@@ -1,11 +1,11 @@
-package control;
+package fps.robotfight.control;
 
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.behaviours.Behaviour;
 import com.jme3.ai.agents.behaviours.npc.SimpleAttackBehaviour;
 import com.jme3.ai.agents.util.PhysicalObject;
 import com.jme3.ai.agents.util.control.Game;
-import com.jme3.ai.agents.util.control.GameGenre;
+import com.jme3.ai.agents.util.control.GameControl;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -25,7 +25,7 @@ import java.util.Random;
  *
  * @author Tihomir Radosavljević
  */
-public class FPS implements GameGenre {
+public class FPS implements GameControl {
 
     Game game;
     InputManager inputManager;
@@ -161,7 +161,7 @@ public class FPS implements GameGenre {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void spawn(PhysicalObject gameObject, Vector3f... area) {
+    public void spawn(PhysicalObject physicalObject, Vector3f... area) {
         Random random = new Random();
         float x, z;
         int distance = (int) FastMath.abs(area[1].x - area[0].x);
@@ -174,11 +174,11 @@ public class FPS implements GameGenre {
         if (random.nextBoolean()) {
             z *= -1;
         }
-        gameObject.setLocalTranslation(x, 0, z);
-        if (gameObject instanceof Agent) {
-            game.addAgent((Agent) gameObject);
+        physicalObject.setLocalTranslation(x, 0, z);
+        if (physicalObject instanceof Agent) {
+            game.addAgent((Agent) physicalObject);
         } else {
-            game.addGameObject(gameObject);
+            game.addGameObject(physicalObject);
         }
     }
 

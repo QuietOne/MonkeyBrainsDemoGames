@@ -1,11 +1,11 @@
-package games.fps;
+package fps.robotfight;
 
-import behaviours.npc.FleeInsideTerrain;
-import behaviours.npc.SeekInsideTerrain;
-import behaviours.npc.WanderInsideTerrain;
-import util.DefinedSpatials;
-import util.Cannon;
-import util.LaserWeapon;
+import behaviours.FleeInsideTerrain;
+import behaviours.SeekInsideTerrain;
+import behaviours.WanderInsideTerrain;
+import fps.robotfight.util.RoboFightSpatials;
+import fps.robotfight.util.Cannon;
+import fps.robotfight.util.LaserWeapon;
 import com.jme3.ai.agents.util.control.Game;
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.Team;
@@ -19,14 +19,24 @@ import com.jme3.font.BitmapText;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.RenderManager;
-import control.FPS;
-import util.Knife;
+import fps.robotfight.control.FPS;
+import fps.robotfight.util.Knife;
 
 /**
- * Testing demo game for this agent framework.
+ * Testing demo game for MonkeyBrains framework. Some introduction to game: -
+ * this game is based on Robotfight game made by Ryu Battosai Kajiya in
+ * jMonkeyEngine - this is the game where one robot fights with other robots -
+ * there are three kinds of robots: - blue: have instant kill, no attack range
+ * and always chasing player - red: moves random and have laser - green: runs
+ * away from player, have cannon and always shooting at player - all three
+ * robots are in the same team - if tree robot are to easy for you you can add
+ * more with just increasing initial enemies array size. The game will do the
+ * rest.
+ *
+ * @author Tihomir Radosavljević
+ * @version 1.0
  */
-public class Main extends SimpleApplication {
+public class RobotFightGame extends SimpleApplication {
 
     //defining players
     private Agent player;
@@ -38,7 +48,7 @@ public class Main extends SimpleApplication {
     private final float terrainSize = 40f;
 
     public static void main(String[] args) {
-        Main app = new Main();
+        RobotFightGame app = new RobotFightGame();
         app.start();
     }
 
@@ -49,39 +59,39 @@ public class Main extends SimpleApplication {
         //defining input manager
         game.setInputManager(inputManager);
         //setting game Genre
-        game.setGenre(new FPS());
+        game.setGameControl(new FPS());
         //registering input
-        game.getGenre().loadInputManagerMapping();
+        game.getGameControl().loadInputManagerMapping();
         game.setFriendlyFire(false);
 
         //DefinedSpatials for graphics for this game
-        DefinedSpatials.material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        DefinedSpatials.initializeFloor(terrainSize);
-        viewPort.addProcessor(DefinedSpatials.initializeBloom(assetManager));
+        RoboFightSpatials.material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        RoboFightSpatials.initializeFloor(terrainSize);
+        viewPort.addProcessor(RoboFightSpatials.initializeBloom(assetManager));
         flyCam.setMoveSpeed(20);
         //disable the default flyby cam
         flyCam.setEnabled(false);
 
 
         //initialization of Agents with their names and spatials
-        player = new Agent("Player", DefinedSpatials.initializeAgent("Player", ColorRGBA.Gray));
+        player = new Agent("Player", RoboFightSpatials.initializeAgent("Player", ColorRGBA.Gray));
         for (int i = 0; i < enemies.length; i++) {
             if (i % 3 == 0) {
-                enemies[i] = new Agent("Bot " + i, DefinedSpatials.initializeAgent("Bot " + i, ColorRGBA.Red));
+                enemies[i] = new Agent("Bot " + i, RoboFightSpatials.initializeAgent("Bot " + i, ColorRGBA.Red));
             } else {
                 if (i % 3 == 1) {
-                    enemies[i] = new Agent("Bot " + i, DefinedSpatials.initializeAgent("Bot " + i,ColorRGBA.Green));
+                    enemies[i] = new Agent("Bot " + i, RoboFightSpatials.initializeAgent("Bot " + i, ColorRGBA.Green));
                 } else {
-                    enemies[i] = new Agent("Bot " + i, DefinedSpatials.initializeAgent("Bot " + i,ColorRGBA.Cyan));
+                    enemies[i] = new Agent("Bot " + i, RoboFightSpatials.initializeAgent("Bot " + i, ColorRGBA.Cyan));
                 }
             }
-            
+
         }
 
         //adding them to game
         game.addAgent(player);
         for (int i = 0; i < enemies.length; i++) {
-            game.getGenre().spawn(enemies[i], new Vector3f(terrainSize * 2 - 5, 0, terrainSize * 2 - 5),
+            game.getGameControl().spawn(enemies[i], new Vector3f(terrainSize * 2 - 5, 0, terrainSize * 2 - 5),
                     new Vector3f(-terrainSize * 2 + 5, 0, -terrainSize * 2 + 5));
 
         }
@@ -137,17 +147,17 @@ public class Main extends SimpleApplication {
         }
 
         //attaching camera to player
-        DefinedSpatials.attachCameraTo(player, cam);
+        RoboFightSpatials.attachCameraTo(player, cam);
 
         //making move behaviour for player
         SimplePlayerMoveBehaviour playerMove = new SimplePlayerMoveBehaviour(player, null);
-        ((FPS) game.getGenre()).addMoveListener(player, playerMove);
-        playerMove.addSupportedOperations(((FPS) game.getGenre()).getPlayerMoveSupportedOperations(player));
+        ((FPS) game.getGameControl()).addMoveListener(player, playerMove);
+        playerMove.addSupportedOperations(((FPS) game.getGameControl()).getPlayerMoveSupportedOperations(player));
 
         //making attack behaviour for player
         SimplePlayerAttackBehaviour playerAttack = new SimplePlayerAttackBehaviour(player, null);
-        ((FPS) game.getGenre()).addAttackListener(player, playerAttack);
-        playerAttack.addSupportedOperations(((FPS) game.getGenre()).getPlayerAttackSupportedOperations(player));
+        ((FPS) game.getGameControl()).addAttackListener(player, playerAttack);
+        playerAttack.addSupportedOperations(((FPS) game.getGameControl()).getPlayerAttackSupportedOperations(player));
 
         //making main behaviour for player and adding behaviours to it
         SimpleMainBehaviour playerMain = new SimpleMainBehaviour(player);
@@ -172,7 +182,7 @@ public class Main extends SimpleApplication {
                     SimpleAttackBehaviour attack = new SimpleAttackBehaviour(enemies[i]);
                     attack.setTarget(player);
                     enemyMain.addBehaviour(attack);
-                    enemyMain.addBehaviour(new FleeInsideTerrain(enemies[i], player));
+                    enemyMain.addBehaviour(new FleeInsideTerrain(terrainSize, enemies[i], player));
                     enemies[i].setMainBehaviour(enemyMain);
                 } else {
                     SimpleMainBehaviour enemyMain = new SimpleMainBehaviour(enemies[i]);
@@ -181,7 +191,7 @@ public class Main extends SimpleApplication {
                     look.addListener(attack);
                     enemyMain.addBehaviour(look);
                     enemyMain.addBehaviour(attack);
-                    enemyMain.addBehaviour(new SeekInsideTerrain(enemies[i], player));
+                    enemyMain.addBehaviour(new SeekInsideTerrain(terrainSize,enemies[i], player));
                     enemies[i].setMainBehaviour(enemyMain);
                 }
             }
@@ -194,7 +204,7 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
-        if (game.getGenre().finish()) {
+        if (game.getGameControl().finish()) {
             if (gameFinishCountDown <= 0) {
                 this.stop();
             } else {
@@ -202,7 +212,7 @@ public class Main extends SimpleApplication {
                 BitmapText hudText = new BitmapText(guiFont, false);
                 hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
                 hudText.setColor(ColorRGBA.Red); // font color
-                if (game.getGenre().win(player)) {
+                if (game.getGameControl().win(player)) {
                     hudText.setText(player.getTeam().getName() + " wins."); // the text
                 } else {
                     hudText.setText(enemies[0].getTeam().getName() + " wins."); // the text
@@ -212,10 +222,5 @@ public class Main extends SimpleApplication {
             }
         }
         game.update(tpf);
-    }
-
-    @Override
-    public void simpleRender(RenderManager rm) {
-        //TODO: add render code
     }
 }

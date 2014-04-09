@@ -1,4 +1,4 @@
-package util;
+package fps.robotfight.util;
 
 import com.jme3.ai.agents.util.AbstractBullet;
 import com.jme3.scene.Spatial;

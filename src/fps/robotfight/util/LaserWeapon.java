@@ -1,4 +1,4 @@
-package util;
+package fps.robotfight.util;
 
 import com.jme3.ai.agents.Agent;
 import com.jme3.collision.CollisionResults;
@@ -56,7 +56,7 @@ public class LaserWeapon extends AbstractWeapon{
                 break;
             }
         }
-        LaserBullet laserBullet = new LaserBullet(this, DefinedSpatials.initializeLaserBullet(agent, direction, laserLength));
+        LaserBullet laserBullet = new LaserBullet(this, RoboFightSpatials.initializeLaserBullet(agent, direction, laserLength));
         //only one laser bullet can be active at the time
         bullet = laserBullet;
         ((Node) agent.getSpatial()).attachChild(laserBullet.getSpatial());

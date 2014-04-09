@@ -1,4 +1,4 @@
-package util;
+package fps.robotfight.util;
 
 import com.jme3.ai.agents.util.control.Game;
 import com.jme3.ai.agents.Agent;
@@ -21,14 +21,10 @@ import com.jme3.scene.shape.Quad;
 import com.jme3.scene.shape.Sphere;
 
 /**
- * This class is not used for use of framework, but is only used to store
- * methods for geometries and for input methods, that are used in this game. The
- * main reason for this is to show usage of this framework for this simple demo
- * game without redundant details.
  *
  * @author Tihomir Radosavljević
  */
-public class DefinedSpatials {
+public class RoboFightSpatials {
 
     public static Material material;
     private static float maxBlur = 2.7f;
