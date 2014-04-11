@@ -20,8 +20,9 @@ public class ALifeEntity {
     private float happiness;
     private float eatPerTime;
     private Agent sexualPartner;
+    private Agent agent;
 
-    public ALifeEntity(float lifeSpan, float maxFoodAmount, float hotness, float eatPerTime, ColorRGBA gender) {
+    public ALifeEntity(Agent agent, float lifeSpan, float maxFoodAmount, float hotness, float eatPerTime, ColorRGBA gender) {
         this.foodAmount = maxFoodAmount;
         this.maxFoodAmount = maxFoodAmount;
         this.lifeSpan = lifeSpan;
@@ -31,6 +32,7 @@ public class ALifeEntity {
         sexDeprivedAmount = 0;
         timeLeft = lifeSpan;
         happiness = 1000f;
+        this.agent = agent;
     }
 
     public boolean isHorny() {
@@ -157,4 +159,20 @@ public class ALifeEntity {
     public boolean hasSexualPartner(){
         return sexualPartner != null;
     }
+
+    public CharSequence toCharSequence(){
+        String s="Name: "+agent.getName()+"\n";
+        s+="Mass: "+agent.getMass()+'\n';
+        s+="HitPoints: "+agent.getHitPoint()+"\n";
+        s+="Max move speed: "+agent.getMaxMoveSpeed()+"\n";
+        s+="Visibility range: "+agent.getVisibilityRange()+"\n";
+        s+="Eat per time: "+eatPerTime+"\n";
+        s+="Happiness: "+happiness+"\n";
+        s+="Hotness: "+hotness+"\n";
+        s+="Food amount: "+foodAmount+"\n";
+        s+="Sex deprived amount: "+sexDeprivedAmount+"\n";
+        return s;
+    }
+    
+    
 }

@@ -12,8 +12,11 @@ import simulation.evolution.util.ALifeEntity;
 import simulation.evolution.util.Food;
 
 /**
+ * Eating behaviour. Agent sees food and if it is hungry, it will go to food and
+ * eat it.
  *
  * @author Tihomir Radosavljević
+ * @version 1.0
  */
 public class EatBehaviour extends Behaviour implements PhysicalObjectSeenListener {
 
@@ -23,6 +26,7 @@ public class EatBehaviour extends Behaviour implements PhysicalObjectSeenListene
 
     public EatBehaviour(Agent agent) {
         super(agent);
+        //moving behaviour, but without moving on Y-axis
         moveBehaviour = new SimpleMoveBehaviour(agent) {
             @Override
             protected void controlUpdate(float tpf) {
@@ -50,17 +54,18 @@ public class EatBehaviour extends Behaviour implements PhysicalObjectSeenListene
 
     @Override
     protected void controlUpdate(float tpf) {
+        //if there is no food being targeted, than nothing will be done
         if (targetedFood != null) {
             //if agent is close enough to eat it than eat it
             if (agent.getLocalTranslation().distance(targetedFood.getLocalTranslation()) < rangeOfEating) {
                 ALifeEntity alf = (ALifeEntity) agent.getModel();
+                //decreasing amount of food left
                 targetedFood.beingEaten(alf.getEatPerTime() * tpf);
+                //increase food being eaten by agent
                 alf.increaseFoodAmount(alf.getEatPerTime() * tpf);
                 alf.increaseHappiness(10 * tpf);
-                if (!targetedFood.moreEnergy()) {
-                    targetedFood = null;
-                }
-                if (alf.fullStomach()) {
+                //there isn't more food left or agent is full
+                if (!targetedFood.moreEnergy() || alf.fullStomach()) {
                     targetedFood = null;
                 }
             } else {

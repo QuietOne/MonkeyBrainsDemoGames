@@ -7,13 +7,12 @@ import com.jme3.ai.agents.util.control.GameControl;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
-import fps.robotfight.util.Knife;
-import fps.robotfight.util.LaserWeapon;
 import java.util.Random;
 import simulation.evolution.behaviours.LiveBehaviour;
 import simulation.evolution.util.ALifeEntity;
 import simulation.evolution.util.EvolutionSpatials;
 import simulation.evolution.util.Food;
+import simulation.evolution.util.Weapon;
 
 /**
  *
@@ -94,9 +93,8 @@ public class Simulation implements GameControl {
         } else {
             gender = ColorRGBA.Red;
         }
-        //add movement, rotation, weapon, visibility
-        ALifeEntity aLifeEntity = new ALifeEntity(lifeSpan, maxFoodAmount, hotness, eatPerTime, gender);
         Agent<ALifeEntity> agent = new Agent<ALifeEntity>(agentName, EvolutionSpatials.initializeAgent(agentName, gender));
+        ALifeEntity aLifeEntity = new ALifeEntity(agent, lifeSpan, maxFoodAmount, hotness, eatPerTime, gender);
         agent.setModel(aLifeEntity);
         agent.setLocalTranslation(x, 0, z);
         agent.setMaxHitPoint(random.nextInt(100)+100);
@@ -105,9 +103,10 @@ public class Simulation implements GameControl {
         agent.setVisibilityRange(random.nextInt(200)+100);
         agent.setMass(random.nextInt(40)+10);
         agent.setMaxForce(3);
-        agent.setWeapon(new Knife("knife", agent));
+        agent.setWeapon(new Weapon(agentName, agent));
         agent.setMainBehaviour(new LiveBehaviour(terrainSize, agent));
         game.addAgent(agent);
+        agent.start();
     }
     
     public void spawnAgentChildren(){

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package simulation.evolution.behaviours;
 
 import behaviours.SeekInsideTerrain;
@@ -16,42 +12,58 @@ import com.jme3.ai.agents.util.control.Game;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
-import java.util.Random;
 import simulation.evolution.control.Simulation;
 import simulation.evolution.util.ALifeEntity;
 import simulation.evolution.util.EvolutionSpatials;
 
 /**
+ * Reproduction behaviour. Two agent are making new generation of agents.
  *
  * @author Tihomir Radosavljević
+ * @version 1.0
  */
-public class FuckBehaviour extends Behaviour implements PhysicalObjectSeenListener {
+public class ReproduceBehaviour extends Behaviour implements PhysicalObjectSeenListener {
 
+    /**
+     * Agent with whom is this agent reproducing.
+     */
     private Agent withWhom;
-    float rangeOfFucking;
-    SeekBehaviour seekBehaviour;
-    float timeUntilOrgasm;
-    float fuckTime;
-    SimpleAttackBehaviour attackBehaviour;
-    private boolean doingIt;
+    /**
+     * Maximal distance of reproduction.
+     */
+    private float rangeOfReproducing;
+    private SeekBehaviour seekBehaviour;
+    /**
+     * Time left until reproduction being made.
+     */
+    private float timeUntilReproduction;
+    /**
+     * Time needed for reproduction.
+     */
+    private final float reproductionTime = 1f;
+    private SimpleAttackBehaviour attackBehaviour;
+    /**
+     * Is proces of reproduction being active.
+     */
+    private boolean active;
 
-    public FuckBehaviour(float terrainSize, Agent agent) {
+    public ReproduceBehaviour(float terrainSize, Agent agent) {
         super(agent);
         seekBehaviour = new SeekInsideTerrain(terrainSize, agent, null);
-        rangeOfFucking = 10f;
-        fuckTime = 1f;
-        timeUntilOrgasm = fuckTime;
+        rangeOfReproducing = 5f;
+        timeUntilReproduction = reproductionTime;
         attackBehaviour = new SimpleAttackBehaviour(agent);
-        doingIt = false;
+        active = false;
     }
 
     @Override
     protected void controlUpdate(float tpf) {
         if (withWhom != null && withWhom.isEnabled()) {
             //if agent is close enough to eat it than eat it
-            if (agent.getLocalTranslation().distance(withWhom.getLocalTranslation()) < rangeOfFucking) {
+            if (agent.getLocalTranslation().distance(withWhom.getLocalTranslation()) < rangeOfReproducing) {
                 //does it already have sexual partner
                 if (((ALifeEntity) withWhom.getModel()).hasSexualPartner()) {
+                    //if this agent is not sexual partner of that one
                     if (((ALifeEntity) withWhom.getModel()).getSexualPartner() != agent) {
                         //if agent is really horny or just stronger
                         if (((ALifeEntity) agent.getModel()).isReallyHorny()
@@ -59,46 +71,51 @@ public class FuckBehaviour extends Behaviour implements PhysicalObjectSeenListen
                             attackBehaviour.setTarget(((ALifeEntity) withWhom.getModel()).getSexualPartner());
                             attackBehaviour.update(tpf);
                             if (attackBehaviour.getTargetObject() == null) {
-                                System.out.println(agent.getName()+ " has killed " + ((ALifeEntity) withWhom.getModel()).getSexualPartner());
+                                System.out.println(agent.getName() + " has killed " + ((ALifeEntity) withWhom.getModel()).getSexualPartner());
                                 ((ALifeEntity) withWhom.getModel()).setSexualPartner(agent);
-                                timeUntilOrgasm = fuckTime;
+                                timeUntilReproduction = reproductionTime;
                             }
                         } else {
                             //if agent will not fight for other agent
                             withWhom = null;
                         }
                     } else {
-                        doingIt = true;
+                        active = true;
+                        //reproduction process is active
                         ((ALifeEntity) agent.getModel()).decreaseSexDeprivation(tpf);
                         ((ALifeEntity) agent.getModel()).increaseHappiness(100 * tpf);
                         ((ALifeEntity) agent.getModel()).setSexualPartner(withWhom);
                         EvolutionSpatials.changeBodyColor(agent, ColorRGBA.Red);
                         EvolutionSpatials.changeBodyColor(withWhom, ColorRGBA.Red);
-                        if (timeUntilOrgasm <= 0) {
+                        if (timeUntilReproduction <= 0) {
                             EvolutionSpatials.changeBodyColor(agent, ColorRGBA.Gray);
                             EvolutionSpatials.changeBodyColor(withWhom, ColorRGBA.Gray);
                             withWhom = null;
-                            //Make 3 babies per sex well done
-                            ((Simulation)Game.getInstance().getGameControl()).spawnAgentChildren();
-                            ((Simulation)Game.getInstance().getGameControl()).spawnAgentChildren();
-                            ((Simulation)Game.getInstance().getGameControl()).spawnAgentChildren();
-                            doingIt = false;
+                            //three newborns are made
+                            ((Simulation) Game.getInstance().getGameControl()).spawnAgentChildren();
+                            ((Simulation) Game.getInstance().getGameControl()).spawnAgentChildren();
+                            ((Simulation) Game.getInstance().getGameControl()).spawnAgentChildren();
+                            active = false;
                         } else {
-                            timeUntilOrgasm -= tpf;
+                            timeUntilReproduction -= tpf;
                         }
                     }
                 } else {
+                    //if agent doesn't have sexual partner
                     ((ALifeEntity) withWhom.getModel()).setSexualPartner(agent);
-                    timeUntilOrgasm = fuckTime;
+                    timeUntilReproduction = reproductionTime;
                 }
 
             } else {
                 //if not close enough, move to partner, you dog
                 seekBehaviour.setTarget(withWhom);
                 seekBehaviour.update(tpf);
+                EvolutionSpatials.changeBodyColor(agent, ColorRGBA.Gray);
             }
         } else {
+            //if there isn't any potential sexual partner
             EvolutionSpatials.changeBodyColor(agent, ColorRGBA.Gray);
+            withWhom = null;
         }
     }
 
@@ -120,18 +137,16 @@ public class FuckBehaviour extends Behaviour implements PhysicalObjectSeenListen
                 if (((ALifeEntity) withWhom.getModel()).getHotness()
                         < (((ALifeEntity) withWhom.getModel()).getHotness())) {
                     withWhom = (Agent) object;
-                    timeUntilOrgasm = fuckTime;
+                    timeUntilReproduction = reproductionTime;
                 }
             } else {
                 withWhom = (Agent) object;
-                timeUntilOrgasm = fuckTime;
+                timeUntilReproduction = reproductionTime;
             }
         }
     }
 
-    public boolean isDoingIt() {
-        return doingIt;
+    public boolean isActive() {
+        return active;
     }
-    
-
 }

@@ -15,15 +15,17 @@ import simulation.evolution.events.BeingAttackedEventListener;
 import simulation.evolution.util.ALifeEntity;
 
 /**
+ * Live behaviour. Main behaviour that contains all other behaviours of agent.
  *
  * @author Tihomir Radosavljević
+ * @version 1.0
  */
 public class LiveBehaviour extends Behaviour implements BeingAttackedEventListener {
 
     private ALifeEntity agentLife;
     private SimpleLookBehaviour lookBehaviour;
     private EatBehaviour eatBehaviour;
-    private FuckBehaviour fuckBehaviour;
+    private ReproduceBehaviour reproduceBehaviour;
     private Agent attackingAgent;
     private FleeBehaviour fleeBehaviour;
     private SimpleAttackBehaviour attackBehaviour;
@@ -34,10 +36,10 @@ public class LiveBehaviour extends Behaviour implements BeingAttackedEventListen
         super(agent);
         agentLife = (ALifeEntity) agent.getModel();
         eatBehaviour = new EatBehaviour(agent);
-        fuckBehaviour = new FuckBehaviour(terrainSize, agent);
+        reproduceBehaviour = new ReproduceBehaviour(terrainSize, agent);
         lookBehaviour = new SimpleLookBehaviour(agent);
         lookBehaviour.addListener(eatBehaviour);
-        lookBehaviour.addListener(fuckBehaviour);
+        lookBehaviour.addListener(reproduceBehaviour);
         fleeBehaviour = new FleeInsideTerrain(agent, null);
         attackBehaviour = new SimpleAttackBehaviour(agent);
         wanderBehaviour = new WanderInsideTerrain(agent, terrainSize);
@@ -48,8 +50,8 @@ public class LiveBehaviour extends Behaviour implements BeingAttackedEventListen
         lookBehaviour.update(tpf);
         //if no one is attacking
         if (attackingAgent == null) {
-            if (fuckBehaviour.isDoingIt()) {
-                fuckBehaviour.update(tpf);
+            if (reproduceBehaviour.isActive()) {
+                reproduceBehaviour.update(tpf);
             } else {
                 //if agent is hungry
                 if (agentLife.isHungry()) {
@@ -62,7 +64,7 @@ public class LiveBehaviour extends Behaviour implements BeingAttackedEventListen
                 //if agent is horny
                 if (agentLife.isHorny()) {
                     agentLife.decreaseHappiness(10 * tpf);
-                    fuckBehaviour.update(tpf);
+                    reproduceBehaviour.update(tpf);
                     if (agentLife.isReallyHorny()) {
                         agentLife.decreaseHappiness(30 * tpf);
                     }
@@ -98,7 +100,7 @@ public class LiveBehaviour extends Behaviour implements BeingAttackedEventListen
         if (agentLife.isUnhappy()) {
             //System.out.println(agent.getName() + " is unhappy.");
             Game.getInstance().decreaseHitPoints(agent, agent.getHitPoint());
-            System.out.println(agent.getName()+" have commited suicide.");
+            System.out.println(agent.getName() + " have commited suicide.");
         }
         //in life everything goes away
         agentLife.increaseSexDeprivation(tpf);

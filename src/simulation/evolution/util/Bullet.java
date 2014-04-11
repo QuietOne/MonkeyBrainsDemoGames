@@ -1,4 +1,4 @@
-package fps.robotfight.util;
+package simulation.evolution.util;
 
 import com.jme3.ai.agents.util.AbstractBullet;
 import com.jme3.scene.Spatial;
@@ -11,12 +11,12 @@ import com.jme3.renderer.ViewPort;
  *
  * @author Tihomir Radosavljević
  */
-public class LaserBullet extends AbstractBullet{
+public class Bullet extends AbstractBullet{
 
     private float lifeTime;
     private float maxLifeTime = 0.25f;
     
-    public LaserBullet(AbstractWeapon weapon, Spatial spatial) {
+    public Bullet(AbstractWeapon weapon, Spatial spatial) {
         super(weapon, spatial);
         this.lifeTime = maxLifeTime;
     }

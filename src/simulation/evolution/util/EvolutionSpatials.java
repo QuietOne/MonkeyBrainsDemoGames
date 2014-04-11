@@ -198,4 +198,34 @@ public class EvolutionSpatials {
         return food;
     }
     
+        /**
+     * Creating bullet and attaching it to shooter.
+     * @param shooter to whom is attached
+     * @param direction direction of bullet
+     * @param length length of bullet
+     * @return spatilal of bullet
+     */
+    public static Geometry initializeLaserBullet(Agent shooter, Vector3f direction, float length, ColorRGBA color) {
+        float laserLength = length;
+
+        //this is part where geometry begins
+        Cylinder laser = new Cylinder(4, 8, 0.04f, laserLength);
+        Geometry laserBeam = new Geometry("laserbeam", laser);
+        Material matlaser = material.clone();
+        matlaser.setColor("Color", color);
+        matlaser.setColor("GlowColor", ColorRGBA.Orange);
+        laserBeam.setMaterial(matlaser);
+        // attach laserbeam to player so it moves with player
+        ((Node) shooter.getSpatial()).attachChild(laserBeam);
+        // center laserbeam on players origin
+        laserBeam.center();
+        // make the laserbeam point towards clicked spot
+        laserBeam.lookAt(direction, Vector3f.UNIT_Z);
+        // move laserbeam up so it does not shoot on ground level, but from player model
+        laserBeam.move(new Vector3f(0, 3, 0));
+        // move laserbeam forward because cylinder is created with center at player origin
+        laserBeam.move(laserBeam.getLocalRotation().mult(new Vector3f(0, 0, laserLength / 2)));
+        return laserBeam;
+    }
+    
 }

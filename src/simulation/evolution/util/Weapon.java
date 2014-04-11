@@ -1,4 +1,4 @@
-package fps.robotfight.util;
+package simulation.evolution.util;
 
 import com.jme3.ai.agents.Agent;
 import com.jme3.collision.CollisionResults;
@@ -16,12 +16,12 @@ import com.jme3.ai.agents.util.control.Game;
  * @author Tihomir Radosavljević
  * @version 1.0
  */
-public class LaserWeapon extends AbstractWeapon{
+public class Weapon extends AbstractWeapon{
 
-    public LaserWeapon(String name, Agent agent){
+    public Weapon(String name, Agent agent){
         this.name = name;
         this.agent = agent;
-        this.maxAttackRange = 40f;
+        this.maxAttackRange = 20f;
         this.minAttackRange = 0;
         this.attackDamage = 10f;
         this.numberOfBullets = -1;
@@ -56,7 +56,7 @@ public class LaserWeapon extends AbstractWeapon{
                 break;
             }
         }
-        LaserBullet laserBullet = new LaserBullet(this, RoboFightSpatials.initializeLaserBullet(agent, direction, laserLength));
+        Bullet laserBullet = new Bullet(this, EvolutionSpatials.initializeLaserBullet(agent, direction, laserLength,((ALifeEntity) agent.getModel()).getGender()));
         //only one laser bullet can be active at the time
         bullet = laserBullet;
         ((Node) agent.getSpatial()).attachChild(laserBullet.getSpatial());
