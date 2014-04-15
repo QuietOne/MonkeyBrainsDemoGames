@@ -160,7 +160,8 @@ public class ALifeEntity {
         return sexualPartner != null;
     }
 
-    public CharSequence toCharSequence(){
+    @Override
+    public String toString(){
         String s="Name: "+agent.getName()+"\n";
         s+="Mass: "+agent.getMass()+'\n';
         s+="HitPoints: "+agent.getHitPoint()+"\n";
