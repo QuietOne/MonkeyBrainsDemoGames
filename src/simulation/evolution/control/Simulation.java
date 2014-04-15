@@ -4,6 +4,10 @@ import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.util.PhysicalObject;
 import com.jme3.ai.agents.util.control.Game;
 import com.jme3.ai.agents.util.control.GameControl;
+import com.jme3.input.InputManager;
+import com.jme3.input.MouseInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
@@ -29,7 +33,11 @@ public class Simulation implements GameControl {
     }
 
     public void loadInputManagerMapping() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        game.getInputManager().addMapping("Select", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+    }
+    
+    public void addSelectListener(ActionListener actionListener){
+        game.getInputManager().addListener(actionListener, "Select");
     }
 
     public boolean finish() {
