@@ -12,6 +12,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
 import java.util.List;
 import java.util.Random;
 import simulation.evolution.control.Simulation;
@@ -59,6 +60,7 @@ public class EvolutionGame extends SimpleApplication implements ActionListener {
         game.setInputManager(inputManager);
         game.getGameControl().loadInputManagerMapping();
         ((Simulation) game.getGameControl()).addSelectListener(this);
+        ((Simulation) game.getGameControl()).addAddListener(this);
         //for texts description
         agentStatusText = new BitmapText(guiFont, false);
         agentStatusText.setSize(guiFont.getCharSet().getRenderedSize());
@@ -121,7 +123,6 @@ public class EvolutionGame extends SimpleApplication implements ActionListener {
 
     public void onAction(String name, boolean isPressed, float tpf) {
         if (name.equals("Select")) {
-
             CollisionResults results = new CollisionResults();
             Vector2f click2d = inputManager.getCursorPosition();
             Vector3f click3d = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 0f).clone();
@@ -144,6 +145,19 @@ public class EvolutionGame extends SimpleApplication implements ActionListener {
                 }
             } else {
                 inspectedAgent = null;
+            }
+        }
+        if (name.equals("Add")) {
+            CollisionResults results = new CollisionResults();
+            Vector2f click2d = inputManager.getCursorPosition();
+            Vector3f click3d = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 0f).clone();
+            Vector3f dir = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
+            Ray ray = new Ray(click3d, dir);
+            rootNode.collideWith(ray, results);
+            if (results.size() > 0) {
+                Vector3f position = new Vector3f(results.getClosestCollision().getContactPoint());
+                position.y=0;
+                ((Simulation)game.getGameControl()).spawnAgent(position);
             }
         }
     }
