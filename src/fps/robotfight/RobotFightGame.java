@@ -100,7 +100,7 @@ public class RobotFightGame extends SimpleApplication {
         player.setMoveSpeed(15);
         player.setRotationSpeed(30);
         for (int i = 0; i < enemies.length; i++) {
-            enemies[i].setMoveSpeed(10);
+            enemies[i].setMoveSpeed(20);
             enemies[i].setRotationSpeed(30);
             enemies[i].setMass(40);
             enemies[i].setMaxForce(3);
