@@ -18,6 +18,7 @@ import simulation.evolution.control.Simulation;
 import simulation.evolution.util.ALifeEntity;
 import simulation.evolution.util.EvolutionSpatials;
 import simulation.evolution.util.Food;
+import simulation.evolution.util.Statistics;
 
 /**
  * Testing demo game for MonkeyBrains framework. Some introduction to game:
@@ -38,7 +39,8 @@ public class EvolutionGame extends SimpleApplication implements ActionListener {
     private final float timeForNewFood = 10f;
     private final float terrainSize = 40f;
     private float timeUntilNextFood = timeForNewFood;
-    private BitmapText hudText;
+    private BitmapText agentStatusText;
+    private BitmapText statisticsText;
     private Agent inspectedAgent;
 
     public static void main(String[] args) {
@@ -57,8 +59,15 @@ public class EvolutionGame extends SimpleApplication implements ActionListener {
         game.setInputManager(inputManager);
         game.getGameControl().loadInputManagerMapping();
         ((Simulation) game.getGameControl()).addSelectListener(this);
-        //for agent description
-        hudText = new BitmapText(guiFont, false);
+        //for texts description
+        agentStatusText = new BitmapText(guiFont, false);
+        agentStatusText.setSize(guiFont.getCharSet().getRenderedSize());
+        statisticsText = new BitmapText(guiFont, false);
+        statisticsText.setSize(guiFont.getCharSet().getRenderedSize());
+        statisticsText.setColor(ColorRGBA.Yellow);
+        statisticsText.setText("STARTING");
+        statisticsText.setLocalTranslation(settings.getWidth() - statisticsText.getLineWidth()*10, settings.getHeight() - statisticsText.getLineHeight(), 0); // position
+        guiNode.attachChild(statisticsText);
 
         //setting camera
         flyCam.setEnabled(true);
@@ -103,37 +112,39 @@ public class EvolutionGame extends SimpleApplication implements ActionListener {
         if (game.getGameControl().finish()) {
             this.stop();
         }
-        //update hud text
+        //update agent text
         if (inspectedAgent != null) {
-            hudText.setText(((ALifeEntity) inspectedAgent.getModel()).toString());
+            agentStatusText.setText(((ALifeEntity) inspectedAgent.getModel()).toString());
         }
-
+        statisticsText.setText(Statistics.getInstance().toString());
     }
 
     public void onAction(String name, boolean isPressed, float tpf) {
-        CollisionResults results = new CollisionResults();
-        Vector2f click2d = inputManager.getCursorPosition();
-        Vector3f click3d = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 0f).clone();
-        Vector3f dir = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
-        Ray ray = new Ray(click3d, dir);
-        rootNode.collideWith(ray, results);
-        if (results.size() > 0) {
-            guiNode.detachChild(hudText);
-            String agentName = results.getClosestCollision().getGeometry().getParent().getName();
-            List<Agent> agents = game.getAgents();
-            for (int i = 0; i < agents.size(); i++) {
-                if (agentName.equals(agents.get(i).getName())) {
-                    inspectedAgent = agents.get(i);
-                    hudText.setSize(guiFont.getCharSet().getRenderedSize());
-                    hudText.setColor(((ALifeEntity) inspectedAgent.getModel()).getGender());
-                    hudText.setText(((ALifeEntity) inspectedAgent.getModel()).toString());
-                    hudText.setLocalTranslation(settings.getWidth() - hudText.getLineWidth(), settings.getHeight() - hudText.getLineHeight() / 4*3, 0); // position
-                    guiNode.attachChild(hudText);
-                    break;
+        if (name.equals("Select")) {
+
+            CollisionResults results = new CollisionResults();
+            Vector2f click2d = inputManager.getCursorPosition();
+            Vector3f click3d = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 0f).clone();
+            Vector3f dir = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
+            Ray ray = new Ray(click3d, dir);
+            rootNode.collideWith(ray, results);
+            if (results.size() > 0) {
+                guiNode.detachChild(agentStatusText);
+                String agentName = results.getClosestCollision().getGeometry().getParent().getName();
+                List<Agent> agents = game.getAgents();
+                for (int i = 0; i < agents.size(); i++) {
+                    if (agentName.equals(agents.get(i).getName())) {
+                        inspectedAgent = agents.get(i);
+                        agentStatusText.setColor(((ALifeEntity) inspectedAgent.getModel()).getGender());
+                        agentStatusText.setText(((ALifeEntity) inspectedAgent.getModel()).toString());
+                        agentStatusText.setLocalTranslation(settings.getWidth() - agentStatusText.getLineWidth(), settings.getHeight() - agentStatusText.getLineHeight() / 4 * 3, 0); // position
+                        guiNode.attachChild(agentStatusText);
+                        break;
+                    }
                 }
+            } else {
+                inspectedAgent = null;
             }
-        } else {
-            inspectedAgent = null;
         }
     }
 }

@@ -8,11 +8,13 @@ import com.jme3.ai.agents.behaviours.npc.SimpleAttackBehaviour;
 import com.jme3.ai.agents.behaviours.npc.SimpleLookBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.FleeBehaviour;
 import com.jme3.ai.agents.util.control.Game;
+import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import simulation.evolution.events.BeingAttackedEvent;
 import simulation.evolution.events.BeingAttackedEventListener;
 import simulation.evolution.util.ALifeEntity;
+import simulation.evolution.util.Statistics;
 
 /**
  * Live behaviour. Main behaviour that contains all other behaviours of agent.
@@ -100,6 +102,14 @@ public class LiveBehaviour extends Behaviour implements BeingAttackedEventListen
         if (agentLife.isUnhappy()) {
             //System.out.println(agent.getName() + " is unhappy.");
             Game.getInstance().decreaseHitPoints(agent, agent.getHitPoint());
+            Statistics.getInstance().averageLifeSpan(agentLife.getLifeSpan()-agentLife.getTimeLeft());
+            if (agentLife.getGender().equals(ColorRGBA.Blue)) {
+                Statistics.getInstance().decreaseCurrentNumberOfBlue();
+            } else {
+                Statistics.getInstance().decreaseCurrentNumberOfRed();
+            }
+            Statistics.getInstance().maximumLifeSpan(agentLife.getLifeSpan()-agentLife.getTimeLeft());
+            Statistics.getInstance().minimumLifeSpan(agentLife.getLifeSpan()-agentLife.getTimeLeft());
             System.out.println(agent.getName() + " have commited suicide.");
         }
         //in life everything goes away
@@ -108,6 +118,14 @@ public class LiveBehaviour extends Behaviour implements BeingAttackedEventListen
         agentLife.age(tpf);
         if (agentLife.timeToDie()) {
             Game.getInstance().decreaseHitPoints(agent, agent.getHitPoint());
+            Statistics.getInstance().averageLifeSpan(agentLife.getLifeSpan());
+            if (agentLife.getGender().equals(ColorRGBA.Blue)) {
+                Statistics.getInstance().decreaseCurrentNumberOfBlue();
+            } else {
+                Statistics.getInstance().decreaseCurrentNumberOfRed();
+            }
+            Statistics.getInstance().maximumLifeSpan(agentLife.getLifeSpan());
+            Statistics.getInstance().minimumLifeSpan(agentLife.getLifeSpan());
             System.out.println(agent.getName() + " have died of old age at " + agentLife.getLifeSpan() + ".");
         }
     }

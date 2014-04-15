@@ -3,9 +3,9 @@ package simulation.evolution.behaviours;
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.behaviours.Behaviour;
 import com.jme3.ai.agents.behaviours.npc.SimpleMoveBehaviour;
-import com.jme3.ai.agents.events.PhysicalObjectSeenEvent;
-import com.jme3.ai.agents.events.PhysicalObjectSeenListener;
-import com.jme3.ai.agents.util.PhysicalObject;
+import com.jme3.ai.agents.events.GameObjectSeenEvent;
+import com.jme3.ai.agents.events.GameObjectSeenListener;
+import com.jme3.ai.agents.util.GameObject;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import simulation.evolution.util.ALifeEntity;
@@ -18,7 +18,7 @@ import simulation.evolution.util.Food;
  * @author Tihomir Radosavljević
  * @version 1.0
  */
-public class EatBehaviour extends Behaviour implements PhysicalObjectSeenListener {
+public class EatBehaviour extends Behaviour implements GameObjectSeenListener {
 
     private Food targetedFood;
     private SimpleMoveBehaviour moveBehaviour;
@@ -81,8 +81,8 @@ public class EatBehaviour extends Behaviour implements PhysicalObjectSeenListene
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void handlePhysicalObjectSeenEvent(PhysicalObjectSeenEvent event) {
-        PhysicalObject object = event.getPhysicalObjectSeen();
+    public void handleGameObjectSeenEvent(GameObjectSeenEvent event) {
+        GameObject object = event.getGameObjectSeen();
         //if it is food
         if (object instanceof Food) {
             if (targetedFood != null) {

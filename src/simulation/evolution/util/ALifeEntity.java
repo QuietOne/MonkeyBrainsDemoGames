@@ -1,7 +1,6 @@
 package simulation.evolution.util;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.util.control.Game;
 import com.jme3.math.ColorRGBA;
 
 /**
@@ -40,7 +39,7 @@ public class ALifeEntity {
     }
 
     public boolean isHungry() {
-        return foodAmount < maxFoodAmount/2;
+        return foodAmount < maxFoodAmount / 2;
     }
 
     public boolean isReallyHungry() {
@@ -155,25 +154,23 @@ public class ALifeEntity {
     public boolean timeToDie() {
         return timeLeft <= 0;
     }
-    
-    public boolean hasSexualPartner(){
+
+    public boolean hasSexualPartner() {
         return sexualPartner != null;
     }
 
     @Override
-    public String toString(){
-        String s="Name: "+agent.getName()+"\n";
-        s+="Mass: "+agent.getMass()+'\n';
-        s+="HitPoints: "+agent.getHitPoint()+"\n";
-        s+="Max move speed: "+agent.getMaxMoveSpeed()+"\n";
-        s+="Visibility range: "+agent.getVisibilityRange()+"\n";
-        s+="Eat per time: "+eatPerTime+"\n";
-        s+="Happiness: "+happiness+"\n";
-        s+="Hotness: "+hotness+"\n";
-        s+="Food amount: "+foodAmount+"\n";
-        s+="Sex deprived amount: "+sexDeprivedAmount+"\n";
+    public String toString() {
+        String s = "Name: " + agent.getName() + "\n";
+        s += "Mass: " + agent.getMass() + '\n';
+        s += "HitPoints: " + agent.getHitPoint() + "\n";
+        s += "Move speed: " + agent.getMoveSpeed() + "\n";
+        s += "Visibility range: " + agent.getVisibilityRange() + "\n";
+        s += "Eat per time: " + eatPerTime + "\n";
+        s += "Happiness: " + happiness + "\n";
+        s += "Hotness: " + hotness + "\n";
+        s += "Food amount: " + foodAmount + "\n";
+        s += "Sex deprived amount: " + sexDeprivedAmount + "\n";
         return s;
     }
-    
-    
 }

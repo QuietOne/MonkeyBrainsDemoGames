@@ -1,13 +1,13 @@
 package simulation.evolution.events;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.events.PhysicalObjectEvent;
+import com.jme3.ai.agents.events.GameObjectEvent;
 
 /**
  *
  * @author Tihomir Radosavljević
  */
-public class BeingAttackedEvent extends PhysicalObjectEvent{
+public class BeingAttackedEvent extends GameObjectEvent{
 
     private Agent attackingAgent;
     

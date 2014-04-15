@@ -1,7 +1,7 @@
 package simulation.evolution.control;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.util.PhysicalObject;
+import com.jme3.ai.agents.util.GameObject;
 import com.jme3.ai.agents.util.control.Game;
 import com.jme3.ai.agents.util.control.GameControl;
 import com.jme3.input.InputManager;
@@ -16,6 +16,7 @@ import simulation.evolution.behaviours.LiveBehaviour;
 import simulation.evolution.util.ALifeEntity;
 import simulation.evolution.util.EvolutionSpatials;
 import simulation.evolution.util.Food;
+import simulation.evolution.util.Statistics;
 import simulation.evolution.util.Weapon;
 
 /**
@@ -56,7 +57,7 @@ public class Simulation implements GameControl {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void spawn(PhysicalObject physicalObject, Vector3f... area) {
+    public void spawn(GameObject gameObject, Vector3f... area) {
         Random random = new Random();
         float x, z;
         int distance = (int) FastMath.abs(area[1].x - area[0].x);
@@ -69,8 +70,8 @@ public class Simulation implements GameControl {
         if (random.nextBoolean()) {
             z *= -1;
         }
-        physicalObject.setLocalTranslation(x, ((Food) physicalObject).getEnergy()*0.01f, z);
-        game.addGameObject(physicalObject);
+        gameObject.setLocalTranslation(x, ((Food) gameObject).getEnergy()*0.01f, z);
+        game.addGameObject(gameObject);
     }
 
     public void spawnAgent(String agentName, Vector3f... area) {
@@ -98,8 +99,12 @@ public class Simulation implements GameControl {
         ColorRGBA gender;
         if (random.nextBoolean()) {
             gender = ColorRGBA.Blue;
+            Statistics.getInstance().addCurrentNumberOfBlue();
+            Statistics.getInstance().addTotalNumberOfBlue();
         } else {
             gender = ColorRGBA.Red;
+            Statistics.getInstance().addCurrentNumberOfRed();
+            Statistics.getInstance().addTotalNumberOfRed();
         }
         Agent<ALifeEntity> agent = new Agent<ALifeEntity>(agentName, EvolutionSpatials.initializeAgent(agentName, gender));
         ALifeEntity aLifeEntity = new ALifeEntity(agent, lifeSpan, maxFoodAmount, hotness, eatPerTime, gender);

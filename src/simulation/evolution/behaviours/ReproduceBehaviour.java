@@ -5,9 +5,9 @@ import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.behaviours.Behaviour;
 import com.jme3.ai.agents.behaviours.npc.SimpleAttackBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.SeekBehaviour;
-import com.jme3.ai.agents.events.PhysicalObjectSeenEvent;
-import com.jme3.ai.agents.events.PhysicalObjectSeenListener;
-import com.jme3.ai.agents.util.PhysicalObject;
+import com.jme3.ai.agents.events.GameObjectSeenEvent;
+import com.jme3.ai.agents.events.GameObjectSeenListener;
+import com.jme3.ai.agents.util.GameObject;
 import com.jme3.ai.agents.util.control.Game;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.RenderManager;
@@ -22,7 +22,7 @@ import simulation.evolution.util.EvolutionSpatials;
  * @author Tihomir Radosavljević
  * @version 1.0
  */
-public class ReproduceBehaviour extends Behaviour implements PhysicalObjectSeenListener {
+public class ReproduceBehaviour extends Behaviour implements GameObjectSeenListener {
 
     /**
      * Agent with whom is this agent reproducing.
@@ -70,7 +70,7 @@ public class ReproduceBehaviour extends Behaviour implements PhysicalObjectSeenL
                                 || agent.getHitPoint() > ((ALifeEntity) withWhom.getModel()).getSexualPartner().getHitPoint()) {
                             attackBehaviour.setTarget(((ALifeEntity) withWhom.getModel()).getSexualPartner());
                             attackBehaviour.update(tpf);
-                            if (attackBehaviour.getTargetObject() == null) {
+                            if (attackBehaviour.isTargetSet()) {
                                 System.out.println(agent.getName() + " has killed " + ((ALifeEntity) withWhom.getModel()).getSexualPartner());
                                 ((ALifeEntity) withWhom.getModel()).setSexualPartner(agent);
                                 timeUntilReproduction = reproductionTime;
@@ -124,8 +124,8 @@ public class ReproduceBehaviour extends Behaviour implements PhysicalObjectSeenL
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void handlePhysicalObjectSeenEvent(PhysicalObjectSeenEvent event) {
-        PhysicalObject object = event.getPhysicalObjectSeen();
+    public void handleGameObjectSeenEvent(GameObjectSeenEvent event) {
+        GameObject object = event.getGameObjectSeen();
         //if it is food
         if (object instanceof Agent) {
             if (withWhom != null) {

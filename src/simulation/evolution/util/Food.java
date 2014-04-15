@@ -1,11 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package simulation.evolution.util;
 
-import com.jme3.ai.agents.util.PhysicalObject;
+import com.jme3.ai.agents.util.GameObject;
 import com.jme3.ai.agents.util.control.Game;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -14,7 +9,7 @@ import com.jme3.renderer.ViewPort;
  *
  * @author Tihomir Radosavljević
  */
-public class Food extends PhysicalObject{
+public class Food extends GameObject{
 
     private float energy;
 
@@ -26,7 +21,7 @@ public class Food extends PhysicalObject{
     
     @Override
     protected void controlUpdate(float tpf) {
-        
+        //nothing should happen
     }
 
     @Override
