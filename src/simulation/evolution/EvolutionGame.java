@@ -1,12 +1,21 @@
 package simulation.evolution;
 
+import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.util.control.Game;
 import com.jme3.app.SimpleApplication;
+import com.jme3.collision.CollisionResults;
+import com.jme3.font.BitmapText;
+import com.jme3.input.controls.ActionListener;
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import java.util.List;
 import java.util.Random;
 import simulation.evolution.control.Simulation;
+import simulation.evolution.util.ALifeEntity;
 import simulation.evolution.util.EvolutionSpatials;
 import simulation.evolution.util.Food;
 
@@ -19,7 +28,7 @@ import simulation.evolution.util.Food;
  * @author Tihomir Radosavljević
  * @version 1.0
  */
-public class EvolutionGame extends SimpleApplication {
+public class EvolutionGame extends SimpleApplication implements ActionListener {
 
     //Defining game
     private Game game = Game.getInstance();
@@ -29,6 +38,8 @@ public class EvolutionGame extends SimpleApplication {
     private final float timeForNewFood = 10f;
     private final float terrainSize = 40f;
     private float timeUntilNextFood = timeForNewFood;
+    private BitmapText hudText;
+    private Agent inspectedAgent;
 
     public static void main(String[] args) {
         EvolutionGame app = new EvolutionGame();
@@ -42,6 +53,12 @@ public class EvolutionGame extends SimpleApplication {
         //setting game Genre
         game.setGameControl(new Simulation(terrainSize));
         game.setFriendlyFire(false);
+        //defining input
+        game.setInputManager(inputManager);
+        game.getGameControl().loadInputManagerMapping();
+        ((Simulation) game.getGameControl()).addSelectListener(this);
+        //for agent description
+        hudText = new BitmapText(guiFont, false);
 
         //setting camera
         flyCam.setEnabled(true);
@@ -68,7 +85,6 @@ public class EvolutionGame extends SimpleApplication {
                     new Vector3f(terrainSize * 2 - 5, 0, terrainSize * 2 - 5),
                     new Vector3f(-terrainSize * 2 + 5, 0, -terrainSize * 2 + 5));
         }
-
     }
 
     @Override
@@ -86,6 +102,38 @@ public class EvolutionGame extends SimpleApplication {
         //if all agents are dead finish simultaion
         if (game.getGameControl().finish()) {
             this.stop();
+        }
+        //update hud text
+        if (inspectedAgent != null) {
+            hudText.setText(((ALifeEntity) inspectedAgent.getModel()).toString());
+        }
+
+    }
+
+    public void onAction(String name, boolean isPressed, float tpf) {
+        CollisionResults results = new CollisionResults();
+        Vector2f click2d = inputManager.getCursorPosition();
+        Vector3f click3d = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 0f).clone();
+        Vector3f dir = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
+        Ray ray = new Ray(click3d, dir);
+        rootNode.collideWith(ray, results);
+        if (results.size() > 0) {
+            guiNode.detachChild(hudText);
+            String agentName = results.getClosestCollision().getGeometry().getParent().getName();
+            List<Agent> agents = game.getAgents();
+            for (int i = 0; i < agents.size(); i++) {
+                if (agentName.equals(agents.get(i).getName())) {
+                    inspectedAgent = agents.get(i);
+                    hudText.setSize(guiFont.getCharSet().getRenderedSize());
+                    hudText.setColor(((ALifeEntity) inspectedAgent.getModel()).getGender());
+                    hudText.setText(((ALifeEntity) inspectedAgent.getModel()).toString());
+                    hudText.setLocalTranslation(settings.getWidth() - hudText.getLineWidth(), settings.getHeight() - hudText.getLineHeight() / 4*3, 0); // position
+                    guiNode.attachChild(hudText);
+                    break;
+                }
+            }
+        } else {
+            inspectedAgent = null;
         }
     }
 }
