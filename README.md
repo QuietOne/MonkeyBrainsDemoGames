@@ -4,9 +4,9 @@ Demo games made using MonkeyBrains (JMEAI)
 
 ##Note:
 
-For any game to work from this repository, you must also download MonkeyBrains and set references inside of project(it is very easy with jMonkey SDK).
+MonkeyBrains has been added in this demo and this game is completely operational for use.
 
 ##MonkeyBrains:
 
-You can download MonkeyBrains here:
+You can download source for MonkeyBrains here:
 https://github.com/QuietOne/JMEAI
