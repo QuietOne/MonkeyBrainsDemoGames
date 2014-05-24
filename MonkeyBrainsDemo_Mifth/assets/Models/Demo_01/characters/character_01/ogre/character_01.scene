@@ -1,0 +1,33 @@
+<scene formatVersion="1.0.1" export_time="1400969025.559496" previous_export_time="1400968343.8049464" exported_by="mifthbeat" >
+  <nodes >
+    <node name="Armature" >
+      <position y="0.000000" x="0.000000" z="-0.000000" />
+      <rotation qz="-0.000000" qx="0.000000" qw="1.000000" qy="0.000000" />
+      <scale y="1.000000" x="1.000000" z="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <node name="characterMan" >
+        <position y="0.000000" x="0.000000" z="-0.000000" />
+        <rotation qz="-0.000000" qx="0.000000" qw="1.000000" qy="0.000000" />
+        <scale y="1.000000" x="1.000000" z="1.000000" />
+        <game >
+          <sensors />
+          <actuators />
+        </game>
+        <entity damping_rot="0.10000000149011612" physics_type="STATIC" lock_trans_x="False" damping_trans="0.03999999910593033" mass="1.0" lock_trans_y="False" lock_trans_z="False" lock_rot_z="False" friction_z="1.0" velocity_min="0.0" lock_rot_x="False" name="characterMan" mass_radius="1.0" meshFile="characterMan.mesh" actor="False" inertia_tensor="0.4000000059604645" anisotropic_friction="False" lock_rot_y="False" friction_x="1.0" friction_y="1.0" velocity_max="0.0" ghost="False" />
+      </node>
+    </node>
+  </nodes>
+  <externals >
+    <item type="material" >
+      <file name="/home/mifthbeat/jMonkeyProjects/MonkeyBrainsDemoGames/MonkeyBrainsDemo_Mifth/assets/Models/Demo_01/characters/ogre/characterMan.material" />
+    </item>
+  </externals>
+  <environment >
+    <colourDiffuse b="0.4000000059604645" r="0.05656290054321289" g="0.22081542015075684" />
+    <colourBackground b="0.4000000059604645" r="0.05656290054321289" g="0.22081542015075684" />
+    <colourAmbient b="0.0" r="0.0" g="0.0" />
+  </environment>
+</scene>
