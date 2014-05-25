@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty-styles>
+  <!-- +++++++++++++++++++++++++++++++++++++ -->
+  <!-- style for the button background panel -->
+  <!-- +++++++++++++++++++++++++++++++++++++ -->
+  <style id="ma_button#panel">
+    <attributes backgroundImage="Interface/Textures/Buttons/Button_01/button_01_1.png" imageMode="resize:20,10,20,10,20,10,20,4,20,10,20,10" paddingLeft="7px" paddingRight="7px" width="100px" height="24px" childLayout="center" visibleToMouse="true" />
+    <effect>
+      <onHover name="imageOverlay" filename="Interface/Textures/Buttons/Button_01/button_01_3.png" imageMode="resize:20,10,20,10,20,10,20,4,20,10,20,10" post="false"/>
+      <onFocus name="imageOverlay" filename="Interface/Textures/Buttons/Button_01/button_01_1.png" imageMode="resize:20,10,20,10,20,10,20,4,20,10,20,10" post="false" />
+      <onClick name="imageOverlay" filename="Interface/Textures/Buttons/Button_01/button_01_2.png" imageMode="resize:20,10,20,10,20,10,20,4,20,10,20,10" post="false" />
+      <onEnabled name="renderQuad" startColor="#2228" endColor="#2220" post="true" length="150" />
+      <onDisabled name="renderQuad" startColor="#2220" endColor="#2228" post="true" length="150" />
+    </effect>
+  </style>
+
+  <!-- +++++++++++++++++++++++++++++++++++++ -->
+  <!-- style for the button text -->
+  <!-- +++++++++++++++++++++++++++++++++++++ -->
+  <style id="ma_button#text" base="button-font">
+    <attributes align="center" valign="center" textHAlign="center" textVAlign="center" visibleToMouse="false"/>
+    <effect>
+      <onEnabled name="textColorAnimated" startColor="#8880" endColor="#eeef" post="false" length="150" />
+      <onDisabled name="textColorAnimated" startColor="#eee0" endColor="#8886" post="false" length="150" />
+    </effect>
+  </style>
+</nifty-styles>

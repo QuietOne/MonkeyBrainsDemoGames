@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty-controls>
+    
+    <controlDefinition name="layerControl" width="20px" height="20px" padding="1"  visibleToMouse="true">
+        <panel id="#LayerRoot" childLayout="center" align="center" visibleToMouse="false">
+            
+            <panel id="#LayerLock" width="100%" height="100%" style="layerBox_None" childLayout="center"  align="center" valign="center" padding="1">
+            </panel>
+            
+            <panel id="#LayerEnabling" width="90%" height="90%" style="layerBox_Disabled">  width="90%" height="90%" childLayout="center" backgroundColor="#59cc2b" align="center" valign="center" visible="false" >
+            </panel>
+
+            <panel id="#LayerHasModels" width="30%" height="30%" style="layerBox_None" childLayout="center" align="center">
+            </panel>
+            
+        </panel>
+    </controlDefinition>
+
+  
+</nifty-controls>

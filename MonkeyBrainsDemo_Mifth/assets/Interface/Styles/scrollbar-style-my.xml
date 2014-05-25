@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty-styles>
+  <!-- ++++++++ -->
+  <!-- vertical -->
+  <!-- ++++++++ -->
+  <style id="nifty-vertical-scrollbar-my#panel">
+    <attributes childLayout="vertical" width="13px" align="center" focusable="true" />
+  </style>
+  <style id="nifty-vertical-scrollbar-my#up">
+    <attributes filename="Interface/Textures/Scrollbars/Scrollbar_01/scrollbar.png" width="13px" height="13px" imageMode="sprite:23,23,3"/>
+
+  </style>
+  <style id="nifty-vertical-scrollbar-my#down">
+    <attributes filename="Interface/Textures/Scrollbars/Scrollbar_01/scrollbar.png" width="13px" height="13px" imageMode="sprite:23,23,0"/>
+
+  </style>
+  <style id="nifty-vertical-scrollbar-my#background">
+    <attributes filename="Interface/Textures/Scrollbars/Scrollbar_01/scrollbar.png" width="13px" height="*" childLayout="absolute" imageMode="sprite:23,23,12"/>
+    <effect>
+      <onClick name="focus" targetElement="#parent" />
+    </effect>
+  </style>
+  <style id="nifty-vertical-scrollbar-my#position">
+    <attributes filename="Interface/Textures/Scrollbars/Scrollbar_01/scrollbar.png" x="0px" y="0px" width="13px" height="8px" imageMode="sprite-resize:23,23,13,4,15,4,4,4,15,4,15,4,15,4,4" childLayout="center" />
+
+  </style>
+
+  <!-- ++++++++++ -->
+  <!-- horizontal -->
+  <!-- ++++++++++ -->
+  <style id="nifty-horizontal-scrollbar-my#panel">
+    <attributes childLayout="horizontal" height="23px" align="center" focusable="true" />
+  </style>
+  <style id="nifty-horizontal-scrollbar-my#left">
+    <attributes filename="Interface/Textures/Scrollbars/Scrollbar_01/scrollbar.png" width="13px" height="13px" imageMode="sprite:23,23,6"/>
+
+  </style>
+  <style id="nifty-horizontal-scrollbar-my#right">
+    <attributes filename="Interface/Textures/Scrollbars/Scrollbar_01/scrollbar.png" width="13px" height="13px" imageMode="sprite:23,23,9"/>
+
+  </style>
+  <style id="nifty-horizontal-scrollbar-my#background">
+    <attributes filename="Interface/Textures/Scrollbars/Scrollbar_01/scrollbar.png" width="*" height="13px" childLayout="absolute" imageMode="sprite-resize:23,23,16,4,15,4,4,4,15,4,15,4,15,4,4" />
+    <effect>
+      <onClick name="focus" targetElement="#parent" />
+    </effect>
+  </style>
+  <style id="nifty-horizontal-scrollbar-my#position">
+    <attributes filename="Interface/Textures/Scrollbars/Scrollbar_01/scrollbar.png" x="0px" y="0px" width="8px" height="13px" imageMode="sprite-resize:23,23,17,4,15,4,4,4,15,4,15,4,15,4,4" />
+
+  </style>
+</nifty-styles>

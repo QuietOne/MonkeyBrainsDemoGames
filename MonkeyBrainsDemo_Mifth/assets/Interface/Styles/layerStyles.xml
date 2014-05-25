@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty-styles>
+    <!-- +++++++++++++++++++++++++++++++++++++ -->
+    <!-- style for the button background panel -->
+    <!-- +++++++++++++++++++++++++++++++++++++ -->
+    <style id="layerBox_Enabled">
+        <attributes backgroundColor="#59cc2b"/>
+    </style>
+
+    <style id="layerBox_Disabled">
+        <attributes backgroundColor="#8a8a8a"/>
+    </style>
+
+    <style id="layerBox_Active">
+        <attributes backgroundColor="#e09d28"/>
+    </style>
+
+    <style id="layerBox_Locked">
+        <attributes backgroundColor="#d94404"/>
+    </style>
+
+    <style id="layerBox_HasModels">
+        <attributes backgroundColor="#4d2a03"/>
+    </style>
+
+    <style id="layerBox_None">
+        <attributes />
+    </style>
+
+
+
+</nifty-styles>
