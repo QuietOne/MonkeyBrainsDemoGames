@@ -12,6 +12,7 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import org.aitest.character.AICharacter;
@@ -52,6 +53,7 @@ public class AIGameManager extends AbstractAppState {
                 Node enemyNode = (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o");
                 enemyNode.setLocalTransform(sp.getLocalTransform());
                 AICharacter enemyChar = new AICharacter(app, enemyNode);
+                enemyChar.getCharacterCrtl().setViewDirection(enemyNode.getLocalRotation().mult(Vector3f.UNIT_Z).normalizeLocal());
                 sceneNode.attachChild(enemyChar.getCharNode());
             } else {
                 CollisionShape cShape = CollisionShapeFactory.createMeshShape(sp);

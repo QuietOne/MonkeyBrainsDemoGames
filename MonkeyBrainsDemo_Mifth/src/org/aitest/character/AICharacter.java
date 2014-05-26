@@ -43,7 +43,7 @@ public class AICharacter {
 
         CollisionShape cShape = CollisionShapeFactory.createMeshShape(charNode);
 //        RigidBodyControl rg = new RigidBodyControl(cShape, 1f);
-        BetterCharacterControl charCrtl = new BetterCharacterControl(0.5f, 2f, 1f);
+        charCrtl = new BetterCharacterControl(0.5f, 2f, 1f);
         charNode.addControl(charCrtl);
 
         this.app.getStateManager().getState(BulletAppState.class).getPhysicsSpace().add(charCrtl);
