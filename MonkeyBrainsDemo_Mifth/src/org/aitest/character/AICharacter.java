@@ -62,7 +62,7 @@ public class AICharacter {
                 control = sp.getControl(AnimControl.class);
 
                 channel = control.createChannel();
-                channel.setAnim("run_01");
+                channel.setAnim("base_stand");
                 
                 skeletonsLst.add(skeletonControl);
             }
