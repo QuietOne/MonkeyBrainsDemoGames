@@ -15,7 +15,8 @@ import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import org.aitest.character.AICharacter;
+import org.aitest.character.AICharacterControl;
+import org.aitest.character.AIMainCharacterState;
 
 /**
  *
@@ -52,8 +53,8 @@ public class AIGameManager extends AbstractAppState {
                 // enemy
                 Node enemyNode = (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o");
                 enemyNode.setLocalTransform(sp.getLocalTransform());
-                AICharacter enemyChar = new AICharacter(app, enemyNode);
-                enemyChar.getCharacterCrtl().setViewDirection(enemyNode.getLocalRotation().mult(Vector3f.UNIT_Z).normalizeLocal());
+                AICharacterControl enemyChar = new AICharacterControl(app, enemyNode);
+                enemyChar.setViewDirection(enemyNode.getLocalRotation().mult(Vector3f.UNIT_Z).normalizeLocal());
                 sceneNode.attachChild(enemyChar.getCharNode());
             } else {
                 CollisionShape cShape = CollisionShapeFactory.createMeshShape(sp);
@@ -71,7 +72,9 @@ public class AIGameManager extends AbstractAppState {
         sceneBase = null;
 
         // mainCharacter
-        AICharacter characterr = new AICharacter(app, (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o"));
+        AICharacterControl characterr = new AICharacterControl(app, (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o"));
+        AIMainCharacterState mainCharState = new AIMainCharacterState(characterr);
+        app.getStateManager().attach(mainCharState);
         sceneNode.attachChild(characterr.getCharNode());
 
     }
