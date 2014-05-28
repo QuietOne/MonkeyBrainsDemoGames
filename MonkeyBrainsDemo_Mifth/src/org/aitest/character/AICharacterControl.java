@@ -40,6 +40,7 @@ public class AICharacterControl extends BetterCharacterControl {
     private float rotateSpeed, moveSpeed;
     private boolean updatePerFrame;
     private PhysicsSpace physics;
+    private AICharacterState charState;
 
     public AICharacterControl(Application app, Node charModel, boolean updatePerFrame) {
 
@@ -60,6 +61,8 @@ public class AICharacterControl extends BetterCharacterControl {
         rotateSpeed = 4.0f;
         moveSpeed = 10.0f;
         setMoveSpeed(moveSpeed);
+        
+        charState = AICharacterState.Stand;
 
         AIGameManager gameManager = app.getStateManager().getState(AIGameManager.class);
 
@@ -100,31 +103,39 @@ public class AICharacterControl extends BetterCharacterControl {
     public void update(float tpf) {
         super.update(tpf);
 
-        // set Rotation
-        if (doRotate) {
-            Quaternion rotQua = new Quaternion().fromAngleAxis(FastMath.DEG_TO_RAD * rotateSpeed, Vector3f.UNIT_Y);
-            if (!rotateLeft) {
-                rotQua.inverseLocal();
+        if (doShoot || doStrike || charState == AICharacterState.Shoot) {
+            charState = AICharacterState.Shoot;
+            
+            
+        } else if ((doMove || doRotate) && charState != AICharacterState.Shoot) {
+            
+            charState = AICharacterState.Run;
+
+            // set Rotation
+            if (doRotate) {
+                Quaternion rotQua = new Quaternion().fromAngleAxis(FastMath.DEG_TO_RAD * rotateSpeed, Vector3f.UNIT_Y);
+                if (!rotateLeft) {
+                    rotQua.inverseLocal();
+                }
+
+                rotQua = spatial.getLocalRotation().mult(rotQua);
+
+                setViewDirection(rotQua.mult(Vector3f.UNIT_Z).normalizeLocal());
+
+
             }
 
-            rotQua = spatial.getLocalRotation().mult(rotQua);
+            // set movement
+            if (doMove) {
+                Vector3f walkDir = getViewDirection().mult(moveSpeed);
+                if (!moveForward) {
+                    walkDir.negateLocal();
+                }
 
-            setViewDirection(rotQua.mult(Vector3f.UNIT_Z).normalizeLocal());
-
-
-        }
-
-        // set movement
-        if (doMove) {
-            Vector3f walkDir = getViewDirection().mult(moveSpeed);
-            if (!moveForward) {
-                walkDir.negateLocal();
+                setWalkDirection(walkDir);
             }
-
-            setWalkDirection(walkDir);
-
-
         } else {
+            charState = AICharacterState.Stand;
             setWalkDirection(Vector3f.ZERO);
         }
 
@@ -230,5 +241,12 @@ public class AICharacterControl extends BetterCharacterControl {
     public void setUpdatePerFrame(boolean updatePerFrame) {
         this.updatePerFrame = updatePerFrame;
     }
-    
+
+    public AICharacterState getCharState() {
+        return charState;
+    }
+
+//    public void setCharState(AICharacterState charState) {
+//        this.charState = charState;
+//    }
 }

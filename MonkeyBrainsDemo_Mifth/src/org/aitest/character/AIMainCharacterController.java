@@ -23,14 +23,14 @@ import com.jme3.scene.Node;
  *
  * @author mifthbeat
  */
-public class AIMainCharacterState extends AbstractAppState implements AnalogListener, ActionListener {
+public class AIMainCharacterController extends AbstractAppState implements AnalogListener, ActionListener {
 
     private Application app;
     private String[] mappings;
     private ChaseCamera chaseCam;
     private AICharacterControl charCtrl;
 
-    public AIMainCharacterState(AICharacterControl charCtrl) {
+    public AIMainCharacterController(AICharacterControl charCtrl) {
         this.charCtrl = charCtrl;
     }
     

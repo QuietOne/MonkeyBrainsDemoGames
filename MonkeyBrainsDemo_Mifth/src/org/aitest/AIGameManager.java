@@ -16,7 +16,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import org.aitest.character.AICharacterControl;
-import org.aitest.character.AIMainCharacterState;
+import org.aitest.character.AIMainCharacterController;
 
 /**
  *
@@ -73,7 +73,7 @@ public class AIGameManager extends AbstractAppState {
 
         // mainCharacter
         AICharacterControl characterr = new AICharacterControl(app, (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o"), true);
-        AIMainCharacterState mainCharState = new AIMainCharacterState(characterr);
+        AIMainCharacterController mainCharState = new AIMainCharacterController(characterr);
         app.getStateManager().attach(mainCharState);
         sceneNode.attachChild(characterr.getCharNode());
 
