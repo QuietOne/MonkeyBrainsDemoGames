@@ -41,18 +41,19 @@ public class AICharacterControl extends BetterCharacterControl {
     private PhysicsSpace physics;
 
     public AICharacterControl(Application app, Node charModel) {
-        
-        super(0.5f, 2f, 50f); // create BetterCharacterControl
-        
+
+        super(0.7f, 2f, 50f); // create BetterCharacterControl
+
         this.app = app;
 
         doMove = false;
         doRotate = false;
         rotateLeft = true;
         moveForward = true;
-        
-        rotateSpeed = 1.0f;
-        moveSpeed = 1.0f;
+
+        rotateSpeed = 4.0f;
+        moveSpeed = 10.0f;
+        setMoveSpeed(moveSpeed);
 
         AIGameManager gameManager = app.getStateManager().getState(AIGameManager.class);
 
@@ -80,7 +81,7 @@ public class AICharacterControl extends BetterCharacterControl {
             } else {
                 SkeletonControl skeletonControl = sp.getControl(SkeletonControl.class);
                 skeletonControl.setHardwareSkinningPreferred(true); // PERFORMANCE IS MUCH MUCH BETTER WITH HW SKINNING
-                
+
                 AnimChannel aniChannel = aniControl.createChannel();
                 aniChannel.setAnim("base_stand");
 
@@ -89,21 +90,56 @@ public class AICharacterControl extends BetterCharacterControl {
         }
     }
 
-    
     @Override
     public void update(float tpf) {
         super.update(tpf);
 
         if (doRotate) {
-            Quaternion rotQua = spatial.getLocalRotation().mult(new Quaternion().fromAngleAxis(FastMath.DEG_TO_RAD * 0.001f, Vector3f.UNIT_Y));
-            setViewDirection(rotQua.multLocal(Vector3f.UNIT_Z).normalizeLocal());
-            
-            doRotate = false;
+            Quaternion rotQua = new Quaternion().fromAngleAxis(FastMath.DEG_TO_RAD * rotateSpeed, Vector3f.UNIT_Y);
+            if (!rotateLeft) {
+                rotQua.inverseLocal();
+            }
+
+            rotQua = spatial.getLocalRotation().mult(rotQua);
+
+            setViewDirection(rotQua.mult(Vector3f.UNIT_Z).normalizeLocal());
+
+
+        }
+
+        if (doMove) {
+            Vector3f walkDir = getViewDirection().mult(moveSpeed);
+            if (!moveForward) {
+                walkDir.negateLocal();
+            }
+
+            setWalkDirection(walkDir);
+
+
+        } else {
+            setWalkDirection(Vector3f.ZERO);
+        }
+
+        if (doMove) {
+            for (AnimControl ani : AnimLst) {
+                if (!ani.getChannel(0).getAnimationName().equals("run_01")) {
+                ani.getChannel(0).setAnim("run_01");    
+                }
+                
+            }
+        } else {
+            for (AnimControl ani : AnimLst) {
+                if (!ani.getChannel(0).getAnimationName().equals("base_stand")) {
+                    ani.getChannel(0).setAnim("base_stand");
+                }
+                        
+            }            
         }
         
-        
+        doMove = false;
+        doRotate = false;
     }
-    
+
     public Node getCharNode() {
         return (Node) spatial;
     }
@@ -155,7 +191,4 @@ public class AICharacterControl extends BetterCharacterControl {
     public void setMoveSpeed(float moveSpeed) {
         this.moveSpeed = moveSpeed;
     }
-
-
-
 }

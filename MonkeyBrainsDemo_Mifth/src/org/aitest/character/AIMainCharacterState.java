@@ -91,6 +91,15 @@ public class AIMainCharacterState extends AbstractAppState implements AnalogList
         if (name.equals("AKeyChar")){
             charCtrl.setDoRotate(true);
             charCtrl.setRotateLeft(true);
+        } else if (name.equals("DKeyChar")){
+            charCtrl.setDoRotate(true);
+            charCtrl.setRotateLeft(false);
+        } else if (name.equals("WKeyChar")){
+            charCtrl.setDoMove(true);
+            charCtrl.setMoveForward(true);
+        } else if (name.equals("SKeyChar")){
+            charCtrl.setDoMove(true);
+            charCtrl.setMoveForward(false);
         }
     }
 
