@@ -35,19 +35,25 @@ public class AICharacterControl extends BetterCharacterControl {
 //    private BetterCharacterControl charCrtl;
     private List<AnimControl> AnimLst;
     private String[] animNames = {"base_stand", "run_01", "shoot", "strike_sword"};
-    private boolean doMove, doRotate;
+    private boolean doMove, doRotate, doShoot, doStrike;
     private boolean rotateLeft, moveForward;
     private float rotateSpeed, moveSpeed;
+    private boolean updatePerFrame;
     private PhysicsSpace physics;
 
-    public AICharacterControl(Application app, Node charModel) {
+    public AICharacterControl(Application app, Node charModel, boolean updatePerFrame) {
 
         super(0.7f, 2f, 50f); // create BetterCharacterControl
 
         this.app = app;
 
+        this.updatePerFrame = updatePerFrame;
+
         doMove = false;
         doRotate = false;
+        doShoot = false;
+        doStrike = false;
+
         rotateLeft = true;
         moveForward = true;
 
@@ -94,6 +100,7 @@ public class AICharacterControl extends BetterCharacterControl {
     public void update(float tpf) {
         super.update(tpf);
 
+        // set Rotation
         if (doRotate) {
             Quaternion rotQua = new Quaternion().fromAngleAxis(FastMath.DEG_TO_RAD * rotateSpeed, Vector3f.UNIT_Y);
             if (!rotateLeft) {
@@ -107,6 +114,7 @@ public class AICharacterControl extends BetterCharacterControl {
 
         }
 
+        // set movement
         if (doMove) {
             Vector3f walkDir = getViewDirection().mult(moveSpeed);
             if (!moveForward) {
@@ -120,24 +128,31 @@ public class AICharacterControl extends BetterCharacterControl {
             setWalkDirection(Vector3f.ZERO);
         }
 
+
+        // set Animations
         if (doMove) {
             for (AnimControl ani : AnimLst) {
                 if (!ani.getChannel(0).getAnimationName().equals("run_01")) {
-                ani.getChannel(0).setAnim("run_01");    
+                    ani.getChannel(0).setAnim("run_01");
                 }
-                
+
             }
         } else {
             for (AnimControl ani : AnimLst) {
                 if (!ani.getChannel(0).getAnimationName().equals("base_stand")) {
                     ani.getChannel(0).setAnim("base_stand");
                 }
-                        
-            }            
+
+            }
         }
-        
-        doMove = false;
-        doRotate = false;
+
+        if (updatePerFrame) {
+            doMove = false;
+            doRotate = false;
+            doShoot = false;
+            doStrike = false;
+        }
+
     }
 
     public Node getCharNode() {
@@ -191,4 +206,29 @@ public class AICharacterControl extends BetterCharacterControl {
     public void setMoveSpeed(float moveSpeed) {
         this.moveSpeed = moveSpeed;
     }
+
+    public boolean isDoShoot() {
+        return doShoot;
+    }
+
+    public void setDoShoot(boolean doShoot) {
+        this.doShoot = doShoot;
+    }
+
+    public boolean isDoStrike() {
+        return doStrike;
+    }
+
+    public void setDoStrike(boolean doStrike) {
+        this.doStrike = doStrike;
+    }
+
+    public boolean isUpdatePerFrame() {
+        return updatePerFrame;
+    }
+
+    public void setUpdatePerFrame(boolean updatePerFrame) {
+        this.updatePerFrame = updatePerFrame;
+    }
+    
 }

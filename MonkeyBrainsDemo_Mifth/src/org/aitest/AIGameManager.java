@@ -53,7 +53,7 @@ public class AIGameManager extends AbstractAppState {
                 // enemy
                 Node enemyNode = (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o");
                 enemyNode.setLocalTransform(sp.getLocalTransform());
-                AICharacterControl enemyChar = new AICharacterControl(app, enemyNode);
+                AICharacterControl enemyChar = new AICharacterControl(app, enemyNode, true);
                 enemyChar.setViewDirection(enemyNode.getLocalRotation().mult(Vector3f.UNIT_Z).normalizeLocal());
                 sceneNode.attachChild(enemyChar.getCharNode());
             } else {
@@ -72,7 +72,7 @@ public class AIGameManager extends AbstractAppState {
         sceneBase = null;
 
         // mainCharacter
-        AICharacterControl characterr = new AICharacterControl(app, (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o"));
+        AICharacterControl characterr = new AICharacterControl(app, (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o"), true);
         AIMainCharacterState mainCharState = new AIMainCharacterState(characterr);
         app.getStateManager().attach(mainCharState);
         sceneNode.attachChild(characterr.getCharNode());

@@ -88,19 +88,34 @@ public class AIMainCharacterState extends AbstractAppState implements AnalogList
     }
 
     public void onAnalog(String name, float value, float tpf) {
-        if (name.equals("AKeyChar")){
+        if (name.equals("AKeyChar") 
+                && !charCtrl.isDoShoot() && !charCtrl.isDoStrike()){
             charCtrl.setDoRotate(true);
             charCtrl.setRotateLeft(true);
-        } else if (name.equals("DKeyChar")){
+        } else if (name.equals("DKeyChar") 
+                && !charCtrl.isDoShoot() && !charCtrl.isDoStrike()){
             charCtrl.setDoRotate(true);
             charCtrl.setRotateLeft(false);
-        } else if (name.equals("WKeyChar")){
+        } else if (name.equals("WKeyChar") 
+                && !charCtrl.isDoShoot() && !charCtrl.isDoStrike()){
             charCtrl.setDoMove(true);
             charCtrl.setMoveForward(true);
-        } else if (name.equals("SKeyChar")){
+        } else if (name.equals("SKeyChar") 
+                && !charCtrl.isDoShoot() && !charCtrl.isDoStrike()){
             charCtrl.setDoMove(true);
             charCtrl.setMoveForward(false);
-        }
+        } else if (name.equals("mouseLeftClick")){
+            charCtrl.setDoMove(false);
+            charCtrl.setDoRotate(false);
+            charCtrl.setDoShoot(true);
+            charCtrl.setDoStrike(false);
+        } else if (name.equals("mouseRightClick")  
+                && !charCtrl.isDoShoot()) {
+            charCtrl.setDoMove(false);
+            charCtrl.setDoRotate(false);
+            charCtrl.setDoStrike(true);
+//            charCtrl.setMoveForward(false);
+        } 
     }
 
     public void onAction(String name, boolean isPressed, float tpf) {
