@@ -40,7 +40,8 @@ public class AICharacterControl extends BetterCharacterControl {
     private float rotateSpeed, moveSpeed;
     private boolean updatePerFrame;
     private PhysicsSpace physics;
-    private AICharacterState charState;
+    private AICharacterShootState charShootState;
+    private AICharacterMoveState charMoveState;
 
     public AICharacterControl(Application app, Node charModel, boolean updatePerFrame) {
 
@@ -61,8 +62,9 @@ public class AICharacterControl extends BetterCharacterControl {
         rotateSpeed = 4.0f;
         moveSpeed = 10.0f;
         setMoveSpeed(moveSpeed);
-        
-        charState = AICharacterState.Stand;
+
+        charShootState = AICharacterShootState.None;
+        charMoveState = AICharacterMoveState.None;
 
         AIGameManager gameManager = app.getStateManager().getState(AIGameManager.class);
 
@@ -99,49 +101,92 @@ public class AICharacterControl extends BetterCharacterControl {
         }
     }
 
+    private void moveCharacter() {
+        Vector3f walkDir = getViewDirection().mult(moveSpeed);
+        if (!moveForward) {
+            walkDir.negateLocal();
+        }
+
+        setWalkDirection(walkDir);
+    }
+
+    private void rotateCharacter() {
+        Quaternion rotQua = new Quaternion().fromAngleAxis(FastMath.DEG_TO_RAD * rotateSpeed, Vector3f.UNIT_Y);
+        if (!rotateLeft) {
+            rotQua.inverseLocal();
+        }
+
+        rotQua = spatial.getLocalRotation().mult(rotQua);
+
+        setViewDirection(rotQua.mult(Vector3f.UNIT_Z).normalizeLocal());
+    }
+
+    private void stopCharacter() {
+        setWalkDirection(Vector3f.ZERO);
+    }
+
     @Override
     public void update(float tpf) {
         super.update(tpf);
 
-        if (doShoot || doStrike || charState == AICharacterState.Shoot) {
-            charState = AICharacterState.Shoot;
+        // SHOOT SETTING
+        if ((doShoot || doStrike) && charShootState == AICharacterShootState.None) {
+
+            stopCharacter();
+            charMoveState = AICharacterMoveState.None;
+
+            if (doShoot) {
+                charShootState = AICharacterShootState.Shoot;
+            } else if (!doShoot && doStrike) {
+                charShootState = AICharacterShootState.Strike;
+            }
+        }
+
+        // MOVE SETTING
+        if ((doMove || doRotate) && charShootState == AICharacterShootState.None) {
+
+            if (!doMove) {
+                stopCharacter();
+            }
             
-            
-        } else if ((doMove || doRotate) && charState != AICharacterState.Shoot) {
-            
-            charState = AICharacterState.Run;
-
-            // set Rotation
-            if (doRotate) {
-                Quaternion rotQua = new Quaternion().fromAngleAxis(FastMath.DEG_TO_RAD * rotateSpeed, Vector3f.UNIT_Y);
-                if (!rotateLeft) {
-                    rotQua.inverseLocal();
-                }
-
-                rotQua = spatial.getLocalRotation().mult(rotQua);
-
-                setViewDirection(rotQua.mult(Vector3f.UNIT_Z).normalizeLocal());
-
-
+            if (doMove && !doRotate) {
+                charMoveState = AICharacterMoveState.Run;
+            } else if (!doMove && doRotate) {
+                charMoveState = AICharacterMoveState.Rotate;
+            } else if (doMove && doRotate) {
+                charMoveState = AICharacterMoveState.RunAndRotate;
             }
 
-            // set movement
-            if (doMove) {
-                Vector3f walkDir = getViewDirection().mult(moveSpeed);
-                if (!moveForward) {
-                    walkDir.negateLocal();
-                }
-
-                setWalkDirection(walkDir);
-            }
         } else {
-            charState = AICharacterState.Stand;
-            setWalkDirection(Vector3f.ZERO);
+            
+            System.out.println("sssssssss");
+            if (charMoveState != AICharacterMoveState.None) {
+                stopCharacter();
+            }
+            charShootState = AICharacterShootState.None;
         }
 
 
+        // SET LOGIC
+        if (charShootState != AICharacterShootState.None) {
+            if (charShootState == AICharacterShootState.Shoot) {
+            } else if (charShootState == AICharacterShootState.Strike) {
+            }
+        } else if (charMoveState != AICharacterMoveState.None) {
+            if (charMoveState == AICharacterMoveState.Run) {
+                moveCharacter();
+            } else if (charMoveState == AICharacterMoveState.RunAndRotate) {
+                moveCharacter();
+                rotateCharacter();
+            } else if (charMoveState == AICharacterMoveState.Rotate) {
+                rotateCharacter();
+            }
+        }
+
+
+
         // set Animations
-        if (doMove) {
+        if (charMoveState != AICharacterMoveState.None) {
             for (AnimControl ani : AnimLst) {
                 if (!ani.getChannel(0).getAnimationName().equals("run_01")) {
                     ani.getChannel(0).setAnim("run_01");
@@ -242,10 +287,9 @@ public class AICharacterControl extends BetterCharacterControl {
         this.updatePerFrame = updatePerFrame;
     }
 
-    public AICharacterState getCharState() {
-        return charState;
+    public AICharacterShootState getCharState() {
+        return charShootState;
     }
-
 //    public void setCharState(AICharacterState charState) {
 //        this.charState = charState;
 //    }
