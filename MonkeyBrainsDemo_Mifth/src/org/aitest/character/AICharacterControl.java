@@ -40,8 +40,7 @@ public class AICharacterControl extends BetterCharacterControl {
     private float rotateSpeed, moveSpeed;
     private boolean updatePerFrame;
     private PhysicsSpace physics;
-    private AICharacterShootState charShootState;
-    private AICharacterMoveState charMoveState;
+    private AICharacterState charState;
 
     public AICharacterControl(Application app, Node charModel, boolean updatePerFrame) {
 
@@ -63,8 +62,7 @@ public class AICharacterControl extends BetterCharacterControl {
         moveSpeed = 10.0f;
         setMoveSpeed(moveSpeed);
 
-        charShootState = AICharacterShootState.None;
-        charMoveState = AICharacterMoveState.None;
+        charState = AICharacterState.None;
 
         AIGameManager gameManager = app.getStateManager().getState(AIGameManager.class);
 
@@ -130,63 +128,60 @@ public class AICharacterControl extends BetterCharacterControl {
         super.update(tpf);
 
         // SHOOT SETTING
-        if ((doShoot || doStrike) && charShootState == AICharacterShootState.None) {
+        if ((doShoot || doStrike)) {
 
             stopCharacter();
-            charMoveState = AICharacterMoveState.None;
+            charState = AICharacterState.None;
 
             if (doShoot) {
-                charShootState = AICharacterShootState.Shoot;
+                charState = AICharacterState.Shoot;
             } else if (!doShoot && doStrike) {
-                charShootState = AICharacterShootState.Strike;
+                charState = AICharacterState.Strike;
             }
-        }
-
-        // MOVE SETTING
-        if ((doMove || doRotate) && charShootState == AICharacterShootState.None) {
+        } else if ((doMove || doRotate)) {
 
             if (!doMove) {
                 stopCharacter();
             }
             
             if (doMove && !doRotate) {
-                charMoveState = AICharacterMoveState.Run;
+                charState = AICharacterState.Run;
             } else if (!doMove && doRotate) {
-                charMoveState = AICharacterMoveState.Rotate;
+                charState = AICharacterState.Rotate;
             } else if (doMove && doRotate) {
-                charMoveState = AICharacterMoveState.RunAndRotate;
+                charState = AICharacterState.RunAndRotate;
             }
 
         } else {
             
-            System.out.println("sssssssss");
-            if (charMoveState != AICharacterMoveState.None) {
+//            System.out.println("sssssssss");
+            if (charState != AICharacterState.None) {
                 stopCharacter();
             }
-            charShootState = AICharacterShootState.None;
+            charState = AICharacterState.None;
         }
 
 
         // SET LOGIC
-        if (charShootState != AICharacterShootState.None) {
-            if (charShootState == AICharacterShootState.Shoot) {
-            } else if (charShootState == AICharacterShootState.Strike) {
-            }
-        } else if (charMoveState != AICharacterMoveState.None) {
-            if (charMoveState == AICharacterMoveState.Run) {
+        if (charState != AICharacterState.None) {
+            if (charState == AICharacterState.Shoot) {
+            } else if (charState == AICharacterState.Strike) {
+            } else if (charState == AICharacterState.Run) {
                 moveCharacter();
-            } else if (charMoveState == AICharacterMoveState.RunAndRotate) {
+            } else if (charState == AICharacterState.RunAndRotate) {
                 moveCharacter();
                 rotateCharacter();
-            } else if (charMoveState == AICharacterMoveState.Rotate) {
+            } else if (charState == AICharacterState.Rotate) {
                 rotateCharacter();
             }
-        }
+        } 
+            
+
 
 
 
         // set Animations
-        if (charMoveState != AICharacterMoveState.None) {
+        if (charState == AICharacterState.Run || charState == AICharacterState.Rotate || charState == AICharacterState.RunAndRotate) {
             for (AnimControl ani : AnimLst) {
                 if (!ani.getChannel(0).getAnimationName().equals("run_01")) {
                     ani.getChannel(0).setAnim("run_01");
@@ -287,8 +282,8 @@ public class AICharacterControl extends BetterCharacterControl {
         this.updatePerFrame = updatePerFrame;
     }
 
-    public AICharacterShootState getCharState() {
-        return charShootState;
+    public AICharacterState getCharState() {
+        return charState;
     }
 //    public void setCharState(AICharacterState charState) {
 //        this.charState = charState;

@@ -8,7 +8,9 @@ package org.aitest.character;
  *
  * @author mifth
  */
-public enum AICharacterMoveState {
+public enum AICharacterState {
+    Shoot,
+    Strike,
     Run,
     Rotate,
     RunAndRotate,
