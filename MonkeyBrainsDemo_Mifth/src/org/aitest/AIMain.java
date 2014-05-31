@@ -14,6 +14,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
+import org.aitest.weapon.AIWeaponController;
 
 /**
  * test
@@ -51,6 +52,9 @@ public class AIMain extends SimpleApplication {
         
         BulletAppState bulletState = new BulletAppState();
         stateManager.attach(bulletState);
+        
+        AIWeaponController weaponCtrl = new AIWeaponController(this);
+        stateManager.attach(weaponCtrl);
 
         AIGameManager aiManager = new AIGameManager((DesktopAssetManager) assetManager, this);
         stateManager.attach(aiManager);

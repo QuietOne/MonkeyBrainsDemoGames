@@ -6,6 +6,8 @@ package org.aitest.character;
 
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
+import com.jme3.animation.AnimEventListener;
+import com.jme3.animation.LoopMode;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.app.Application;
 import com.jme3.bullet.BulletAppState;
@@ -15,20 +17,27 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.debug.Arrow;
 import java.util.LinkedList;
 import java.util.List;
 import org.aitest.AIGameManager;
+import org.aitest.weapon.AIBulletControl;
+import org.aitest.weapon.AIWeaponController;
 
 /**
  *
  * @author mifthbeat
  */
-public class AICharacterControl extends BetterCharacterControl {
+public class AICharacterControl extends BetterCharacterControl implements AnimEventListener {
 
     private Application app;
 //    private Node charNode;
@@ -41,6 +50,8 @@ public class AICharacterControl extends BetterCharacterControl {
     private boolean updatePerFrame;
     private PhysicsSpace physics;
     private AICharacterState charState;
+    private float shootTimer, shootMaxTime, strikeMaxTime;
+    private boolean bulletCreated;
 
     public AICharacterControl(Application app, Node charModel, boolean updatePerFrame) {
 
@@ -58,9 +69,14 @@ public class AICharacterControl extends BetterCharacterControl {
         rotateLeft = true;
         moveForward = true;
 
-        rotateSpeed = 4.0f;
+        rotateSpeed = 2.0f;
         moveSpeed = 10.0f;
         setMoveSpeed(moveSpeed);
+
+        shootTimer = 0f;
+        shootMaxTime = 0.3f;
+        strikeMaxTime = 0.6f;
+        bulletCreated = false;
 
         charState = AICharacterState.None;
 
@@ -77,7 +93,17 @@ public class AICharacterControl extends BetterCharacterControl {
 
         physics = this.app.getStateManager().getState(BulletAppState.class).getPhysicsSpace();
         physics.add(this);
-//        physics.addTickListener(this);
+
+
+        // add arrow
+        Mesh arrow = new Arrow(Vector3f.UNIT_Z);
+        Geometry geoArrow = new Geometry("arrow", arrow);
+        Material matArrow = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        matArrow.setColor("Color", ColorRGBA.White);
+        geoArrow.setMaterial(matArrow);
+        geoArrow.setLocalTranslation(0f, 0.1f, 0f);
+        charModel.attachChild(geoArrow);
+
 
     }
 
@@ -87,7 +113,7 @@ public class AICharacterControl extends BetterCharacterControl {
 
             if (aniControl == null && sp instanceof Node) {
                 findAnimation((Node) sp);
-            } else {
+            } else if (aniControl != null) {
                 SkeletonControl skeletonControl = sp.getControl(SkeletonControl.class);
                 skeletonControl.setHardwareSkinningPreferred(true); // PERFORMANCE IS MUCH MUCH BETTER WITH HW SKINNING
 
@@ -97,6 +123,18 @@ public class AICharacterControl extends BetterCharacterControl {
                 AnimLst.add(aniControl);
             }
         }
+    }
+
+    private void createBullet() {
+        Geometry newBullet = app.getStateManager().getState(AIWeaponController.class).getBullet().clone(false);
+        newBullet.setLocalRotation(getSpatialRotation().clone());
+        newBullet.setLocalTranslation(getSpatialTranslation().clone().addLocal(Vector3f.UNIT_Y));
+        newBullet.addControl(new AIBulletControl(newBullet.getLocalTranslation(), newBullet, app));
+
+        Node root = (Node) app.getViewPort().getScenes().get(0);
+        root.attachChild(newBullet);
+
+
     }
 
     private void moveCharacter() {
@@ -123,85 +161,150 @@ public class AICharacterControl extends BetterCharacterControl {
         setWalkDirection(Vector3f.ZERO);
     }
 
+    // ANIMATION LISTENER
+    public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) {
+    }
+
+    // ANIMATION LISTENER
+    public void onAnimChange(AnimControl control, AnimChannel channel, String animName) {
+    }
+
     @Override
     public void update(float tpf) {
-        super.update(tpf);
 
-        // SHOOT SETTING
-        if ((doShoot || doStrike)) {
+        // Update only for fixed rate
+        if (app.getStateManager().getState(AIGameManager.class).IsUpdate()) {
 
-            stopCharacter();
-            charState = AICharacterState.None;
+            super.update(tpf);
 
-            if (doShoot) {
-                charState = AICharacterState.Shoot;
-            } else if (!doShoot && doStrike) {
-                charState = AICharacterState.Strike;
-            }
-        } else if ((doMove || doRotate)) {
+            // Intputs settings
+            if ((doShoot || doStrike)
+                    && charState != AICharacterState.Shoot && charState != AICharacterState.Strike) {
 
-            if (!doMove) {
                 stopCharacter();
-            }
-            
-            if (doMove && !doRotate) {
-                charState = AICharacterState.Run;
-            } else if (!doMove && doRotate) {
-                charState = AICharacterState.Rotate;
-            } else if (doMove && doRotate) {
-                charState = AICharacterState.RunAndRotate;
-            }
+                charState = AICharacterState.None;
 
-        } else {
-            
+                if (doShoot) {
+                    charState = AICharacterState.Shoot;
+                } else if (!doShoot && doStrike) {
+                    charState = AICharacterState.Strike;
+                }
+            } else if ((doMove || doRotate)
+                    && charState != AICharacterState.Shoot && charState != AICharacterState.Strike) {
+
+                if (!doMove) {
+                    stopCharacter();
+                }
+
+                if (doMove && !doRotate) {
+                    charState = AICharacterState.Run;
+                } else if (!doMove && doRotate) {
+                    charState = AICharacterState.Rotate;
+                } else if (doMove && doRotate) {
+                    charState = AICharacterState.RunAndRotate;
+                }
+
+            } else if (charState != AICharacterState.Shoot && charState != AICharacterState.Strike) {
+
 //            System.out.println("sssssssss");
+                if (charState != AICharacterState.None) {
+                    stopCharacter();
+                }
+                charState = AICharacterState.None;
+            }
+
+
+            // SET LOGIC
             if (charState != AICharacterState.None) {
-                stopCharacter();
+                if (charState == AICharacterState.Shoot) {
+                    
+//                    rotateCharacter();
+                    
+                    if (shootTimer >= shootMaxTime) {
+                        shootTimer = 0f;
+                        charState = AICharacterState.None;
+                        bulletCreated = false;
+                    } else {
+
+                        if (shootTimer >= 0.1f && !bulletCreated) {
+                            createBullet();
+                            bulletCreated = true;
+                        }
+
+                        shootTimer += 1.0f / 60.0f;
+                    }
+
+                } else if (charState == AICharacterState.Strike) {
+
+                    if (shootTimer >= strikeMaxTime) {
+                        shootTimer = 0f;
+                        charState = AICharacterState.None;
+                    } else {
+                        shootTimer += 1.0f / 60.0f;
+
+                    }
+
+                } else if (charState == AICharacterState.Run) {
+                    moveCharacter();
+                } else if (charState == AICharacterState.RunAndRotate) {
+                    moveCharacter();
+                    rotateCharacter();
+                } else if (charState == AICharacterState.Rotate) {
+                    rotateCharacter();
+                }
             }
-            charState = AICharacterState.None;
-        }
 
 
-        // SET LOGIC
-        if (charState != AICharacterState.None) {
-            if (charState == AICharacterState.Shoot) {
+            // set Animations
+            if (charState == AICharacterState.Run || charState == AICharacterState.Rotate || charState == AICharacterState.RunAndRotate) {
+                for (AnimControl ani : AnimLst) {
+                    if (!ani.getChannel(0).getAnimationName().equals("run_01")) {
+                        ani.getChannel(0).setAnim("run_01", 0.3f);
+                        ani.getChannel(0).setSpeed(1f);
+                        ani.getChannel(0).setLoopMode(LoopMode.Loop);
+                    }
+
+                }
+            } else if (charState == AICharacterState.Shoot) {
+
+                for (AnimControl ani : AnimLst) {
+                    if (!ani.getChannel(0).getAnimationName().equals("shoot")) {
+                        ani.getChannel(0).setAnim("shoot", 0.1f);
+                        ani.getChannel(0).setSpeed(1.5f);
+                        ani.getChannel(0).setLoopMode(LoopMode.DontLoop);
+                    }
+
+                }
+
             } else if (charState == AICharacterState.Strike) {
-            } else if (charState == AICharacterState.Run) {
-                moveCharacter();
-            } else if (charState == AICharacterState.RunAndRotate) {
-                moveCharacter();
-                rotateCharacter();
-            } else if (charState == AICharacterState.Rotate) {
-                rotateCharacter();
-            }
-        } 
-            
 
+                for (AnimControl ani : AnimLst) {
+                    if (!ani.getChannel(0).getAnimationName().equals("strike_sword")) {
+                        ani.getChannel(0).setAnim("strike_sword", 0.2f);
+                        ani.getChannel(0).setSpeed(1f);
+                        ani.getChannel(0).setLoopMode(LoopMode.DontLoop);
+                    }
 
-
-
-        // set Animations
-        if (charState == AICharacterState.Run || charState == AICharacterState.Rotate || charState == AICharacterState.RunAndRotate) {
-            for (AnimControl ani : AnimLst) {
-                if (!ani.getChannel(0).getAnimationName().equals("run_01")) {
-                    ani.getChannel(0).setAnim("run_01");
                 }
 
-            }
-        } else {
-            for (AnimControl ani : AnimLst) {
-                if (!ani.getChannel(0).getAnimationName().equals("base_stand")) {
-                    ani.getChannel(0).setAnim("base_stand");
+            } else {
+                for (AnimControl ani : AnimLst) {
+                    if (!ani.getChannel(0).getAnimationName().equals("base_stand")) {
+                        ani.getChannel(0).setAnim("base_stand", 0.3f);
+                        ani.getChannel(0).setSpeed(1f);
+                        ani.getChannel(0).setLoopMode(LoopMode.Loop);
+                    }
+
                 }
-
             }
-        }
 
-        if (updatePerFrame) {
-            doMove = false;
-            doRotate = false;
-            doShoot = false;
-            doStrike = false;
+            if (updatePerFrame) {
+                doMove = false;
+                doRotate = false;
+                doShoot = false;
+                doStrike = false;
+            }
+
         }
 
     }

@@ -13,6 +13,7 @@ import com.jme3.scene.Node;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import org.aitest.AIGameManager;
 
 /**
  *
@@ -70,6 +71,11 @@ public class AIGuiManager extends AbstractAppState implements ScreenController {
     // AppState Method
     @Override
     public void update(float tpf) {
+        
+        // Update only for fixed rate
+        if (app.getStateManager().getState(AIGameManager.class).IsUpdate()) {
+        }
+        
     }
 
     // AppState Method

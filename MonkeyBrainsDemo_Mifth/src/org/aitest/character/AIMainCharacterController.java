@@ -18,6 +18,7 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import org.aitest.AIGameManager;
 
 /**
  *
@@ -33,20 +34,22 @@ public class AIMainCharacterController extends AbstractAppState implements Analo
     public AIMainCharacterController(AICharacterControl charCtrl) {
         this.charCtrl = charCtrl;
     }
-    
+
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
 
         this.app = app;
-        
+
         chaseCam = new ChaseCamera(this.app.getCamera(), charCtrl.getCharNode(), this.app.getInputManager());
         chaseCam.setToggleRotationTrigger(new MouseButtonTrigger(MouseInput.BUTTON_MIDDLE));
         chaseCam.setUpVector(Vector3f.UNIT_Y);
-        
+        chaseCam.setMaxDistance(300f);
+        chaseCam.setDefaultDistance(150f);
+
         SimpleApplication sapp = (SimpleApplication) app;
         sapp.getFlyByCamera().setEnabled(false);
-        
+
         chaseCam.setEnabled(true);
 
         mappings = new String[]{
@@ -88,34 +91,34 @@ public class AIMainCharacterController extends AbstractAppState implements Analo
     }
 
     public void onAnalog(String name, float value, float tpf) {
-        if (name.equals("AKeyChar") 
-                && !charCtrl.isDoShoot() && !charCtrl.isDoStrike()){
+        if (name.equals("AKeyChar")
+                && !charCtrl.isDoShoot() && !charCtrl.isDoStrike()) {
             charCtrl.setDoRotate(true);
             charCtrl.setRotateLeft(true);
-        } else if (name.equals("DKeyChar") 
-                && !charCtrl.isDoShoot() && !charCtrl.isDoStrike()){
+        } else if (name.equals("DKeyChar")
+                && !charCtrl.isDoShoot() && !charCtrl.isDoStrike()) {
             charCtrl.setDoRotate(true);
             charCtrl.setRotateLeft(false);
-        } else if (name.equals("WKeyChar") 
-                && !charCtrl.isDoShoot() && !charCtrl.isDoStrike()){
+        } else if (name.equals("WKeyChar")
+                && !charCtrl.isDoShoot() && !charCtrl.isDoStrike()) {
             charCtrl.setDoMove(true);
             charCtrl.setMoveForward(true);
-        } else if (name.equals("SKeyChar") 
-                && !charCtrl.isDoShoot() && !charCtrl.isDoStrike()){
+        } else if (name.equals("SKeyChar")
+                && !charCtrl.isDoShoot() && !charCtrl.isDoStrike()) {
             charCtrl.setDoMove(true);
             charCtrl.setMoveForward(false);
-        } else if (name.equals("mouseLeftClick")){
+        } else if (name.equals("mouseLeftClick")) {
             charCtrl.setDoMove(false);
             charCtrl.setDoRotate(false);
             charCtrl.setDoShoot(true);
             charCtrl.setDoStrike(false);
-        } else if (name.equals("mouseRightClick")  
+        } else if (name.equals("mouseRightClick")
                 && !charCtrl.isDoShoot()) {
             charCtrl.setDoMove(false);
             charCtrl.setDoRotate(false);
             charCtrl.setDoStrike(true);
 //            charCtrl.setMoveForward(false);
-        } 
+        }
     }
 
     public void onAction(String name, boolean isPressed, float tpf) {
@@ -123,6 +126,11 @@ public class AIMainCharacterController extends AbstractAppState implements Analo
 
     @Override
     public void update(float tpf) {
+
+        // Update only for fixed rate
+        if (app.getStateManager().getState(AIGameManager.class).IsUpdate()) {
+        }
+
     }
 
     @Override

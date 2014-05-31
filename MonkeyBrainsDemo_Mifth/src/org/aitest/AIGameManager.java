@@ -17,6 +17,8 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import org.aitest.character.AICharacterControl;
 import org.aitest.character.AIMainCharacterController;
+import org.aitest.physics.AIStaticObjectControl;
+import org.aitest.physics.AIStaticObjectType;
 
 /**
  *
@@ -28,10 +30,14 @@ public class AIGameManager extends AbstractAppState {
     private Application app;
     private Node root;
     private Node sceneNode = new Node("Scene");
+    private long lastFrame;
+    private boolean update = false;
 
     public AIGameManager(DesktopAssetManager dsm, Application app) {
         this.dasm = dsm;
         this.app = app;
+        
+        lastFrame = System.nanoTime();
 
         root = (Node) app.getViewPort().getScenes().get(0);
         root.attachChild(sceneNode);
@@ -45,7 +51,7 @@ public class AIGameManager extends AbstractAppState {
 
     public void loadScene() {
 
-        Node sceneBase = (Node) dasm.loadModel("Models/Demo_01/Scene_01/scene_01.j3o");
+        Node sceneBase = (Node) dasm.loadModel("Models/Demo_01/Scene_01/scene_01.blend");
 
         for (Spatial sp : sceneBase.getChildren()) {
 
@@ -58,7 +64,12 @@ public class AIGameManager extends AbstractAppState {
                 sceneNode.attachChild(enemyChar.getCharNode());
             } else {
                 CollisionShape cShape = CollisionShapeFactory.createMeshShape(sp);
-                RigidBodyControl rg = new RigidBodyControl(cShape, 0f);
+                AIStaticObjectType objType = AIStaticObjectType.Obstacle;
+                if (sp.getName().equals("floor")) {
+                    objType = AIStaticObjectType.Floor;
+                }
+                
+                AIStaticObjectControl rg = new AIStaticObjectControl(objType, cShape, 0f);
                 sp.addControl(rg);
                 app.getStateManager().getState(BulletAppState.class).getPhysicsSpace().add(rg);
                 sceneNode.attachChild(sp);
@@ -83,8 +94,32 @@ public class AIGameManager extends AbstractAppState {
         return dasm;
     }
 
+    
     @Override
     public void update(float tpf) {
+        
+        // Use our own tpf calculation in case frame rate is
+        // running away making this tpf unstable
+        long time = System.nanoTime();
+        
+        long delta = time - lastFrame;
+        
+        
+        if( delta == 0 ) {
+            return; // no update to perform
+        }
+
+        double seconds = delta / 1000000000.0;
+        
+        // Clamp frame time to no bigger than a certain amount 60fps
+        if( seconds >= 1.0/60.0 ) {
+            lastFrame = time;
+//            System.out.println(seconds);
+            update = true;
+        } else {
+            update = false;
+        }
+
     }
 
     @Override
@@ -92,4 +127,9 @@ public class AIGameManager extends AbstractAppState {
         super.cleanup();
 
     }
+
+    public boolean IsUpdate() {
+        return update;
+    }
+    
 }
