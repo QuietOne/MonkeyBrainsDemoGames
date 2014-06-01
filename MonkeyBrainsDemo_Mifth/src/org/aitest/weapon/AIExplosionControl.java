@@ -63,7 +63,7 @@ public class AIExplosionControl extends AbstractControl {
         // Update only for fixed rate
         if (app.getStateManager().getState(AIGameManager.class).IsUpdate()) {
             if (timer < 0.5f) {
-                timer += tpf * 7f;
+                timer += app.getStateManager().getState(AIGameManager.class).getCurrentTpf() * 3f;
 
                 expl.setLocalScale(timer, timer, timer);
             } else {

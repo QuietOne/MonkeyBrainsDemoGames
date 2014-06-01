@@ -11,6 +11,7 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.scene.Node;
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import org.aitest.AIGameManager;
@@ -25,6 +26,7 @@ public class AIGuiManager extends AbstractAppState implements ScreenController {
     private NiftyJmeDisplay niftyDisplay;
     private Application app;
     private Screen gameScreen;
+    private Element popupKeys;
 
     public AIGuiManager(Application app) {
 
@@ -41,13 +43,19 @@ public class AIGuiManager extends AbstractAppState implements ScreenController {
         nifty = niftyDisplay.getNifty();
 
         nifty.registerScreenController(this);
+        nifty.addXml("Interface/Main/basicPopups.xml");
         nifty.addXml("Interface/Main/basicGui.xml");
-
+        
+        
 //        nifty.setIgnoreKeyboardEvents(true);
         nifty.gotoScreen("aiDemo"); // start the screen 
         gameScreen = nifty.getScreen("aiDemo");
+        
+        popupKeys = nifty.createPopup("popupKeys");
+        popupKeys.disable();
+        
         gameScreen.getFocusHandler().resetFocusElements();
-
+        
     }
 
     // AppState Method
@@ -57,17 +65,36 @@ public class AIGuiManager extends AbstractAppState implements ScreenController {
 
     }
 
-    public void setDebug() {
-        BulletAppState bullet = app.getStateManager().getState(BulletAppState.class);
+    public void setDebugButton() {
+        
+        AIGameManager gameManager =  app.getStateManager().getState(AIGameManager.class);
 
-        if (bullet.isDebugEnabled()) {
-            bullet.setDebugEnabled(false);
+        if (gameManager.isGameDebug()) {
+            gameManager.setGameDebug(false);
         } else {
-            bullet.setDebugEnabled(true);
+            gameManager.setGameDebug(true);
         }
         gameScreen.getFocusHandler().resetFocusElements();
     }
-
+    
+    public void helpButton(String str) {
+        if (str.equals("true")) {
+            popupKeys.enable();
+            nifty.showPopup(nifty.getCurrentScreen(), popupKeys.getId(), null);
+        } else {
+            nifty.closePopup(popupKeys.getId());
+            popupKeys.disable();
+            popupKeys.getFocusHandler().resetFocusElements();
+            gameScreen.getFocusHandler().resetFocusElements();
+        }
+    }
+    
+    public void resetSceneButton() {
+        app.getStateManager().getState(AIGameManager.class).reloadScene();
+        gameScreen.getFocusHandler().resetFocusElements();
+    }
+    
+    
     // AppState Method
     @Override
     public void update(float tpf) {

@@ -25,9 +25,19 @@
         <layer id="layer" childLayout="center">
             <panel width="100%" height="100%" childLayout="horizontal">
                 <panel width="100px" height="100%" childLayout="vertical">
-                    <control id="saveScene" name="button" valign="center" align="center" style="ma_button" label="Debug" >
-                        <interact onClick="setDebug()"/>
-                    </control>                     
+                    <control id="debugScene" name="button" valign="center" align="center" style="ma_button" label="Debug" >
+                        <interact onClick="setDebugButton()"/>
+                    </control>
+
+                    <control id="helputton" name="button" valign="center" align="center" style="ma_button" label="Help" >
+                        <interact onClick="helpButton(true)"/>
+                    </control>
+                                                            
+                    <control id="resetScene" name="button" valign="center" align="center" style="ma_button" label="ResetScene" >
+                        <interact onClick="resetSceneButton()"/>
+                    </control>
+                    
+
                 </panel>
                 <panel height="100%" childLayout="vertical"></panel>
                 

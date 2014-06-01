@@ -13,8 +13,11 @@ import com.jme3.app.Application;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.PhysicsTickListener;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.BetterCharacterControl;
+import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.material.Material;
@@ -27,6 +30,7 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Arrow;
+import com.jme3.scene.shape.Box;
 import java.util.LinkedList;
 import java.util.List;
 import org.aitest.AIGameManager;
@@ -37,7 +41,7 @@ import org.aitest.weapon.AIWeaponController;
  *
  * @author mifthbeat
  */
-public class AICharacterControl extends BetterCharacterControl implements AnimEventListener {
+public class AICharacterControl extends BetterCharacterControl {
 
     private Application app;
 //    private Node charNode;
@@ -52,10 +56,14 @@ public class AICharacterControl extends BetterCharacterControl implements AnimEv
     private AICharacterState charState;
     private float shootTimer, shootMaxTime, strikeMaxTime;
     private boolean bulletCreated;
+    private float health;
+    private Node swordModel;
+    private boolean swordKilled;
+    private float swordDestruction, bulletDestruction;
 
     public AICharacterControl(Application app, Node charModel, boolean updatePerFrame) {
 
-        super(0.7f, 2f, 50f); // create BetterCharacterControl
+        super(0.85f, 2f, 50f); // create BetterCharacterControl
 
         this.app = app;
 
@@ -69,12 +77,17 @@ public class AICharacterControl extends BetterCharacterControl implements AnimEv
         rotateLeft = true;
         moveForward = true;
 
-        rotateSpeed = 2.0f;
-        moveSpeed = 10.0f;
+        rotateSpeed = 1.0f;
+        moveSpeed = 7.0f;
         setMoveSpeed(moveSpeed);
 
+        health = 100f;
+        swordKilled = false;
+        swordDestruction = 30f;
+        bulletDestruction = 20f;
+
         shootTimer = 0f;
-        shootMaxTime = 0.3f;
+        shootMaxTime = 0.4f;
         strikeMaxTime = 0.6f;
         bulletCreated = false;
 
@@ -85,8 +98,6 @@ public class AICharacterControl extends BetterCharacterControl implements AnimEv
 //        this.charNode = charModel;
         AnimLst = new LinkedList<AnimControl>();
 
-        findAnimation(charModel);
-
         CollisionShape cShape = CollisionShapeFactory.createMeshShape(charModel);
 //        charCrtl = new BetterCharacterControl();
         charModel.addControl(this); // FORCE TO ADD THE CONTROL TO THE SPATIAL
@@ -94,6 +105,7 @@ public class AICharacterControl extends BetterCharacterControl implements AnimEv
         physics = this.app.getStateManager().getState(BulletAppState.class).getPhysicsSpace();
         physics.add(this);
 
+        prepareModel(charModel);
 
         // add arrow
         Mesh arrow = new Arrow(Vector3f.UNIT_Z);
@@ -107,15 +119,19 @@ public class AICharacterControl extends BetterCharacterControl implements AnimEv
 
     }
 
-    private void findAnimation(Node nd) {
+    private void prepareModel(Node nd) {
         for (Spatial sp : nd.getChildren()) {
             AnimControl aniControl = sp.getControl(AnimControl.class);
 
             if (aniControl == null && sp instanceof Node) {
-                findAnimation((Node) sp);
+                prepareModel((Node) sp);
             } else if (aniControl != null) {
                 SkeletonControl skeletonControl = sp.getControl(SkeletonControl.class);
                 skeletonControl.setHardwareSkinningPreferred(true); // PERFORMANCE IS MUCH MUCH BETTER WITH HW SKINNING
+
+                if (swordModel == null) {
+                    createSword(skeletonControl);
+                }
 
                 AnimChannel aniChannel = aniControl.createChannel();
                 aniChannel.setAnim("base_stand");
@@ -125,11 +141,35 @@ public class AICharacterControl extends BetterCharacterControl implements AnimEv
         }
     }
 
+    private void createSword(SkeletonControl skeletonControl) {
+        swordModel = new Node("sword");
+
+        GhostControl gh = new GhostControl(new BoxCollisionShape(new Vector3f(0.3f, 1f, 0.3f)));
+        swordModel.addControl(gh);
+        physics.add(gh);
+
+        Node n = skeletonControl.getAttachmentsNode("sword");
+        n.attachChild(swordModel);
+    }
+
+    private void killWithSword() {
+        for (PhysicsCollisionObject physObj : swordModel.getControl(GhostControl.class).getOverlappingObjects()) {
+            Spatial spObj = (Spatial) physObj.getUserObject();
+            AICharacterControl charCtrl = spObj.getControl(AICharacterControl.class);
+            if (charCtrl != null && !charCtrl.equals(this)) {
+                charCtrl.substractHealth(swordDestruction);
+
+                swordKilled = true;
+                break;
+            }
+        }
+    }
+
     private void createBullet() {
         Geometry newBullet = app.getStateManager().getState(AIWeaponController.class).getBullet().clone(false);
         newBullet.setLocalRotation(getSpatialRotation().clone());
-        newBullet.setLocalTranslation(getSpatialTranslation().clone().addLocal(Vector3f.UNIT_Y));
-        newBullet.addControl(new AIBulletControl(newBullet.getLocalTranslation(), newBullet, app));
+        newBullet.setLocalTranslation(getSpatialTranslation().clone().addLocal(Vector3f.UNIT_Y).addLocal(newBullet.getLocalRotation().mult(Vector3f.UNIT_Z)));
+        newBullet.addControl(new AIBulletControl(newBullet.getLocalTranslation(), newBullet, app, bulletDestruction));
 
         Node root = (Node) app.getViewPort().getScenes().get(0);
         root.attachChild(newBullet);
@@ -161,12 +201,33 @@ public class AICharacterControl extends BetterCharacterControl implements AnimEv
         setWalkDirection(Vector3f.ZERO);
     }
 
-    // ANIMATION LISTENER
-    public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) {
-    }
+//    // ANIMATION LISTENER
+//    public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) {
+//    }
+//
+//    // ANIMATION LISTENER
+//    public void onAnimChange(AnimControl control, AnimChannel channel, String animName) {
+//    }
+    public void destroyCtrl() {
 
-    // ANIMATION LISTENER
-    public void onAnimChange(AnimControl control, AnimChannel channel, String animName) {
+        AnimLst.clear();
+
+//        for (int i = 0; i < spatial.getNumControls(); i++) {
+//        }
+
+        if (spatial != null) {
+
+            physics.removeAll(spatial);
+            
+            swordModel.removeFromParent();
+            swordModel = null;
+
+            spatial.removeFromParent();
+            spatial.removeControl(this);
+            spatial = null;
+        }
+
+
     }
 
     @Override
@@ -217,9 +278,9 @@ public class AICharacterControl extends BetterCharacterControl implements AnimEv
             // SET LOGIC
             if (charState != AICharacterState.None) {
                 if (charState == AICharacterState.Shoot) {
-                    
+
 //                    rotateCharacter();
-                    
+
                     if (shootTimer >= shootMaxTime) {
                         shootTimer = 0f;
                         charState = AICharacterState.None;
@@ -231,7 +292,7 @@ public class AICharacterControl extends BetterCharacterControl implements AnimEv
                             bulletCreated = true;
                         }
 
-                        shootTimer += 1.0f / 60.0f;
+                        shootTimer += app.getStateManager().getState(AIGameManager.class).getCurrentTpf();
                     }
 
                 } else if (charState == AICharacterState.Strike) {
@@ -239,8 +300,15 @@ public class AICharacterControl extends BetterCharacterControl implements AnimEv
                     if (shootTimer >= strikeMaxTime) {
                         shootTimer = 0f;
                         charState = AICharacterState.None;
+                        swordKilled = false;
                     } else {
-                        shootTimer += 1.0f / 60.0f;
+
+                        if (shootTimer >= 0.1f && !swordKilled) {
+                            killWithSword();
+                            bulletCreated = true;
+                        }
+
+                        shootTimer += app.getStateManager().getState(AIGameManager.class).getCurrentTpf();
 
                     }
 
@@ -281,7 +349,7 @@ public class AICharacterControl extends BetterCharacterControl implements AnimEv
                 for (AnimControl ani : AnimLst) {
                     if (!ani.getChannel(0).getAnimationName().equals("strike_sword")) {
                         ani.getChannel(0).setAnim("strike_sword", 0.2f);
-                        ani.getChannel(0).setSpeed(1f);
+                        ani.getChannel(0).setSpeed(1.0f);
                         ani.getChannel(0).setLoopMode(LoopMode.DontLoop);
                     }
 
@@ -307,6 +375,18 @@ public class AICharacterControl extends BetterCharacterControl implements AnimEv
 
         }
 
+    }
+
+    public float getHealth() {
+        return health;
+    }
+
+    public void substractHealth(float substractedHealth) {
+        health -= substractedHealth;
+
+        if (health <= 0) {
+            destroyCtrl();
+        }
     }
 
     public Node getCharNode() {
@@ -388,7 +468,8 @@ public class AICharacterControl extends BetterCharacterControl implements AnimEv
     public AICharacterState getCharState() {
         return charState;
     }
-//    public void setCharState(AICharacterState charState) {
-//        this.charState = charState;
-//    }
+
+    public void setCharState(AICharacterState charState) {
+        this.charState = charState;
+    }
 }

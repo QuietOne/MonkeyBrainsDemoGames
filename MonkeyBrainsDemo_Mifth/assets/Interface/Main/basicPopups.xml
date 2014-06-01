@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
+    <!-- +++++++++++++++++++++++++++++++++++++++ -->
+    <!-- start screen -->
+    <!-- +++++++++++++++++++++++++++++++++++++++ -->
+
+
+    <!--Data Components Popup-->
+    <popup id="popupKeys" childLayout="center" >
+        <panel width="500px" height="400px" align="center" valign="center" childLayout="vertical" style="panel_style_01" padding="10" >
+            <effect>
+                <onStartScreen  name="fade" startColor="#0000" endColor="#000f" length="500"/>
+                <onEndScreen  name="fade" startColor="#000f" endColor="#0000" length="500"/>
+            </effect>                    
+            
+            <panel align="center" width="95%" valign="center" childLayout="vertical" padding="5">
+                <text wrap="true" textHAlign="left" style="ma_button#text" text="
+Keys:&#10;&#10;
+WASD –-- Move Character&#10;
+LeftMouse –-- Shoot&#10;
+RightMouse –-- Strike with Sword&#10;
+MiddleMouse/Scroller –-- Rotate Camera&#10;
+"  />
+
+            </panel>
+            <panel align="center" valign="center" childLayout="horizontal" padding="5">
+                <control id="closePopupKeys" name="button" style="ma_button" label="Ok" >
+                    <interact onClick="helpButton(false)"/>
+                </control>
+            </panel>    
+        </panel>
+    </popup>
+
+</nifty>

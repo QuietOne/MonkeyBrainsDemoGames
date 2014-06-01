@@ -12,6 +12,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
+import org.aitest.AIGameManager;
 
 /**
  *
@@ -19,16 +20,17 @@ import com.jme3.scene.shape.Box;
  */
 public class AIWeaponController extends AbstractAppState {
     
-    Geometry bullet;
-    Application app;
+    private Geometry bullet, swordMesh;
+    private  Application app;
 
     public AIWeaponController(Application app) {
         
         this.app = app;
         
         // Setup Bullet
-        Box b = new Box(Vector3f.ZERO, 0.15f, 0.15f, 0.5f);
+        Box b = new Box(Vector3f.ZERO, 1f, 1f, 1f);
         bullet = new Geometry("Box", b);
+        bullet.setLocalScale(0.1f, 0.1f, 0.5f);
         Material mat_bullet = new Material(this.app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat_bullet.setColor("Color", ColorRGBA.Red);
         bullet.setMaterial(mat_bullet);
@@ -42,6 +44,10 @@ public class AIWeaponController extends AbstractAppState {
     
     @Override
     public void update(float tpf) {
+        
+        // Update only for fixed rate
+        if (app.getStateManager().getState(AIGameManager.class).IsUpdate()) {
+        }
 
     }
     
@@ -53,5 +59,6 @@ public class AIWeaponController extends AbstractAppState {
     public Geometry getBullet() {
         return bullet;
     }
+
     
 }

@@ -8,6 +8,7 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.bullet.BulletAppState;
 import com.jme3.input.ChaseCamera;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
@@ -124,6 +125,16 @@ public class AIMainCharacterController extends AbstractAppState implements Analo
     public void onAction(String name, boolean isPressed, float tpf) {
     }
 
+    private void destroy() {
+        removeListener();
+        chaseCam.setSpatial(null);
+        chaseCam.setEnabled(false);
+        chaseCam = null;
+        
+        charCtrl.destroyCtrl();
+        charCtrl = null;
+    }
+
     @Override
     public void update(float tpf) {
 
@@ -136,6 +147,6 @@ public class AIMainCharacterController extends AbstractAppState implements Analo
     @Override
     public void cleanup() {
         super.cleanup();
-
+        destroy();
     }
 }

@@ -14,6 +14,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
+import org.aitest.character.AIMainCharacterController;
 import org.aitest.weapon.AIWeaponController;
 
 /**
@@ -37,32 +38,33 @@ public class AIMain extends SimpleApplication {
         flyCam.setZoomSpeed(0f);
         flyCam.setMoveSpeed(50f);
         flyCam.setDragToRotate(true);
-        
+
         viewPort.setBackgroundColor(ColorRGBA.DarkGray);
-        
+
         // set lights
         AmbientLight amb = new AmbientLight();
         amb.setColor(new ColorRGBA(0.7f, 0.8f, 1.0f, 1f));
         rootNode.addLight(amb);
-        
+
         DirectionalLight dl = new DirectionalLight();
         dl.setDirection(new Vector3f(-0.5501984f, -0.6679371f, 0.5011405f));
         dl.setColor(new ColorRGBA(1.0f, 1.0f, 0.7f, 1f));
         rootNode.addLight(dl);
-        
+
         BulletAppState bulletState = new BulletAppState();
+        bulletState.setThreadingType(BulletAppState.ThreadingType.PARALLEL);
         stateManager.attach(bulletState);
-        
+
         AIWeaponController weaponCtrl = new AIWeaponController(this);
         stateManager.attach(weaponCtrl);
 
-        AIGameManager aiManager = new AIGameManager((DesktopAssetManager) assetManager, this);
-        stateManager.attach(aiManager);
-        aiManager.loadScene();
+        AIGameManager aiGameManager = new AIGameManager((DesktopAssetManager) assetManager, this);
+        stateManager.attach(aiGameManager);
+        aiGameManager.loadScene();
 //        rootNode.attachChild(scene);
-        
+
         AIGuiManager guiManager = new AIGuiManager(this);
-        stateManager.attach(aiManager);
+        stateManager.attach(guiManager);
 
     }
 
@@ -74,5 +76,14 @@ public class AIMain extends SimpleApplication {
     @Override
     public void simpleRender(RenderManager rm) {
         //TODO: add render code
+    }
+
+    // I NEED O DESTROY MAIN CHARACTER CONTROLLER BEFORE OTHER CONTROLLERS
+    @Override
+    public void destroy() {
+        if (stateManager.getState(AIMainCharacterController.class) != null) {
+            stateManager.detach(stateManager.getState(AIMainCharacterController.class));
+        }
+        super.destroy();
     }
 }

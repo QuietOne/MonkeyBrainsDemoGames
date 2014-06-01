@@ -4,6 +4,7 @@
  */
 package org.aitest.weapon;
 
+import com.bulletphysics.collision.dispatch.GhostObject;
 import com.bulletphysics.dynamics.RigidBody;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
@@ -46,8 +47,9 @@ public class AIBulletControl extends AbstractControl implements Savable, Cloneab
     private Spatial spToKill;
     private Application app;
     private Geometry geoRay;
+    private float healthDestruction;
 
-    public AIBulletControl(Vector3f bornPlace, Geometry bullet, Application app) {
+    public AIBulletControl(Vector3f bornPlace, Geometry bullet, Application app, float healthDestruction) {
 
         this.bullet = bullet;
         this.bullet.setUserData("Type", "Bullet");
@@ -55,10 +57,12 @@ public class AIBulletControl extends AbstractControl implements Savable, Cloneab
         this.bornPlace = bornPlace.clone();
         this.app = app;
 
+        this.healthDestruction = healthDestruction;
+
         hit = 1000f;
 
-        vecMove = bullet.getLocalRotation().mult(Vector3f.UNIT_Z).normalizeLocal().mult(2f);
-        bulletLength = 100f;
+        vecMove = bullet.getLocalRotation().mult(Vector3f.UNIT_Z).normalizeLocal().mult(4f);
+        bulletLength = 70f;
         work = true;
 
         Vector3f vecStart = this.bornPlace;
@@ -74,7 +78,7 @@ public class AIBulletControl extends AbstractControl implements Savable, Cloneab
                 Spatial spThis = (Spatial) collisionObject.getUserObject();
 
                 // Get the Enemy to skill
-                if (fl < hit ) {
+                if (fl < hit && spThis.getControl(GhostControl.class) == null) {
                     hit = fl;
                     spToKill = spThis;
                 }
@@ -85,23 +89,31 @@ public class AIBulletControl extends AbstractControl implements Savable, Cloneab
 
             if (spToKill != null) {
 
-//                System.out.println(hit);
                 contactPoint = vecStart.clone().interpolate(vecEnd, hit);
+
+                // set destruction
+                if (spToKill.getControl(AICharacterControl.class) != null) {
+                    AICharacterControl aiCharCtrl = spToKill.getControl(AICharacterControl.class);
+                    aiCharCtrl.substractHealth(this.healthDestruction);
+                }
 
             }
         }
-        
-//        // testRay
-//        Vector3f endVecToDebug = vecEnd;
-//        if (contactPoint != null) {
-//            endVecToDebug = contactPoint;
-//        }
-//        geoRay = new Geometry("line", new Line(vecStart, endVecToDebug));
-//        Material mat_bullet = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-//        mat_bullet.setColor("Color", ColorRGBA.Cyan);
-//        geoRay.setMaterial(mat_bullet);
-//        Node root = (Node) this.app.getViewPort().getScenes().get(0);
-//        root.attachChild(geoRay);
+
+        // testRay forDebug
+        if (this.app.getStateManager().getState(AIGameManager.class).isGameDebug()) {
+            Vector3f endVecToDebug = vecEnd;
+            if (contactPoint != null) {
+                endVecToDebug = contactPoint;
+            }
+            geoRay = new Geometry("line", new Line(vecStart, endVecToDebug));
+            Material mat_bullet = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+            mat_bullet.setColor("Color", ColorRGBA.Cyan);
+            geoRay.setMaterial(mat_bullet);
+            Node root = (Node) this.app.getViewPort().getScenes().get(0);
+            root.attachChild(geoRay);
+        }
+
 
     }
 
@@ -111,12 +123,12 @@ public class AIBulletControl extends AbstractControl implements Savable, Cloneab
             geoRay.removeFromParent();
             geoRay = null;
         }
-        
+
         work = false;
         bullet.removeFromParent();
         bullet.removeControl(this);
         bullet = null;
-        
+
 
     }
 
@@ -133,7 +145,8 @@ public class AIBulletControl extends AbstractControl implements Savable, Cloneab
 //                    System.out.println("eeyyyyy");
                     float contactPointDistance = bornPlace.distance(contactPoint);
 
-                    if (distance >= contactPointDistance) {
+                    if (distance >= contactPointDistance
+                            || distance + vecMove.length() > contactPointDistance) {
                         Node nd = new Node("expl");
                         nd.addControl(new AIExplosionControl(contactPoint, nd, app));
                         Node root = (Node) app.getViewPort().getScenes().get(0);
@@ -143,7 +156,7 @@ public class AIBulletControl extends AbstractControl implements Savable, Cloneab
                     }
                 }
 
-                if (distance >= bulletLength) {
+                if (distance >= bulletLength || distance + vecMove.length() > bulletLength) {
                     destroy();
                     return;
                 }
