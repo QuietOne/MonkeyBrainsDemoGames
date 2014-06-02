@@ -84,9 +84,9 @@ public class AIMain extends SimpleApplication {
     // I NEED O DESTROY MAIN CHARACTER CONTROLLER BEFORE OTHER CONTROLLERS
     @Override
     public void destroy() {
-//        if (stateManager.getState(AIMainCharacterController.class) != null) {
-//            stateManager.detach(stateManager.getState(AIMainCharacterController.class));
-//        }
+        if (stateManager.getState(AIMainCharacterController.class) != null) {
+            stateManager.detach(stateManager.getState(AIMainCharacterController.class));
+        }
         super.destroy();
     }
 }
