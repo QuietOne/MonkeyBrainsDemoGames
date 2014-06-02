@@ -85,14 +85,16 @@ public class AIGameManager extends AbstractAppState {
         sceneNode.attachChild(characterr.getCharNode());
 
     }
-    
+
     public void reloadScene() {
+        app.getStateManager().detach(app.getStateManager().getState(AIMainCharacterController.class));
+        app.getStateManager().getState(BulletAppState.class).getPhysicsSpace().removeAll(root);
         sceneNode.detachAllChildren();
         root.detachAllChildren();
         root.attachChild(sceneNode); // attach it again
-        app.getStateManager().detach(app.getStateManager().getState(AIMainCharacterController.class));
-        app.getStateManager().getState(BulletAppState.class).getPhysicsSpace().removeAll(root);
-        
+
+
+
         loadScene();
     }
 
@@ -114,9 +116,6 @@ public class AIGameManager extends AbstractAppState {
 
     @Override
     public void update(float tpf) {
-
-
-
     }
 
     @Override
