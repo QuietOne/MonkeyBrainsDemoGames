@@ -23,6 +23,7 @@ import com.jme3.scene.control.Control;
 import com.jme3.scene.shape.Box;
 import java.io.IOException;
 import org.aitest.AIGameManager;
+import org.aitest.AIUpdateManager;
 
 /**
  *
@@ -61,9 +62,9 @@ public class AIExplosionControl extends AbstractControl {
     protected void controlUpdate(float tpf) {
 
         // Update only for fixed rate
-        if (app.getStateManager().getState(AIGameManager.class).IsUpdate()) {
+        if (app.getStateManager().getState(AIUpdateManager.class).IsUpdate()) {
             if (timer < 0.5f) {
-                timer += app.getStateManager().getState(AIGameManager.class).getCurrentTpf() * 3f;
+                timer += app.getStateManager().getState(AIUpdateManager.class).getCurrentTpf() * 3f;
 
                 expl.setLocalScale(timer, timer, timer);
             } else {

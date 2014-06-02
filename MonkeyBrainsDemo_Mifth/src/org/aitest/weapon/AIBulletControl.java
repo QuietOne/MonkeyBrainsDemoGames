@@ -31,6 +31,7 @@ import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Line;
 import java.util.List;
 import org.aitest.AIGameManager;
+import org.aitest.AIUpdateManager;
 import org.aitest.character.AICharacterControl;
 
 /**
@@ -136,7 +137,7 @@ public class AIBulletControl extends AbstractControl implements Savable, Cloneab
     protected void controlUpdate(float tpf) {
 
         // Update only for fixed rate
-        if (app.getStateManager().getState(AIGameManager.class).IsUpdate()) {
+        if (app.getStateManager().getState(AIUpdateManager.class).IsUpdate()) {
 
             if (work) {
                 float distance = bornPlace.distance(bullet.getLocalTranslation());

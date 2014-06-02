@@ -15,6 +15,7 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import org.aitest.AIGameManager;
+import org.aitest.AIUpdateManager;
 
 /**
  *
@@ -100,7 +101,7 @@ public class AIGuiManager extends AbstractAppState implements ScreenController {
     public void update(float tpf) {
         
         // Update only for fixed rate
-        if (app.getStateManager().getState(AIGameManager.class).IsUpdate()) {
+        if (app.getStateManager().getState(AIUpdateManager.class).IsUpdate()) {
         }
         
     }

@@ -13,6 +13,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import org.aitest.AIGameManager;
+import org.aitest.AIUpdateManager;
 
 /**
  *
@@ -46,7 +47,7 @@ public class AIWeaponController extends AbstractAppState {
     public void update(float tpf) {
         
         // Update only for fixed rate
-        if (app.getStateManager().getState(AIGameManager.class).IsUpdate()) {
+        if (app.getStateManager().getState(AIUpdateManager.class).IsUpdate()) {
         }
 
     }

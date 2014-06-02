@@ -20,6 +20,7 @@ import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import org.aitest.AIGameManager;
+import org.aitest.AIUpdateManager;
 
 /**
  *
@@ -139,7 +140,7 @@ public class AIMainCharacterController extends AbstractAppState implements Analo
     public void update(float tpf) {
 
         // Update only for fixed rate
-        if (app.getStateManager().getState(AIGameManager.class).IsUpdate()) {
+        if (app.getStateManager().getState(AIUpdateManager.class).IsUpdate()) {
         }
 
     }

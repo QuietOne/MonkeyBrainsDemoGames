@@ -50,6 +50,9 @@ public class AIMain extends SimpleApplication {
         dl.setDirection(new Vector3f(-0.5501984f, -0.6679371f, 0.5011405f));
         dl.setColor(new ColorRGBA(1.0f, 1.0f, 0.7f, 1f));
         rootNode.addLight(dl);
+        
+        AIUpdateManager updateManager = new AIUpdateManager();
+        stateManager.attach(updateManager);
 
         BulletAppState bulletState = new BulletAppState();
         bulletState.setThreadingType(BulletAppState.ThreadingType.PARALLEL);

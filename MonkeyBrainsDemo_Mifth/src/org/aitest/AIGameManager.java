@@ -31,18 +31,11 @@ public class AIGameManager extends AbstractAppState {
     private Application app;
     private Node root;
     private Node sceneNode = new Node("Scene");
-    private long lastFrame;
-    private double lastTimeFromPrevious;
-    private float currentTpf;
-    private boolean update, gameDebug = false;
+    private boolean gameDebug = false;
 
     public AIGameManager(DesktopAssetManager dsm, Application app) {
         this.dasm = dsm;
         this.app = app;
-
-        lastFrame = System.nanoTime();
-        lastTimeFromPrevious = 0.0;
-        currentTpf = 0f;
 
         root = (Node) app.getViewPort().getScenes().get(0);
         root.attachChild(sceneNode);
@@ -123,26 +116,7 @@ public class AIGameManager extends AbstractAppState {
     @Override
     public void update(float tpf) {
 
-        // Use our own tpf calculation in case frame rate is
-        // running away making this tpf unstable
-        long time = System.nanoTime();
 
-        long delta = time - lastFrame;
-
-        double seconds = delta / 1000000000.0;
-
-        // Clamp frame time to no bigger than a certain amount 60fps
-        if (seconds + lastTimeFromPrevious >= 1.0 / 60.0) {
-            lastFrame = time;
-//            System.out.println(seconds);
-            update = true;
-
-            lastTimeFromPrevious = (seconds + lastTimeFromPrevious) - (1.0 / 60.0);
-            currentTpf = (float) seconds;
-
-        } else {
-            update = false;
-        }
 
     }
 
@@ -152,19 +126,7 @@ public class AIGameManager extends AbstractAppState {
 
     }
 
-    public boolean IsUpdate() {
-        return update;
-    }
-
     public boolean isGameDebug() {
         return gameDebug;
-    }
-
-    public float getCurrentTpf() {
-        return currentTpf;
-    }
-
-    public void setCurrentTpf(float currentTpf) {
-        this.currentTpf = currentTpf;
     }
 }

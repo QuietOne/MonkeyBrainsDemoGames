@@ -34,6 +34,7 @@ import com.jme3.scene.shape.Box;
 import java.util.LinkedList;
 import java.util.List;
 import org.aitest.AIGameManager;
+import org.aitest.AIUpdateManager;
 import org.aitest.weapon.AIBulletControl;
 import org.aitest.weapon.AIWeaponController;
 
@@ -234,7 +235,7 @@ public class AICharacterControl extends BetterCharacterControl {
     public void update(float tpf) {
 
         // Update only for fixed rate
-        if (app.getStateManager().getState(AIGameManager.class).IsUpdate()) {
+        if (app.getStateManager().getState(AIUpdateManager.class).IsUpdate()) {
 
             super.update(tpf);
 
@@ -292,7 +293,7 @@ public class AICharacterControl extends BetterCharacterControl {
                             bulletCreated = true;
                         }
 
-                        shootTimer += app.getStateManager().getState(AIGameManager.class).getCurrentTpf();
+                        shootTimer += app.getStateManager().getState(AIUpdateManager.class).getCurrentTpf();
                     }
 
                 } else if (charState == AICharacterState.Strike) {
@@ -308,7 +309,7 @@ public class AICharacterControl extends BetterCharacterControl {
                             bulletCreated = true;
                         }
 
-                        shootTimer += app.getStateManager().getState(AIGameManager.class).getCurrentTpf();
+                        shootTimer += app.getStateManager().getState(AIUpdateManager.class).getCurrentTpf();
 
                     }
 
