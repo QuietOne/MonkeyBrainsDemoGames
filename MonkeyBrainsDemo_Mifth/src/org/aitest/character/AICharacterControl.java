@@ -218,9 +218,10 @@ public class AICharacterControl extends BetterCharacterControl {
 
         if (spatial != null) {
 
-            physics.removeAll(spatial);
+            physics.remove(spatial);
             
             swordModel.removeFromParent();
+            physics.remove(swordModel);
             swordModel = null;
 
             spatial.removeFromParent();
