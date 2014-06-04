@@ -56,6 +56,11 @@ public class AIUpdateManager extends AbstractAppState {
             update = true;
 
             currentTpf = (float) seconds;
+            
+            // Clamp to 3 seconds
+            if (currentTpf > 3f) {
+                currentTpf = (float) framerate;
+            }
 
 //            System.out.println(currentTpf + "" + tpf);
 
