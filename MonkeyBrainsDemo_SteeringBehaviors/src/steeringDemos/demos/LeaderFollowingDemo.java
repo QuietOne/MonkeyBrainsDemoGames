@@ -1,6 +1,6 @@
 //Copyright (c) 2014, Jesús Martín Berlanga. All rights reserved. Distributed under the BSD licence. Read "com/jme3/ai/license.txt".
 
-package steeringDemos.simpleExamples;
+package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.util.control.Game;
@@ -14,7 +14,7 @@ import com.jme3.ai.agents.behaviours.npc.steering.SeparationBehaviour;
 import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
 import com.jme3.ai.agents.behaviours.npc.SimpleMoveBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.BalancedCompoundSteeringBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.PursuitBehaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.LeaderFollowing;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -28,12 +28,12 @@ import java.util.List;
 import java.util.Arrays;
 
 /**
- * AI Steer Test - Testing the pursuit and separation behaviours
+ * AI Steer Test - Testing the leader following and separation behaviours
  *
  * @author Jesús Martín Berlanga
- * @version 1.2
+ * @version 1.3
  */
-public class PursuitAndSeparationTest extends SimpleApplication {
+public class LeaderFollowingDemo extends SimpleApplication {
     
     private SeparationBehaviour[] separation;
     private boolean isStrengthEscalar = true;
@@ -60,7 +60,7 @@ public class PursuitAndSeparationTest extends SimpleApplication {
     //TEST SETTINGS - END
 
     public static void main(String[] args) {
-        PursuitAndSeparationTest app = new PursuitAndSeparationTest();
+        LeaderFollowingDemo app = new LeaderFollowingDemo();
         app.start();
     }
     
@@ -145,7 +145,7 @@ public class PursuitAndSeparationTest extends SimpleApplication {
         for (int i = 0; i < neighbours.length; i++) {
             neighboursMainBehaviour[i] = new SimpleMainBehaviour(neighbours[i]);
             
-            PursuitBehaviour pursuit = new PursuitBehaviour(
+            LeaderFollowing pursuit = new LeaderFollowing(
                     neighbours[i], target,
                     2f,
                     (float) Math.PI / 2,
