@@ -47,7 +47,7 @@ public class AICharacterControl extends BetterCharacterControl {
     private Application app;
 //    private Node charNode;
 //    private BetterCharacterControl charCrtl;
-    private List<AnimControl> AnimLst;
+    private List<AnimControl> animLst;
     private String[] animNames = {"base_stand", "run_01", "shoot", "strike_sword"};
     private boolean doMove, doRotate, doShoot, doStrike;
     private boolean rotateLeft, moveForward;
@@ -97,7 +97,7 @@ public class AICharacterControl extends BetterCharacterControl {
         AIGameManager gameManager = app.getStateManager().getState(AIGameManager.class);
 
 //        this.charNode = charModel;
-        AnimLst = new LinkedList<AnimControl>();
+        animLst = new LinkedList<AnimControl>();
 
         CollisionShape cShape = CollisionShapeFactory.createMeshShape(charModel);
 //        charCrtl = new BetterCharacterControl();
@@ -134,10 +134,13 @@ public class AICharacterControl extends BetterCharacterControl {
                     createSword(skeletonControl);
                 }
 
-                AnimChannel aniChannel = aniControl.createChannel();
-                aniChannel.setAnim("base_stand");
+                if (!animLst.contains(aniControl)) {
+                    AnimChannel aniChannel = aniControl.createChannel();
+                    aniChannel.setAnim("base_stand");
 
-                AnimLst.add(aniControl);
+                    animLst.add(aniControl);
+                }
+
             }
         }
     }
@@ -211,7 +214,7 @@ public class AICharacterControl extends BetterCharacterControl {
 //    }
     public void destroyCtrl() {
 
-        AnimLst.clear();
+        animLst.clear();
 
 //        for (int i = 0; i < spatial.getNumControls(); i++) {
 //        }
@@ -219,7 +222,7 @@ public class AICharacterControl extends BetterCharacterControl {
         if (spatial != null) {
 
             physics.remove(spatial);
-            
+
             swordModel.removeFromParent();
             physics.remove(swordModel);
             swordModel = null;
@@ -327,7 +330,7 @@ public class AICharacterControl extends BetterCharacterControl {
 
             // set Animations
             if (charState == AICharacterState.Run || charState == AICharacterState.Rotate || charState == AICharacterState.RunAndRotate) {
-                for (AnimControl ani : AnimLst) {
+                for (AnimControl ani : animLst) {
                     if (!ani.getChannel(0).getAnimationName().equals("run_01")) {
                         ani.getChannel(0).setAnim("run_01", 0.3f);
                         ani.getChannel(0).setSpeed(1f);
@@ -337,7 +340,7 @@ public class AICharacterControl extends BetterCharacterControl {
                 }
             } else if (charState == AICharacterState.Shoot) {
 
-                for (AnimControl ani : AnimLst) {
+                for (AnimControl ani : animLst) {
                     if (!ani.getChannel(0).getAnimationName().equals("shoot")) {
                         ani.getChannel(0).setAnim("shoot", 0.1f);
                         ani.getChannel(0).setSpeed(1.5f);
@@ -348,7 +351,7 @@ public class AICharacterControl extends BetterCharacterControl {
 
             } else if (charState == AICharacterState.Strike) {
 
-                for (AnimControl ani : AnimLst) {
+                for (AnimControl ani : animLst) {
                     if (!ani.getChannel(0).getAnimationName().equals("strike_sword")) {
                         ani.getChannel(0).setAnim("strike_sword", 0.2f);
                         ani.getChannel(0).setSpeed(1.0f);
@@ -358,7 +361,7 @@ public class AICharacterControl extends BetterCharacterControl {
                 }
 
             } else {
-                for (AnimControl ani : AnimLst) {
+                for (AnimControl ani : animLst) {
                     if (!ani.getChannel(0).getAnimationName().equals("base_stand")) {
                         ani.getChannel(0).setAnim("base_stand", 0.3f);
                         ani.getChannel(0).setSpeed(1f);
