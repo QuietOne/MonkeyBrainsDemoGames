@@ -6,7 +6,7 @@ import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.MoveBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.SlowBehaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.supportBehaviors.SlowBehaviour;
 import com.jme3.ai.agents.util.control.Game;
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;
@@ -21,7 +21,7 @@ import steeringDemos.control.CustomSteerControl;
  * Demo for the slow behaviour
  *
  * @author Jesús Martín Berlanga
- * @version 1.0
+ * @version 1.1
  */
 public class SlowDemo extends SimpleApplication {
     
@@ -63,12 +63,13 @@ public class SlowDemo extends SimpleApplication {
         
         SimpleMainBehaviour main = new SimpleMainBehaviour(agent);
         MoveBehaviour move = new MoveBehaviour(agent);
-        SlowBehaviour slow = new SlowBehaviour(agent);
         move.setMoveDirection(new Vector3f(1, 0, 0));
         CompoundSteeringBehaviour steer = new CompoundSteeringBehaviour(agent);
         
         steer.addSteerBehaviour(move);
-        steer.addSteerBehaviour(slow);
+        
+        SlowBehaviour slow = new SlowBehaviour(steer);
+        slow.setAcive(true);
         
         main.addBehaviour(steer);
         agent.setMainBehaviour(main);

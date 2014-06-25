@@ -5,6 +5,7 @@ package steeringDemos.demos;
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.ArriveBehaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.BalancedCompoundSteeringBehaviour;
 import com.jme3.ai.agents.util.control.Game;
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;
@@ -19,6 +20,7 @@ import steeringDemos.control.CustomSteerControl;
  * Demo for ArriveBehaviour
  *
  * @author Jesús Martín Berlanga
+ * @version 1.1
  */
 public class ArriveDemo extends SimpleApplication {
     
@@ -35,10 +37,9 @@ public class ArriveDemo extends SimpleApplication {
     private Agent[] agents = new Agent[3];
     private Agent target;
     private ArriveBehaviour[] arrive;
-    private int[] upadtes = new int[3];
     
-    public static void main(String[] args) {
-        ArriveDemo app = new ArriveDemo();
+    public static void main(String[] args) {       
+        ArriveDemo app = new ArriveDemo();       
         app.start();
     }
     
@@ -51,6 +52,7 @@ public class ArriveDemo extends SimpleApplication {
         this.setupCamera();
         
         this.target = this.createSphere("target", ColorRGBA.Red);
+        target.setRadius(0.25f);
         game.addAgent(target);
         game.getGameControl().spawn(target, new Vector3f());
         
@@ -65,7 +67,7 @@ public class ArriveDemo extends SimpleApplication {
         
         game.getGameControl().spawn(agents[0], new Vector3f(-10, 0, 0));
         game.getGameControl().spawn(agents[1], new Vector3f(8, 0, 0));
-        game.getGameControl().spawn(agents[2], new Vector3f(0, 13, 2));
+        game.getGameControl().spawn(agents[2], new Vector3f(0, 50, 2));
         
         arrive = new ArriveBehaviour[3];
         
@@ -73,13 +75,15 @@ public class ArriveDemo extends SimpleApplication {
         SimpleMainBehaviour main1 = new SimpleMainBehaviour(agents[1]);
         SimpleMainBehaviour main2 = new SimpleMainBehaviour(agents[2]);
         
-        arrive[0] = new ArriveBehaviour(agents[0], target, 5f, 0.0035f);
-        arrive[1] = new ArriveBehaviour(agents[1], target, 3f, 0.01f);
+        arrive[0] = new ArriveBehaviour(agents[0], target);
+        arrive[1] = new ArriveBehaviour(agents[1], target);
         arrive[2] = new ArriveBehaviour(agents[2], target);
-        arrive[2].getSlow().setUnitIncrementSlow(0.0085f);
+        
+        BalancedCompoundSteeringBehaviour steer1 = new BalancedCompoundSteeringBehaviour(agents[1]);
+        steer1.addSteerBehaviour(arrive[1]);
         
         main0.addBehaviour(arrive[0]);
-        main1.addBehaviour(arrive[1]);
+        main1.addBehaviour(steer1);
         main2.addBehaviour(arrive[2]);
         
         agents[0].setMainBehaviour(main0);
@@ -144,16 +148,14 @@ public class ArriveDemo extends SimpleApplication {
         
         for(int i = 0; i < this.arrive.length; i++)
         {
-            if(this.arrive[i].getFreezeTheMovement() == true)
+            if(this.agents[i].distanceRelativeToAgent(target) <= 0.001f + target.getRadius())
             {
-                if( this.upadtes[i] > 60)
-                {
-                    Vector3f resetPosition;
+                    Vector3f resetPosition = null;
                     
                     switch(i)
                     {
                         case 0:
-                            resetPosition = new Vector3f(-10, 0, 0);
+                            resetPosition = new Vector3f(-10, 0, 0); 
                             break;
                             
                         case 1:
@@ -161,22 +163,15 @@ public class ArriveDemo extends SimpleApplication {
                             break;
                             
                         case 2:
-                            resetPosition = new Vector3f(0, 13, 2);
+                            resetPosition = new Vector3f(0, 50, 2);
                             break;
                             
-                        default:
-                            resetPosition = new Vector3f();
                     }
                     
                     this.agents[i].setLocalTranslation(resetPosition);
-                    
-                    this.arrive[i].getSlow().resetSlow();
-                    this.arrive[i].setFreezeTheMovement(false);
-                    this.upadtes[i] = 0;
-                }
-                else
-                    this.upadtes[i]++;
             }
-        }
+
+         }
+       
     }
 }

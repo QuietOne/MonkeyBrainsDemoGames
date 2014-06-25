@@ -1,6 +1,6 @@
 //Copyright (c) 2014, Jesús Martín Berlanga. All rights reserved. Distributed under the BSD licence. Read "com/jme3/ai/license.txt".
 
-package steeringDemos.simpleExamples;
+package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.util.control.Game;
@@ -12,15 +12,20 @@ import com.jme3.scene.Spatial;
 
 import com.jme3.ai.agents.behaviours.npc.steering.SeparationBehaviour;
 import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.SimpleMoveBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.BalancedCompoundSteeringBehaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.MoveBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.PursuitBehaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.WanderBehaviour;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import java.util.ArrayList;
+
+import java.awt.event.ActionEvent;
+import javax.swing.Timer;
 
 import steeringDemos.control.CustomSteerControl;
 
@@ -31,9 +36,9 @@ import java.util.Arrays;
  * AI Steer Test - Testing the pursuit and separation behaviours
  *
  * @author Jesús Martín Berlanga
- * @version 1.0
+ * @version 1.1
  */
-public class PursuitTest extends SimpleApplication {
+public class PursuitDemo extends SimpleApplication {
     
     private SeparationBehaviour[] separation;
     private boolean isStrengthEscalar = true;
@@ -59,8 +64,35 @@ public class PursuitTest extends SimpleApplication {
     private final float NEIGHBOURS_MAX_FORCE = 20;
     //TEST SETTINGS - END
 
+    MoveBehaviour targetMoveBehavior;
+
+    WanderBehaviour targetWanderBehavior;
+    
+    private boolean turnDinamicMode = true;
+    
+    private java.awt.event.ActionListener changeDinamicMode = new java.awt.event.ActionListener()
+    {
+        public void actionPerformed(ActionEvent event)
+        {
+            if(turnDinamicMode)
+            {
+                targetMoveBehavior.setupStrengthControl(1);
+                targetWanderBehavior.setupStrengthControl(0);
+                turnDinamicMode = false;
+            }
+            else
+            {
+                targetMoveBehavior.setupStrengthControl(0.25f);
+                targetWanderBehavior.setupStrengthControl(1);
+                turnDinamicMode = true;
+            }
+        }
+    };
+    
+    private Timer iterationTimer;
+    
     public static void main(String[] args) {
-        PursuitTest app = new PursuitTest();
+        PursuitDemo app = new PursuitDemo();
         app.start();
     }
     
@@ -129,13 +161,23 @@ public class PursuitTest extends SimpleApplication {
         obstacles.add(target);
         
         SimpleMainBehaviour targetMainBehaviour = new SimpleMainBehaviour(target);
-        SimpleMoveBehaviour targetMoveBehavior = new SimpleMoveBehaviour(target);
-        targetMoveBehavior.setMoveDirection(new Vector3f(1,1,0)); //moves in x-y direction
+        targetMoveBehavior = new MoveBehaviour(target);
+        targetMoveBehavior.setupStrengthControl(0.25f);
+        targetWanderBehavior = new WanderBehaviour(target);
+        targetMoveBehavior.setMoveDirection(new Vector3f(1, 1, 0)); //moves in x-y direction
+        
+        this.iterationTimer = new Timer(10000, this.changeDinamicMode); //10000ns = 10s
+        this.iterationTimer.start();
+        
+        CompoundSteeringBehaviour targetSteer = new CompoundSteeringBehaviour(target);
+        targetSteer.addSteerBehaviour(targetMoveBehavior);
+        targetSteer.addSteerBehaviour(targetWanderBehavior);
         
         float randomDistance = ((float) Math.random()) * 1000f;
         
         targetMoveBehavior.setMoveDirection(new Vector3f(randomDistance, randomDistance, randomDistance));
-        targetMainBehaviour.addBehaviour(targetMoveBehavior);
+        
+        targetMainBehaviour.addBehaviour(targetSteer);
         target.setMainBehaviour(targetMainBehaviour);
         
         SimpleMainBehaviour[] neighboursMainBehaviour = new SimpleMainBehaviour[neighbours.length];
