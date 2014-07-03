@@ -15,16 +15,16 @@ import com.jme3.app.state.AppStateManager;
 public class AIUpdateManager extends AbstractAppState {
 
     private long lastFrame = System.nanoTime();
+    private double lastPreviousFrame = 0.0;
     private float currentTpf = 0f;
     private boolean update = false;
     
-    // It's about 61fps as VSync can use less than 60fps for some frames.
-    private final static double framerate = 0.0163;
+    // It's 60fps.
+    private final static double framerate = 1.0 / 60.0;
 
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
-
     }
 
     public boolean IsUpdate() {
@@ -50,17 +50,14 @@ public class AIUpdateManager extends AbstractAppState {
         double seconds = (delta / 1000000000.0);
 
         // Clamp frame time to no bigger than a certain amount 60fps
-        if (seconds >= framerate) {
+        if (seconds + lastPreviousFrame >= framerate) {
             lastFrame = time;
 //            System.out.println(seconds);
             update = true;
 
             currentTpf = (float) seconds;
+            lastPreviousFrame = (seconds + lastPreviousFrame) % framerate;
             
-            // Clamp to 3 seconds
-            if (currentTpf > 3f) {
-                currentTpf = (float) framerate;
-            }
 
 //            System.out.println(currentTpf + "" + tpf);
 
