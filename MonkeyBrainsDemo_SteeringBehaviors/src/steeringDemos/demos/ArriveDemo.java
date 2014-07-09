@@ -20,7 +20,7 @@ import steeringDemos.control.CustomSteerControl;
  * Demo for ArriveBehaviour
  *
  * @author Jesús Martín Berlanga
- * @version 1.1
+ * @version 1.2
  */
 public class ArriveDemo extends SimpleApplication {
     
@@ -99,9 +99,9 @@ public class ArriveDemo extends SimpleApplication {
     private void setupCamera() {
         getCamera().setLocation(new Vector3f(0, 20, 0));
         getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_X);
-        getFlyByCamera().setMoveSpeed(50);
+        getFlyByCamera().setMoveSpeed(17);
         
-        flyCam.setDragToRotate(true);
+        //flyCam.setDragToRotate(true);
         //flyCam.setEnabled(false);
     }
     
@@ -119,7 +119,7 @@ public class ArriveDemo extends SimpleApplication {
     
     //Create a sphere
     private Agent createSphere(String name, ColorRGBA color) {
-        Sphere sphere = new Sphere(10, 10, 0.25f);
+        Sphere sphere = new Sphere(10, 10, 3f);
         Geometry sphereG = new Geometry("Sphere Geometry", sphere);
         Spatial spatial = sphereG;
         

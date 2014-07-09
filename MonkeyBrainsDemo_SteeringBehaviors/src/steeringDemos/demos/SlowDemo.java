@@ -21,7 +21,7 @@ import steeringDemos.control.CustomSteerControl;
  * Demo for the slow behaviour
  *
  * @author Jesús Martín Berlanga
- * @version 1.1
+ * @version 1.2
  */
 public class SlowDemo extends SimpleApplication {
     
@@ -80,9 +80,9 @@ public class SlowDemo extends SimpleApplication {
     private void setupCamera() {
         getCamera().setLocation(new Vector3f(0, 20, 0));
         getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_X);
-        getFlyByCamera().setMoveSpeed(50);
+        getFlyByCamera().setMoveSpeed(20);
         
-        flyCam.setDragToRotate(true);
+        //flyCam.setDragToRotate(true);
         //flyCam.setEnabled(false);  
     }
 

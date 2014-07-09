@@ -28,7 +28,7 @@ import java.util.Arrays;
  * AI Steer Test - Testing the cohesion and the alignment behaviours
  *
  * @author Jesús Martín Berlanga
- * @version 1.0
+ * @version 1.1
  */
 public class CohesionAndAlignmentDemo extends SimpleApplication {
 
@@ -120,9 +120,9 @@ public class CohesionAndAlignmentDemo extends SimpleApplication {
     private void setupCamera() {
         getCamera().setLocation(new Vector3f(0, 20, 0));
         getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_X);
-        getFlyByCamera().setMoveSpeed(50);
+        getFlyByCamera().setMoveSpeed(25);
 
-        flyCam.setDragToRotate(true);
+        //flyCam.setDragToRotate(true);
         //flyCam.setEnabled(false);  
     }
 
