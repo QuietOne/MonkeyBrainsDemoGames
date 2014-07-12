@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.aitest.physics;
 
 import com.jme3.bullet.collision.shapes.CollisionShape;
@@ -19,7 +15,6 @@ public class AIStaticObjectControl extends RigidBodyControl {
         this.type = type;
     }
 
-    
     public AIStaticObjectType getType() {
         return type;
     }
