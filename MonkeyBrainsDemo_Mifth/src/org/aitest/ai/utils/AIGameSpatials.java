@@ -6,6 +6,7 @@ import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.asset.AssetManager;
+import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.control.GhostControl;
 import com.jme3.light.AmbientLight;
@@ -53,8 +54,9 @@ public class AIGameSpatials {
 
     /**
      * Attaching camera to agent.
+     *
      * @param agent
-     * @param cam 
+     * @param cam
      */
     public void attachCameraTo(Agent agent, Camera cam) {
         //create the camera Node
@@ -70,7 +72,7 @@ public class AIGameSpatials {
         camNode.setLocalTranslation(new Vector3f(0, 12, -22));
         agent.setCamera(cam);
     }
-    
+
     public void setGameLighting() {
         //setting ambiental lighting
         AmbientLight amb = new AmbientLight();
@@ -83,44 +85,52 @@ public class AIGameSpatials {
         dl.setColor(new ColorRGBA(1.0f, 1.0f, 0.7f, 1f));
         Game.getInstance().getRootNode().addLight(dl);
     }
-    
-    private void prepareModel(Agent agent, Node nd) {
-        for (Spatial sp : nd.getChildren()) {
-            AnimControl aniControl = sp.getControl(AnimControl.class);
 
-            if (aniControl == null && sp instanceof Node) {
-                prepareModel((Node) sp);
-            } else if (aniControl != null) {
-                SkeletonControl skeletonControl = sp.getControl(SkeletonControl.class);
-                skeletonControl.setHardwareSkinningPreferred(true); // PERFORMANCE IS MUCH MUCH BETTER WITH HW SKINNING
+    public void prepareModel(Node agentNode) {
+        //for each part of agent spatial
+        for (Spatial spatialPart : agentNode.getChildren()) {
+            //make animation
+            AnimControl animation = spatialPart.getControl(AnimControl.class);
+            //there is no animation and there are more parts
+            if (animation == null && spatialPart instanceof Node) {
+                prepareModel((Node) spatialPart);
+            } else {
+                //there is some animation
+                if (animation != null) {
+                    //get skeleton control
+                    SkeletonControl skeletonControl = spatialPart.getControl(SkeletonControl.class);
+                    // PERFORMANCE IS MUCH MUCH BETTER WITH HW SKINNING
+                    skeletonControl.setHardwareSkinningPreferred(true); 
 
-                if (swordModel == null) {
-                    createSword(skeletonControl);
+                    //why load it first
+                    if (swordModel == null) {
+                        createSword(skeletonControl);
+                    }
+                    
+                    // return animation list?
+                    if (!animLst.contains(animation)) {
+                        AnimChannel aniChannel = animation.createChannel();
+                        aniChannel.setAnim("base_stand");
+
+                        animLst.add(animation);
+                    }
                 }
-
-                if (!animLst.contains(aniControl)) {
-                    AnimChannel aniChannel = aniControl.createChannel();
-                    aniChannel.setAnim("base_stand");
-
-                    animLst.add(aniControl);
-                }
-
             }
         }
     }
 
-    private void createSword(SkeletonControl skeletonControl) {
-        swordModel = new Node("sword");
+    public Node createSword(SkeletonControl skeletonControl, String name) {
+        Node swordModel = new Node(name);
 
         GhostControl gh = new GhostControl(new BoxCollisionShape(new Vector3f(0.3f, 1f, 0.3f)));
         swordModel.addControl(gh);
-        physics.add(gh);
+        //add sword to physic space
+        Game.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().add(gh);
 
-        Node n = skeletonControl.getAttachmentsNode("sword");
+        Node n = skeletonControl.getAttachmentsNode(name);
         n.attachChild(swordModel);
+        return swordModel;
     }
-
-    
 
     public Geometry createBullet(Gun gun) {
         Spatial spatial = gun.getAgent().getSpatial();
@@ -130,7 +140,7 @@ public class AIGameSpatials {
         newBullet.addControl(new Bullet(gun, newBullet.getLocalTranslation(), newBullet, Game.getInstance().getApp(), bulletDestruction));
         return newBullet;
     }
-    
+
     public Geometry getBulletSpatial() {
         Box b = new Box(Vector3f.ZERO, 1f, 1f, 1f);
         Geometry geometry = new Geometry("Box", b);

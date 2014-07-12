@@ -27,6 +27,6 @@ public class Gun extends AbstractWeapon {
     
     @Override
     protected AbstractBullet controlAttack(Vector3f direction, float tpf) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new Bullet(this, direction, AIGameSpatials.getInstance().createBullet(this));
     }
 }

@@ -94,39 +94,49 @@ public class AIGameControl implements GameControl {
     }
 
     public void restart() {
-//        app.getStateManager().detach(app.getStateManager().getState(AIMainCharacterController.class));
         app.getStateManager().getState(BulletAppState.class).getPhysicsSpace().removeAll(rootNode);
         sceneNode.detachAllChildren();
         rootNode.detachAllChildren();
-        rootNode.attachChild(sceneNode); // attach it again
+        // attach it again
+        rootNode.attachChild(sceneNode);
+        Game.getInstance().getAgents().clear();
+        Game.getInstance().getGameObjects().clear();
         loadScene();
+        Game.getInstance().start();
     }
 
     public void spawn(GameObject gameObject, Vector3f... area) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //for this game it is implemented in Blender
     }
 
-    public void loadScene() {
+    public void loadScene() { 
+        //loading scene
+        Node sceneBase = (Node) dasm.loadModel("Models/Demo_01/Scene_01/scene_01.blend");
+        
         //adding player
-        Agent<AIModel> player = new Agent<AIModel>("player");
+        Node playerNode = (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o");
+        Agent<AIModel> player = new Agent<AIModel>("player",playerNode);
         player.setModel(new AIModel(player));
         player.setMainBehaviour(new PlayerMainBehaviour(player));
         AIGameSpatials.getInstance().attachCameraTo(player, Game.getInstance().getApp().getCamera());
         Game.getInstance().addAgent(player);
         
-        Node sceneBase = (Node) dasm.loadModel("Models/Demo_01/Scene_01/scene_01.blend");
         for (Spatial sp : sceneBase.getChildren()) {
             if (sp.getName().indexOf("characterMan") == 0) {
-                //adding enemies
+                //adding enemies to the game
+                //loading spatials for agent
                 Node enemyNode = (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o");
                 enemyNode.setLocalTransform(sp.getLocalTransform());
-//                AICharacterControl enemyChar = new AICharacterControl(app, enemyNode, true);
-//                enemyChar.setViewDirection(enemyNode.getLocalRotation().mult(Vector3f.UNIT_Z).normalizeLocal());
-//                sceneNode.attachChild(enemyChar.getCharNode());
+                //creating agent
                 Agent<AIModel> enemyAgent = new Agent<AIModel>("Enemy", enemyNode);
-                enemyAgent.setModel(new AIModel(enemyAgent));
+                //setting model
+                AIModel model = new AIModel(enemyAgent);
+                model.setViewDirection(enemyNode.getLocalRotation().mult(Vector3f.UNIT_Z).normalizeLocal());
+                enemyAgent.setModel(model);
                 enemyAgent.setMainBehaviour(new AIMainBehaviour(enemyAgent));
+                //adding it to game
                 Game.getInstance().addAgent(enemyAgent);
+                
             } else {
                 //adding static objects
                 CollisionShape cShape = CollisionShapeFactory.createMeshShape(sp);
@@ -142,14 +152,8 @@ public class AIGameControl implements GameControl {
                 sceneNode.attachChild(sp);
             }
         }
-        // remove loaded model
         sceneBase.removeFromParent();
         sceneBase = null;
-        // mainCharacter
-//        AICharacterControl characterr = new AICharacterControl(app, (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o"), true);
-//        AIMainCharacterController mainCharState = new AIMainCharacterController(characterr);
-//        app.getStateManager().attach(mainCharState);
-//        sceneNode.attachChild(characterr.getCharNode());
     }
 
     public void setGameDebug(boolean setDebug) {

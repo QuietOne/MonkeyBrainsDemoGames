@@ -19,11 +19,6 @@ public class AIGameUpdateManager extends AbstractAppState {
     // It's 60fps.
     private final static double framerate = 1.0 / 60.0;
 
-    @Override
-    public void initialize(AppStateManager stateManager, Application app) {
-        super.initialize(stateManager, app);
-    }
-
     public boolean IsUpdate() {
         return update;
     }
@@ -62,11 +57,5 @@ public class AIGameUpdateManager extends AbstractAppState {
             update = false;
 //            System.out.println("Shit  " + tpf);
         }
-    }
-
-    @Override
-    public void cleanup() {
-        super.cleanup();
-
     }
 }

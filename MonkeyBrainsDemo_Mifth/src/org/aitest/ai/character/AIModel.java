@@ -5,7 +5,6 @@ import com.jme3.ai.agents.util.control.Game;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.LoopMode;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
@@ -21,6 +20,7 @@ import com.jme3.scene.debug.Arrow;
 import java.util.LinkedList;
 import java.util.List;
 import org.aitest.ai.control.AIGameUpdateManager;
+import org.aitest.ai.utils.AIGameSpatials;
 import org.aitest.ai.utils.Gun;
 import org.aitest.ai.utils.Sword;
 
@@ -43,17 +43,14 @@ public class AIModel extends BetterCharacterControl {
      * Gun that this agent has.
      */
     private Gun gun;
-    private Node charNode;
+    
     private List<AnimControl> animLst;
     private String[] animNames = {"base_stand", "run_01", "shoot", "strike_sword"};
     private boolean doMove, doRotate, doShoot, doStrike;
     private boolean rotateLeft, moveForward;
     private boolean updatePerFrame;
-    private PhysicsSpace physics;
     private AICharacterState charState;
     private boolean bulletCreated;
-    private Node swordModel;
-    private boolean swordKilled;
 
     public AIModel(Agent agent) {
         super(0.85f, 2f, 50f);
@@ -70,18 +67,18 @@ public class AIModel extends BetterCharacterControl {
         doStrike = false;
         rotateLeft = true;
         moveForward = true;
-        swordKilled = false;
         bulletCreated = false;
         charState = AICharacterState.None;
         animLst = new LinkedList<AnimControl>();
         CollisionShape cShape = CollisionShapeFactory.createMeshShape(agent.getSpatial());
 //        charCrtl = new BetterCharacterControl();
         agent.getSpatial().addControl(this); // FORCE TO ADD THE CONTROL TO THE SPATIAL
+        
+        //add this character under the influence of physics
+        Game.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().add(this);
 
-        physics = Game.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace();
-        physics.add(this);
-
-        prepareModel((Node) agent.getSpatial());
+        // Setting spatial for agent with this kind of model
+        AIGameSpatials.getInstance().prepareModel((Node) agent.getSpatial());
 
         // add arrow
         Mesh arrow = new Arrow(Vector3f.UNIT_Z);
@@ -112,29 +109,6 @@ public class AIModel extends BetterCharacterControl {
 
     private void stopCharacter() {
         setWalkDirection(Vector3f.ZERO);
-    }
-
-//    // ANIMATION LISTENER
-//    public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) {
-//    }
-//
-//    // ANIMATION LISTENER
-//    public void onAnimChange(AnimControl control, AnimChannel channel, String animName) {
-//    }
-    public void destroyCtrl() {
-
-        animLst.clear();
-//        for (int i = 0; i < spatial.getNumControls(); i++) {
-//        }
-        if (spatial != null) {
-            physics.remove(spatial);
-            swordModel.removeFromParent();
-            physics.remove(swordModel);
-            swordModel = null;
-            spatial.removeFromParent();
-            spatial.removeControl(this);
-            spatial = null;
-        }
     }
 
     @Override
@@ -318,4 +292,53 @@ public class AIModel extends BetterCharacterControl {
     public void setCharState(AICharacterState charState) {
         this.charState = charState;
     }
+
+    public Agent getAgent() {
+        return agent;
+    }
+
+    public void setAgent(Agent agent) {
+        this.agent = agent;
+    }
+
+    public Sword getSword() {
+        return sword;
+    }
+
+    public void setSword(Sword sword) {
+        this.sword = sword;
+    }
+
+    public Gun getGun() {
+        return gun;
+    }
+
+    public void setGun(Gun gun) {
+        this.gun = gun;
+    }
+
+    public List<AnimControl> getAnimLst() {
+        return animLst;
+    }
+
+    public void setAnimLst(List<AnimControl> animLst) {
+        this.animLst = animLst;
+    }
+
+    public String[] getAnimNames() {
+        return animNames;
+    }
+
+    public void setAnimNames(String[] animNames) {
+        this.animNames = animNames;
+    }
+
+    public boolean isBulletCreated() {
+        return bulletCreated;
+    }
+
+    public void setBulletCreated(boolean bulletCreated) {
+        this.bulletCreated = bulletCreated;
+    }
+    
 }

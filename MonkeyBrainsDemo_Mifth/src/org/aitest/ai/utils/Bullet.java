@@ -36,17 +36,14 @@ public class Bullet extends AbstractBullet {
     private Spatial spToKill;
     private Application app;
     private Geometry geoRay;
-    private float healthDestruction;
     
-    public Bullet(AbstractWeapon weapon, Vector3f bornPlace, Geometry geometry, Application app, float healthDestruction) {
+    public Bullet(AbstractWeapon weapon, Vector3f bornPlace, Geometry geometry) {
         super(weapon, geometry);
-        
+        //do I need more information in spatial?
         spatial.setUserData("Type", "Bullet");
 
         this.bornPlace = bornPlace.clone();
-        this.app = app;
-
-        this.healthDestruction = healthDestruction;
+        this.app = Game.getInstance().getApp();
 
         hit = 1000f;
 
@@ -73,7 +70,6 @@ public class Bullet extends AbstractBullet {
                 }
             }
 
-//            System.out.println(rayTest.size());
             if (spToKill != null) {
                 contactPoint = vecStart.clone().interpolate(vecEnd, hit);
                 // set destruction
@@ -98,8 +94,6 @@ public class Bullet extends AbstractBullet {
             Node root = (Node) this.app.getViewPort().getScenes().get(0);
             root.attachChild(geoRay);
         }
-
-
     }
 
     protected void destroy() {
