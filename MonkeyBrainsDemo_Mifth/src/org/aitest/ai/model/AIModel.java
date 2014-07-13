@@ -64,8 +64,7 @@ public class AIModel extends BetterCharacterControl {
         //add this character under the influence of physics
         Game.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().add(this);
 
-        // Setting spatial for agent with this kind of model
-        AIGameSpatials.getInstance().prepareModel(agent, (Node) agent.getSpatial());
+        
         //same spatial is used in agent.spatial and physics space
         spatial = agent.getSpatial();
 
@@ -78,6 +77,11 @@ public class AIModel extends BetterCharacterControl {
         geoArrow.setLocalTranslation(0f, 0.1f, 0f);
         ((Node) agent.getSpatial()).attachChild(geoArrow);
     }
+    
+    public void setGraphicModel(){
+        // Setting spatial for agent with this kind of model
+        AIGameSpatials.getInstance().prepareModel(agent, (Node) agent.getSpatial());
+    }
 
     @Override
     public void update(float tpf) {
@@ -88,6 +92,10 @@ public class AIModel extends BetterCharacterControl {
         }
     }
 
+    public Vector3f getSpatialTranslation(Geometry geometry){
+        return getSpatialTranslation().clone().addLocal(Vector3f.UNIT_Y).addLocal(geometry.getLocalRotation().mult(Vector3f.UNIT_Z));
+    }
+    
     public Agent getAgent() {
         return agent;
     }

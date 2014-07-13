@@ -66,11 +66,11 @@ public class AIGameControl implements GameControl {
         inputManager.addListener(behaviour, "forward", "left", "backward", "right");
     }
 
-    public void addGunAttackListener(ActionListener behaviour) {
+    public void addGunAttackListener(AnalogListener behaviour) {
         inputManager.addListener(behaviour, "gunFired");
     }
 
-    public void addSwordAttackListener(ActionListener behaviour) {
+    public void addSwordAttackListener(AnalogListener behaviour) {
         inputManager.addListener(behaviour, "swordStrike");
     }
 
@@ -80,7 +80,7 @@ public class AIGameControl implements GameControl {
     }
 
     public void setFlyCameraSettings(FlyByCamera flyCam) {
-        flyCam.setZoomSpeed(0f);
+        flyCam.setZoomSpeed(20f);
         flyCam.setMoveSpeed(50f);
         flyCam.setDragToRotate(true);
     }
@@ -116,8 +116,11 @@ public class AIGameControl implements GameControl {
         //adding player
         Node playerNode = (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o");
         Agent<AIModel> player = new Agent<AIModel>("player",playerNode);
-        player.setModel(new AIModel(player));
+        AIModel model = new AIModel(player);
+        player.setModel(model);
+        model.setGraphicModel();
         player.setMainBehaviour(new PlayerMainBehaviour(player));
+        
         AIGameSpatials.getInstance().attachCameraTo(player, Game.getInstance().getApp().getCamera());
         Game.getInstance().addAgent(player);
         
@@ -130,9 +133,10 @@ public class AIGameControl implements GameControl {
                 //creating agent
                 Agent<AIModel> enemyAgent = new Agent<AIModel>("Enemy", enemyNode);
                 //setting model
-                AIModel model = new AIModel(enemyAgent);
+                model = new AIModel(enemyAgent);
                 model.setViewDirection(enemyNode.getLocalRotation().mult(Vector3f.UNIT_Z).normalizeLocal());
                 enemyAgent.setModel(model);
+                model.setGraphicModel();
                 enemyAgent.setMainBehaviour(new AIMainBehaviour(enemyAgent));
                 //adding it to game
                 Game.getInstance().addAgent(enemyAgent);

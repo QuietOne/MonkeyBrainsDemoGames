@@ -29,19 +29,6 @@ public class Sword extends AbstractWeapon {
         //CHECK: if number is correct.
         maxAttackRange = 1f;
         //spatial = swordModel;
-        ((Node) agent.getSpatial()).attachChild(spatial);
-    }
-    
-    public Sword(Agent agent, Spatial spatial) {
-        this.agent = agent;
-        name = "sword";
-        cooldown = 0.6f;
-        attackDamage = 30f;
-        numberOfBullets = -1;
-        minAttackRange = 0;
-        //CHECK: if number is correct.
-        maxAttackRange = 1f;
-        ((Node) agent.getSpatial()).attachChild(spatial);
     }
 
     @Override

@@ -27,6 +27,6 @@ public class Gun extends AbstractWeapon {
     
     @Override
     protected AbstractBullet controlAttack(Vector3f direction, float tpf) {
-        return new Bullet(this, direction, AIGameSpatials.getInstance().createBullet(this));
+        return new Bullet(this, agent.getLocalTranslation());
     }
 }

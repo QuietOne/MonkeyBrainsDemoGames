@@ -103,9 +103,8 @@ public class AIGameSpatials {
                     // PERFORMANCE IS MUCH MUCH BETTER WITH HW SKINNING
                     skeletonControl.setHardwareSkinningPreferred(true); 
 
-                    //why load it first
-                    if (swordModel == null) {
-                        createSword(skeletonControl);
+                    if (((AIModel) agent.getModel()).getSword().getSpatial() == null) {
+                        createSword(agent, skeletonControl,((AIModel) agent.getModel()).getSword().getName());
                     }
                     
                     // return animation list?
@@ -119,7 +118,7 @@ public class AIGameSpatials {
         }
     }
 
-    public Node createSword(SkeletonControl skeletonControl, String name) {
+    public void createSword(Agent agent, SkeletonControl skeletonControl, String name) {
         Node swordModel = new Node(name);
 
         GhostControl gh = new GhostControl(new BoxCollisionShape(new Vector3f(0.3f, 1f, 0.3f)));
@@ -129,16 +128,7 @@ public class AIGameSpatials {
 
         Node n = skeletonControl.getAttachmentsNode(name);
         n.attachChild(swordModel);
-        return swordModel;
-    }
-
-    public Geometry createBullet(Gun gun) {
-        Spatial spatial = gun.getAgent().getSpatial();
-        Geometry newBullet = getBulletSpatial();
-        newBullet.setLocalRotation(spatial.getLocalRotation().clone());
-        newBullet.setLocalTranslation(spatial.getLocalRotation().clone().addLocal(Vector3f.UNIT_Y).addLocal(newBullet.getLocalRotation().mult(Vector3f.UNIT_Z)));
-        newBullet.addControl(new Bullet(gun, newBullet.getLocalTranslation(), newBullet, Game.getInstance().getApp(), bulletDestruction));
-        return newBullet;
+        ((AIModel) agent.getModel()).getSword().setSpatial(swordModel);
     }
 
     public Geometry getBulletSpatial() {

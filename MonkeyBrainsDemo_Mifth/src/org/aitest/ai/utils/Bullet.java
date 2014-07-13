@@ -37,8 +37,13 @@ public class Bullet extends AbstractBullet {
     private Application app;
     private Geometry geoRay;
 
-    public Bullet(AbstractWeapon weapon, Vector3f bornPlace, Geometry geometry) {
-        super(weapon, geometry);
+    public Bullet(AbstractWeapon weapon, Vector3f bornPlace) {
+        super(weapon, AIGameSpatials.getInstance().getBulletSpatial());
+        
+        Spatial agentSpatial = weapon.getAgent().getSpatial();
+        spatial.setLocalRotation(agentSpatial.getLocalRotation().clone());
+        spatial.setLocalTranslation(((AIModel) weapon.getAgent().getModel()).getSpatialTranslation((Geometry) spatial));
+        spatial.addControl(this);
         //do I need more information in spatial?
         spatial.setUserData("Type", "Bullet");
 

@@ -20,17 +20,26 @@ import org.aitest.ai.model.AIModel;
  */
 public class PlayerMoveBehaviour extends Behaviour implements AnalogListener {
 
-    AIModel model;
-    List<AnimControl> animationList;
+    private AIModel model;
+    private List<AnimControl> animationList;
+    private float timer;
 
     public PlayerMoveBehaviour(Agent agent) {
         super(agent);
         model = (AIModel) agent.getModel();
         animationList = model.getAnimationList();
+        timer = 0;
     }
 
     @Override
     protected void controlUpdate(float tpf) {
+        timer -= tpf;
+        if (timer < 0) {
+            timer = 0;
+        }
+        if (timer == 0) {
+            stopMoving();
+        }
     }
 
     @Override
@@ -38,28 +47,34 @@ public class PlayerMoveBehaviour extends Behaviour implements AnalogListener {
     }
 
     public void onAnalog(String name, float value, float tpf) {
-        boolean moving = true;
+        timer = 0.2f;
         if (name.equals("forward")) {
             Vector3f walkDir = model.getViewDirection().mult(agent.getMoveSpeed());
             model.setWalkDirection(walkDir);
-        } else if (name.equals("backward")) {
-            Vector3f walkDir = model.getViewDirection().mult(agent.getMoveSpeed()).negate();
-            model.setWalkDirection(walkDir);
-        } else if (name.equals("left")) {
-            //rotation to the left
-            Quaternion rotQua = new Quaternion().fromAngleAxis(FastMath.DEG_TO_RAD * agent.getRotationSpeed(), Vector3f.UNIT_Y);
-            rotQua = spatial.getLocalRotation().mult(rotQua);
-            model.setViewDirection(rotQua.mult(Vector3f.UNIT_Z).normalizeLocal());
-        } else if (name.equals("right")) {
-            //rotation to the right
-            Quaternion rotQua = new Quaternion().fromAngleAxis(FastMath.DEG_TO_RAD * agent.getRotationSpeed(), Vector3f.UNIT_Y).inverse();
-            rotQua = spatial.getLocalRotation().mult(rotQua);
-            model.setViewDirection(rotQua.mult(Vector3f.UNIT_Z).normalizeLocal());
         } else {
-            moving = false;
+            if (name.equals("backward")) {
+                Vector3f walkDir = model.getViewDirection().mult(agent.getMoveSpeed()).negate();
+                model.setWalkDirection(walkDir);
+            } else {
+                if (name.equals("left")) {
+                    //rotation to the left
+                    Quaternion rotQua = new Quaternion().fromAngleAxis(FastMath.DEG_TO_RAD * agent.getRotationSpeed(), Vector3f.UNIT_Y);
+                    rotQua = spatial.getLocalRotation().mult(rotQua);
+                    model.setViewDirection(rotQua.mult(Vector3f.UNIT_Z).normalizeLocal());
+                } else {
+                    if (name.equals("right")) {
+                        //rotation to the right
+                        Quaternion rotQua = new Quaternion().fromAngleAxis(FastMath.DEG_TO_RAD * agent.getRotationSpeed(), Vector3f.UNIT_Y).inverse();
+                        rotQua = spatial.getLocalRotation().mult(rotQua);
+                        model.setViewDirection(rotQua.mult(Vector3f.UNIT_Z).normalizeLocal());
+                    } else {
+                        timer = 0;
+                    }
+                }
+            }
         }
         //add animation to it
-        if (moving && !name.equals("gunFired") && !name.equals("swordStrike")) {
+        if (timer != 0) {
             //animation for moving
             for (AnimControl animation : animationList) {
                 if (!animation.getChannel(0).getAnimationName().equals("run_01")) {
@@ -69,13 +84,19 @@ public class PlayerMoveBehaviour extends Behaviour implements AnalogListener {
                 }
             }
         } else {
-            //animation for standing
-            for (AnimControl animation : animationList) {
-                if (!animation.getChannel(0).getAnimationName().equals("base_stand")) {
-                    animation.getChannel(0).setAnim("base_stand", 0.3f);
-                    animation.getChannel(0).setSpeed(1f);
-                    animation.getChannel(0).setLoopMode(LoopMode.Loop);
-                }
+            //agent will stop moving if it attacks
+            stopMoving();
+        }
+    }
+
+    private void stopMoving() {
+        model.setWalkDirection(Vector3f.ZERO);
+        //animation for standing
+        for (AnimControl animation : animationList) {
+            if (!animation.getChannel(0).getAnimationName().equals("base_stand")) {
+                animation.getChannel(0).setAnim("base_stand", 0.3f);
+                animation.getChannel(0).setSpeed(1f);
+                animation.getChannel(0).setLoopMode(LoopMode.Loop);
             }
         }
     }

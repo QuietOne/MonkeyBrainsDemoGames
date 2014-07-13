@@ -30,13 +30,13 @@ public class AIMainBehaviour extends Behaviour{
 
     @Override
     protected void controlUpdate(float tpf) {
-        lookBehaviour.update(tpf);
+        /*lookBehaviour.update(tpf);
         attackBehaviour.update(tpf);
         if (seekBehaviour.getTarget()!=null) {
             seekBehaviour.update(tpf);
         } else {
             wanderBehaviour.update(tpf);
-        }
+        }*/
     }
 
     @Override
