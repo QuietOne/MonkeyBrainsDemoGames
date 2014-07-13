@@ -1,8 +1,6 @@
 package org.aitest.ai.control;
 
-import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
-import com.jme3.app.state.AppStateManager;
 
 /**
  * Class for controling that all updates are in 60fps.

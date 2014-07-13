@@ -24,7 +24,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import org.aitest.ai.behaviours.npc.AIMainBehaviour;
 import org.aitest.ai.behaviours.player.PlayerMainBehaviour;
-import org.aitest.ai.character.AIModel;
+import org.aitest.ai.model.AIModel;
 import org.aitest.ai.utils.AIGameSpatials;
 import org.aitest.physics.AIStaticObjectControl;
 import org.aitest.physics.AIStaticObjectType;
@@ -54,24 +54,24 @@ public class AIGameControl implements GameControl {
     }
 
     public void setInputManagerMapping() {
-        inputManager.addMapping("mouseLeftClick", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-        inputManager.addMapping("mouseRightClick", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
-        inputManager.addMapping("WKeyChar", new KeyTrigger(KeyInput.KEY_W));
-        inputManager.addMapping("AKeyChar", new KeyTrigger(KeyInput.KEY_A));
-        inputManager.addMapping("SKeyChar", new KeyTrigger(KeyInput.KEY_S));
-        inputManager.addMapping("DKeyChar", new KeyTrigger(KeyInput.KEY_D));
+        inputManager.addMapping("gunFired", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+        inputManager.addMapping("swordStrike", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+        inputManager.addMapping("forward", new KeyTrigger(KeyInput.KEY_W));
+        inputManager.addMapping("left", new KeyTrigger(KeyInput.KEY_A));
+        inputManager.addMapping("backward", new KeyTrigger(KeyInput.KEY_S));
+        inputManager.addMapping("right", new KeyTrigger(KeyInput.KEY_D));
     }
 
-    public void addMoveListener(Agent agent, AnalogListener behaviour) {
-        inputManager.addListener(behaviour, "WKeyChar", "AKeyChar", "SKeyChar", "DKeyChar");
+    public void addMoveListener(AnalogListener behaviour) {
+        inputManager.addListener(behaviour, "forward", "left", "backward", "right");
     }
 
-    public void addGunAttackListener(Agent agent, ActionListener behaviour) {
-        inputManager.addListener(behaviour, "mouseLeftClick");
+    public void addGunAttackListener(ActionListener behaviour) {
+        inputManager.addListener(behaviour, "gunFired");
     }
 
-    public void addSwordAttackListener(Agent agent, ActionListener behaviour) {
-        inputManager.addListener(behaviour, "mouseRightClick");
+    public void addSwordAttackListener(ActionListener behaviour) {
+        inputManager.addListener(behaviour, "swordStrike");
     }
 
     public void setCameraSettings(Camera cam) {

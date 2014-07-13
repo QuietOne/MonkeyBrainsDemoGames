@@ -21,6 +21,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.CameraControl;
 import com.jme3.scene.shape.Box;
+import org.aitest.ai.model.AIModel;
 
 /**
  * Spatials needed for game.
@@ -86,14 +87,14 @@ public class AIGameSpatials {
         Game.getInstance().getRootNode().addLight(dl);
     }
 
-    public void prepareModel(Node agentNode) {
+    public void prepareModel(Agent agent, Node agentNode) {
         //for each part of agent spatial
         for (Spatial spatialPart : agentNode.getChildren()) {
             //make animation
             AnimControl animation = spatialPart.getControl(AnimControl.class);
             //there is no animation and there are more parts
             if (animation == null && spatialPart instanceof Node) {
-                prepareModel((Node) spatialPart);
+                prepareModel(agent, (Node) spatialPart);
             } else {
                 //there is some animation
                 if (animation != null) {
@@ -108,11 +109,10 @@ public class AIGameSpatials {
                     }
                     
                     // return animation list?
-                    if (!animLst.contains(animation)) {
+                    if (!((AIModel) agent.getModel()).getAnimationList().contains(animation)) {
                         AnimChannel aniChannel = animation.createChannel();
                         aniChannel.setAnim("base_stand");
-
-                        animLst.add(animation);
+                        ((AIModel) agent.getModel()).getAnimationList().add(animation);
                     }
                 }
             }

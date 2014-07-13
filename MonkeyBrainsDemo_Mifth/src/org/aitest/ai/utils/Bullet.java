@@ -18,7 +18,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Line;
 import java.util.List;
-import org.aitest.ai.character.AIModel;
+import org.aitest.ai.model.AIModel;
 import org.aitest.ai.control.AIGameUpdateManager;
 import org.aitest.ai.control.AIGameControl;
 
@@ -36,7 +36,7 @@ public class Bullet extends AbstractBullet {
     private Spatial spToKill;
     private Application app;
     private Geometry geoRay;
-    
+
     public Bullet(AbstractWeapon weapon, Vector3f bornPlace, Geometry geometry) {
         super(weapon, geometry);
         //do I need more information in spatial?
@@ -74,9 +74,8 @@ public class Bullet extends AbstractBullet {
                 contactPoint = vecStart.clone().interpolate(vecEnd, hit);
                 // set destruction
                 if (spToKill.getControl(AIModel.class) != null) {
-                    AIModel aiCharCtrl = spToKill.getControl(AIModel.class);
-                    //aiCharCtrl.substractHealth(this.healthDestruction);
-                    Game.getInstance().agentAttack(null, null);
+                    AIModel model = spToKill.getControl(AIModel.class);
+                    Game.getInstance().agentAttack(weapon.getAgent(), model.getAgent(), weapon);
                 }
             }
         }
@@ -106,9 +105,7 @@ public class Bullet extends AbstractBullet {
         spatial.removeControl(this);
         spatial = null;
     }
-    
-    
-    
+
     @Override
     protected void controlUpdate(float tpf) {
         // Update only for fixed rate
@@ -118,7 +115,6 @@ public class Bullet extends AbstractBullet {
                 float distance = bornPlace.distance(spatial.getLocalTranslation());
 
                 if (contactPoint != null) {
-//                    System.out.println("eeyyyyy");
                     float contactPointDistance = bornPlace.distance(contactPoint);
 
                     if (distance >= contactPointDistance

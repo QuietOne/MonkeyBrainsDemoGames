@@ -9,7 +9,7 @@ import com.jme3.bullet.control.GhostControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import org.aitest.ai.character.AIModel;
+import org.aitest.ai.model.AIModel;
 
 /**
  *
