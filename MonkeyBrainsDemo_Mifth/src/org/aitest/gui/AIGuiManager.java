@@ -67,7 +67,7 @@ public class AIGuiManager extends AbstractAppState implements ScreenController {
         }
     }
 
-    public void restartGameButton() {
+    public void resetSceneButton() {
         Game.getInstance().getGameControl().restart();
         gameScreen.getFocusHandler().resetFocusElements();
     }

@@ -13,7 +13,6 @@ import com.jme3.input.FlyByCamera;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
-import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
@@ -111,8 +110,7 @@ public class AIGameControl implements GameControl {
 
     public void loadScene() { 
         //loading scene
-        Node sceneBase = (Node) dasm.loadModel("Models/Demo_01/Scene_01/scene_01.blend");
-        
+        Node sceneBase = (Node) dasm.loadModel("Models/Demo_01/Scene_01/scene_01.blend");        
         //adding player
         Node playerNode = (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o");
         Agent<AIModel> player = new Agent<AIModel>("Player",playerNode);
