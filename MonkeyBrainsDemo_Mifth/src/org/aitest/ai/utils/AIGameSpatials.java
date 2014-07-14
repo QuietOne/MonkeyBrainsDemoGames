@@ -32,9 +32,18 @@ import org.aitest.ai.model.AIModel;
 public class AIGameSpatials {
 
     private AssetManager assetManager;
+    private Geometry bulletGeom;
 
     private AIGameSpatials() {
         assetManager = Game.getInstance().getApp().getAssetManager();
+        
+        Box b = new Box(Vector3f.ZERO, 1f, 1f, 1f);
+        bulletGeom = new Geometry("Box", b);
+        bulletGeom.setLocalScale(0.1f, 0.1f, 0.5f);
+        Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        material.setColor("Color", ColorRGBA.Red);
+        bulletGeom.setMaterial(material);
+        
     }
 
     public static AIGameSpatials getInstance() {
@@ -125,12 +134,7 @@ public class AIGameSpatials {
     }
 
     public Geometry getBulletSpatial() {
-        Box b = new Box(Vector3f.ZERO, 1f, 1f, 1f);
-        Geometry geometry = new Geometry("Box", b);
-        geometry.setLocalScale(0.1f, 0.1f, 0.5f);
-        Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        material.setColor("Color", ColorRGBA.Red);
-        geometry.setMaterial(material);
-        return geometry;
+
+        return bulletGeom.clone(false);
     }
 }
