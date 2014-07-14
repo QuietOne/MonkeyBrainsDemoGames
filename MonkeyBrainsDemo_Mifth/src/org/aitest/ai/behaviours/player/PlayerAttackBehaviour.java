@@ -5,6 +5,7 @@ import com.jme3.ai.agents.behaviours.Behaviour;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.LoopMode;
 import com.jme3.input.controls.AnalogListener;
+import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import java.util.List;
@@ -28,6 +29,10 @@ public class PlayerAttackBehaviour extends Behaviour implements AnalogListener {
 
     @Override
     protected void controlUpdate(float tpf) {
+        //Framework updates weapon that is attached directly to agent
+        //rest of the weapons needs to be manualy updated
+        model.getSword().update(tpf);
+        model.getGun().update(tpf);
     }
 
     @Override
@@ -36,27 +41,10 @@ public class PlayerAttackBehaviour extends Behaviour implements AnalogListener {
 
     public void onAnalog(String name, float value, float tpf) {
         if (name.equals("gunFired")) {
-           // model.getGun().attack(Vector3f.ZERO, tpf);
-            //get animation for fired gun
-            for (AnimControl animation : animationList) {
-                if (!animation.getChannel(0).getAnimationName().equals("shoot")) {
-                    animation.getChannel(0).setAnim("shoot", 0.1f);
-                    animation.getChannel(0).setSpeed(1.5f);
-                    animation.getChannel(0).setLoopMode(LoopMode.DontLoop);
-                }
-            }
+            model.getGun().attack(Vector3f.ZERO, tpf);
         } else {
-            if (name.equals("swordStrike")) {
-               // model.getSword().attack(Vector3f.ZERO, tpf);
-                //get animation for sword strike
-                for (AnimControl animation : animationList) {
-                    if (!animation.getChannel(0).getAnimationName().equals("strike_sword")) {
-                        animation.getChannel(0).setAnim("strike_sword", 0.2f);
-                        animation.getChannel(0).setSpeed(1.0f);
-                        animation.getChannel(0).setLoopMode(LoopMode.DontLoop);
-                    }
-                }
-            }
+            //only listeners for this behaviour are gunFired and swordStrike
+            model.getSword().attack(Vector3f.ZERO, tpf);
         }
     }
 }

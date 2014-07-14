@@ -115,7 +115,7 @@ public class AIGameControl implements GameControl {
         
         //adding player
         Node playerNode = (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o");
-        Agent<AIModel> player = new Agent<AIModel>("player",playerNode);
+        Agent<AIModel> player = new Agent<AIModel>("Player",playerNode);
         AIModel model = new AIModel(player);
         player.setModel(model);
         model.setGraphicModel();
@@ -123,7 +123,7 @@ public class AIGameControl implements GameControl {
         
         AIGameSpatials.getInstance().attachCameraTo(player, Game.getInstance().getApp().getCamera());
         Game.getInstance().addAgent(player);
-        
+        int i = 1;
         for (Spatial sp : sceneBase.getChildren()) {
             if (sp.getName().indexOf("characterMan") == 0) {
                 //adding enemies to the game
@@ -131,7 +131,8 @@ public class AIGameControl implements GameControl {
                 Node enemyNode = (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o");
                 enemyNode.setLocalTransform(sp.getLocalTransform());
                 //creating agent
-                Agent<AIModel> enemyAgent = new Agent<AIModel>("Enemy", enemyNode);
+                Agent<AIModel> enemyAgent = new Agent<AIModel>("Enemy"+i, enemyNode);
+                i++;
                 //setting model
                 model = new AIModel(enemyAgent);
                 model.setViewDirection(enemyNode.getLocalRotation().mult(Vector3f.UNIT_Z).normalizeLocal());

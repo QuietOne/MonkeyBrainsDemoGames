@@ -30,34 +30,32 @@ import org.aitest.ai.control.AIGameControl;
 public class Bullet extends AbstractBullet {
 
     private Vector3f vecMove, bornPlace, contactPoint;
-    private boolean work;
     private float bulletLength;
-    private float hit;
+    private float bulletPathLength;
     private Spatial spToKill;
     private Application app;
     private Geometry geoRay;
 
-    public Bullet(AbstractWeapon weapon, Vector3f bornPlace) {
+    public Bullet(AbstractWeapon weapon, Vector3f origin) {
         super(weapon, AIGameSpatials.getInstance().getBulletSpatial());
-        
+
         Spatial agentSpatial = weapon.getAgent().getSpatial();
         spatial.setLocalRotation(agentSpatial.getLocalRotation().clone());
         spatial.setLocalTranslation(((AIModel) weapon.getAgent().getModel()).getSpatialTranslation((Geometry) spatial));
         spatial.addControl(this);
         //do I need more information in spatial?
-        spatial.setUserData("Type", "Bullet");
+//        spatial.setUserData("Type", "Bullet");
 
-        this.bornPlace = bornPlace.clone();
+        bornPlace = new Vector3f(origin);
         this.app = Game.getInstance().getApp();
 
-        hit = 1000f;
+        bulletPathLength = weapon.getMaxAttackRange();
 
         vecMove = spatial.getLocalRotation().mult(Vector3f.UNIT_Z).normalizeLocal().mult(4f);
         bulletLength = 70f;
-        work = true;
 
-        Vector3f vecStart = this.bornPlace;
-        Vector3f vecEnd = this.bornPlace.add(spatial.getLocalRotation().mult(Vector3f.UNIT_Z).normalizeLocal().mult(bulletLength));
+        Vector3f vecStart = bornPlace;
+        Vector3f vecEnd = bornPlace.add(spatial.getLocalRotation().mult(Vector3f.UNIT_Z).normalizeLocal().mult(bulletLength));
 
         BulletAppState bulState = this.app.getStateManager().getState(BulletAppState.class);
         List<PhysicsRayTestResult> rayTest = bulState.getPhysicsSpace().rayTest(vecStart, vecEnd);
@@ -69,18 +67,24 @@ public class Bullet extends AbstractBullet {
                 Spatial spThis = (Spatial) collisionObject.getUserObject();
 
                 // Get the Enemy to skill
-                if (fl < hit && spThis.getControl(GhostControl.class) == null) {
-                    hit = fl;
+                if (fl < bulletPathLength && spThis.getControl(GhostControl.class) == null) {
+                    bulletPathLength = fl;
                     spToKill = spThis;
                 }
             }
 
             if (spToKill != null) {
-                contactPoint = vecStart.clone().interpolate(vecEnd, hit);
+                contactPoint = vecStart.clone().interpolate(vecEnd, bulletPathLength);
                 // set destruction
                 if (spToKill.getControl(AIModel.class) != null) {
                     AIModel model = spToKill.getControl(AIModel.class);
-                    Game.getInstance().agentAttack(weapon.getAgent(), model.getAgent(), weapon);
+                    if (!weapon.getAgent().equals(model.getAgent())) {
+                        Game.getInstance().agentAttack(weapon.getAgent(), model.getAgent(), weapon);
+                        if (!model.getAgent().isEnabled()) {
+                            //for some weird reason explosion is where agent died
+                        }
+                    }
+
                 }
             }
         }
@@ -105,7 +109,6 @@ public class Bullet extends AbstractBullet {
             geoRay.removeFromParent();
             geoRay = null;
         }
-        work = false;
         spatial.removeFromParent();
         spatial.removeControl(this);
         spatial = null;
@@ -113,32 +116,31 @@ public class Bullet extends AbstractBullet {
 
     @Override
     protected void controlUpdate(float tpf) {
-        // Update only for fixed rate
+        //update only for fixed rate
         if (app.getStateManager().getState(AIGameUpdateManager.class).IsUpdate()) {
-
-            if (work) {
-                float distance = bornPlace.distance(spatial.getLocalTranslation());
-
-                if (contactPoint != null) {
-                    float contactPointDistance = bornPlace.distance(contactPoint);
-
-                    if (distance >= contactPointDistance
-                            || distance + vecMove.length() > contactPointDistance) {
-                        Node nd = new Node("expl");
-                        nd.addControl(new ExplosionControl(contactPoint, nd, app));
-                        Node root = (Node) app.getViewPort().getScenes().get(0);
-                        root.attachChild(nd);
-                        destroy();
-                        return;
-                    }
-                }
-
-                if (distance >= bulletLength || distance + vecMove.length() > bulletLength) {
-                    destroy();
+            //calculate distance
+            float distance = bornPlace.distance(spatial.getLocalTranslation());
+            //is this the place of destrucion defined
+            if (contactPoint != null) {
+                float contactPointDistance = bornPlace.distance(contactPoint);
+                if (distance >= contactPointDistance
+                        || distance + vecMove.length() > contactPointDistance) {
+                    //now is time for explosion
+                    Node nd = new Node("expl");
+                    nd.addControl(new ExplosionControl(contactPoint, nd, app));
+                    Game.getInstance().getRootNode().attachChild(nd);
+                    //destroy();
+                    Game.getInstance().removeGameObject(this);
                     return;
                 }
-                spatial.move(vecMove);
             }
+
+            if (distance >= bulletLength || distance + vecMove.length() > bulletLength) {
+                //destroy();
+                Game.getInstance().removeGameObject(this);
+                return;
+            }
+            spatial.move(vecMove);
         }
     }
 

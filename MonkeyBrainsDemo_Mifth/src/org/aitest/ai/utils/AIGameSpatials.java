@@ -34,18 +34,11 @@ public class AIGameSpatials {
     private AssetManager assetManager;
 
     private AIGameSpatials() {
+        assetManager = Game.getInstance().getApp().getAssetManager();
     }
 
     public static AIGameSpatials getInstance() {
         return AIGameSpatialHolder.INSTANCE;
-    }
-
-    public AssetManager getAssetManager() {
-        return assetManager;
-    }
-
-    public void setAssetManager(AssetManager assetManager) {
-        this.assetManager = assetManager;
     }
 
     private static class AIGameSpatialHolder {
@@ -101,12 +94,12 @@ public class AIGameSpatials {
                     //get skeleton control
                     SkeletonControl skeletonControl = spatialPart.getControl(SkeletonControl.class);
                     // PERFORMANCE IS MUCH MUCH BETTER WITH HW SKINNING
-                    skeletonControl.setHardwareSkinningPreferred(true); 
+                    skeletonControl.setHardwareSkinningPreferred(true);
 
                     if (((AIModel) agent.getModel()).getSword().getSpatial() == null) {
-                        createSword(agent, skeletonControl,((AIModel) agent.getModel()).getSword().getName());
+                        createSword(agent, skeletonControl, ((AIModel) agent.getModel()).getSword().getName());
                     }
-                    
+
                     // return animation list?
                     if (!((AIModel) agent.getModel()).getAnimationList().contains(animation)) {
                         AnimChannel aniChannel = animation.createChannel();

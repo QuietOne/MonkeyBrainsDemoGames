@@ -38,6 +38,7 @@ public class PlayerMainBehaviour extends Behaviour {
     protected void controlUpdate(float tpf) {
         //decreasing timer for moving
         moveBehaviour.update(tpf);
+        attackBehaviour.update(tpf);
     }
 
     @Override
