@@ -102,16 +102,7 @@ public class Bullet extends AbstractBullet {
             Node root = (Node) this.app.getViewPort().getScenes().get(0);
             root.attachChild(geoRay);
         }
-    }
-
-    protected void destroy() {
-        if (geoRay != null) {
-            geoRay.removeFromParent();
-            geoRay = null;
-        }
-        spatial.removeFromParent();
-        spatial.removeControl(this);
-        spatial = null;
+        Game.getInstance().getRootNode().attachChild(spatial);
     }
 
     @Override
@@ -129,14 +120,20 @@ public class Bullet extends AbstractBullet {
                     Node nd = new Node("expl");
                     nd.addControl(new ExplosionControl(contactPoint, nd, app));
                     Game.getInstance().getRootNode().attachChild(nd);
-                    //destroy();
+                    if (geoRay != null) {
+                        geoRay.removeFromParent();
+                        geoRay = null;
+                    }
                     Game.getInstance().removeGameObject(this);
                     return;
                 }
             }
 
             if (distance >= bulletLength || distance + vecMove.length() > bulletLength) {
-                //destroy();
+                if (geoRay != null) {
+                    geoRay.removeFromParent();
+                    geoRay = null;
+                }
                 Game.getInstance().removeGameObject(this);
                 return;
             }
