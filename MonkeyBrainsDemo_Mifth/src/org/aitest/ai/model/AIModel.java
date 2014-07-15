@@ -55,6 +55,7 @@ public class AIModel extends BetterCharacterControl {
         agent.setMass(mass);
         agent.setMoveSpeed(7.0f);
         agent.setRotationSpeed(1.0f);
+        agent.setMaxForce(3);
         sword = new Sword(agent);
         gun = new Gun(agent);
 

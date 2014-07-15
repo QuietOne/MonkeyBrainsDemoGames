@@ -32,7 +32,7 @@ public class AIMainBehaviour extends Behaviour{
     protected void controlUpdate(float tpf) {
         /*lookBehaviour.update(tpf);
         attackBehaviour.update(tpf);
-        if (seekBehaviour.getTarget()!=null) {
+        if (seekBehaviour.getTarget()!=null && seekBehaviour.getTarget().isEnabled()) {
             seekBehaviour.update(tpf);
         } else {
             wanderBehaviour.update(tpf);

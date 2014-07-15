@@ -135,6 +135,8 @@ public class AIGameControl implements GameControl {
                 model = new AIModel(enemyAgent);
                 model.setViewDirection(enemyNode.getLocalRotation().mult(Vector3f.UNIT_Z).normalizeLocal());
                 enemyAgent.setModel(model);
+                //setting viewing distance of agent
+                enemyAgent.setVisibilityRange(1200f);
                 model.setGraphicModel();
                 enemyAgent.setMainBehaviour(new AIMainBehaviour(enemyAgent));
                 //adding it to game
