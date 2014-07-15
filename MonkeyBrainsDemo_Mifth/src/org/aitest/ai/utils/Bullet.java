@@ -93,6 +93,8 @@ public class Bullet extends AbstractBullet {
                     if (!model.getAgent().isEnabled()) {
                         //remove agent from physic space
                         app.getStateManager().getState(BulletAppState.class).getPhysicsSpace().remove(model);
+                        //remove agent's sword from physics space
+                        app.getStateManager().getState(BulletAppState.class).getPhysicsSpace().remove(model.getSword().getSpatial());
                     }
 
                 }

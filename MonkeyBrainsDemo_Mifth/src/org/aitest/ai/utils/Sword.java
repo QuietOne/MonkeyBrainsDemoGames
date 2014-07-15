@@ -6,6 +6,7 @@ import com.jme3.ai.agents.util.AbstractWeapon;
 import com.jme3.ai.agents.util.control.Game;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.LoopMode;
+import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.control.GhostControl;
 import com.jme3.math.Vector3f;
@@ -42,6 +43,12 @@ public class Sword extends AbstractWeapon {
             //if somebody is being hit and that one is not me
             if (aiModel != null && !aiModel.equals((AIModel) agent.getModel())) {
                 Game.getInstance().agentAttack(agent, aiModel.getAgent(), this);
+                if (!aiModel.getAgent().isEnabled()) {
+                        //remove agent from physic space
+                        Game.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().remove(aiModel);
+                        //remove agent's sword from physics space
+                        Game.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().remove(aiModel.getSword().getSpatial());
+                    }
                 break;
             }
         }
