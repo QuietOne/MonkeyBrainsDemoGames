@@ -29,16 +29,12 @@ public class PlayerMainBehaviour extends Behaviour {
         ((AIGameControl) Game.getInstance().getGameControl()).addGunAttackListener(attackBehaviour);
         ((AIGameControl) Game.getInstance().getGameControl()).addSwordAttackListener(attackBehaviour);
         ((AIGameControl) Game.getInstance().getGameControl()).addMoveListener(moveBehaviour);
-        //this has been added, so the agent will stop moving if he is attacking
-        ((AIGameControl) Game.getInstance().getGameControl()).addGunAttackListener(moveBehaviour);
-        ((AIGameControl) Game.getInstance().getGameControl()).addSwordAttackListener(moveBehaviour);
     }
 
     @Override
     protected void controlUpdate(float tpf) {
-        //decreasing timer for moving
-        moveBehaviour.update(tpf);
         attackBehaviour.update(tpf);
+        //moving is updated only by inputs
     }
 
     @Override

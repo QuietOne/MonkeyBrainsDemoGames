@@ -1,6 +1,7 @@
 package org.aitest.ai.control;
 
 import com.jme3.ai.agents.Agent;
+import com.jme3.ai.agents.Team;
 import com.jme3.ai.agents.util.GameObject;
 import com.jme3.ai.agents.util.control.Game;
 import com.jme3.ai.agents.util.control.GameControl;
@@ -13,7 +14,7 @@ import com.jme3.input.FlyByCamera;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
-import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.controls.InputListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.math.Quaternion;
@@ -61,15 +62,15 @@ public class AIGameControl implements GameControl {
         inputManager.addMapping("right", new KeyTrigger(KeyInput.KEY_D));
     }
 
-    public void addMoveListener(AnalogListener behaviour) {
+    public void addMoveListener(InputListener behaviour) {
         inputManager.addListener(behaviour, "forward", "left", "backward", "right");
     }
 
-    public void addGunAttackListener(AnalogListener behaviour) {
+    public void addGunAttackListener(InputListener behaviour) {
         inputManager.addListener(behaviour, "gunFired");
     }
 
-    public void addSwordAttackListener(AnalogListener behaviour) {
+    public void addSwordAttackListener(InputListener behaviour) {
         inputManager.addListener(behaviour, "swordStrike");
     }
 
@@ -108,19 +109,20 @@ public class AIGameControl implements GameControl {
         //for this game it is implemented in Blender
     }
 
-    public void loadScene() { 
+    public void loadScene() {
         //loading scene
-        Node sceneBase = (Node) dasm.loadModel("Models/Demo_01/Scene_01/scene_01.blend");        
+        Node sceneBase = (Node) dasm.loadModel("Models/Demo_01/Scene_01/scene_01.blend");
         //adding player
         Node playerNode = (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o");
-        Agent<AIModel> player = new Agent<AIModel>("Player",playerNode);
+        Agent<AIModel> player = new Agent<AIModel>("Player", playerNode);
         AIModel model = new AIModel(player);
         player.setModel(model);
         model.setGraphicModel();
         player.setMainBehaviour(new PlayerMainBehaviour(player));
-        
+
         AIGameSpatials.getInstance().attachCameraTo(player, Game.getInstance().getApp().getCamera());
         Game.getInstance().addAgent(player);
+        Team team = new Team("Enemy");
         int i = 1;
         for (Spatial sp : sceneBase.getChildren()) {
             if (sp.getName().indexOf("characterMan") == 0) {
@@ -129,7 +131,7 @@ public class AIGameControl implements GameControl {
                 Node enemyNode = (Node) dasm.loadModel("Models/Demo_01/characters/character_01/character_01.j3o");
                 enemyNode.setLocalTransform(sp.getLocalTransform());
                 //creating agent
-                Agent<AIModel> enemyAgent = new Agent<AIModel>("Enemy"+i, enemyNode);
+                Agent<AIModel> enemyAgent = new Agent<AIModel>("Enemy" + i, enemyNode);
                 i++;
                 //setting model
                 model = new AIModel(enemyAgent);
@@ -139,9 +141,10 @@ public class AIGameControl implements GameControl {
                 enemyAgent.setVisibilityRange(1200f);
                 model.setGraphicModel();
                 enemyAgent.setMainBehaviour(new AIMainBehaviour(enemyAgent));
+                enemyAgent.setTeam(team);
                 //adding it to game
                 Game.getInstance().addAgent(enemyAgent);
-                
+
             } else {
                 //adding static objects
                 CollisionShape cShape = CollisionShapeFactory.createMeshShape(sp);

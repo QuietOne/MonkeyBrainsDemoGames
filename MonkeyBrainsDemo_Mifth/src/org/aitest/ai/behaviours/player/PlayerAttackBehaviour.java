@@ -3,7 +3,6 @@ package org.aitest.ai.behaviours.player;
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.behaviours.Behaviour;
 import com.jme3.animation.AnimControl;
-import com.jme3.animation.LoopMode;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -42,8 +41,8 @@ public class PlayerAttackBehaviour extends Behaviour implements AnalogListener {
     public void onAnalog(String name, float value, float tpf) {
         if (name.equals("gunFired")) {
             model.getGun().attack(Vector3f.ZERO, tpf);
-        } else {
-            //only listeners for this behaviour are gunFired and swordStrike
+        }
+        if (name.equals("swordStrike")) {
             model.getSword().attack(Vector3f.ZERO, tpf);
         }
     }

@@ -52,7 +52,7 @@ public class Bullet extends AbstractBullet {
         spatial.setLocalTranslation(((AIModel) weapon.getAgent().getModel()).getSpatialTranslation((Geometry) spatial));
         spatial.addControl(this);
 
-        bornPlace = new Vector3f(origin);
+        bornPlace = new Vector3f(origin).setY(1f);
         this.app = Game.getInstance().getApp();
 
         bulletPathLength = weapon.getMaxAttackRange();
