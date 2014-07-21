@@ -54,24 +54,20 @@ public class RobotFightGame extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        //defining rootNode for game processing
-        game.setRootNode(rootNode);
-        //defining input manager
-        game.setInputManager(inputManager);
+        //defining app for game processing
+        game.setApp(this);
         //setting game Genre
         game.setGameControl(new FPS());
         //registering input
-        game.getGameControl().loadInputManagerMapping();
+        game.getGameControl().setInputManagerMapping();
         game.setFriendlyFire(false);
 
         //DefinedSpatials for graphics for this game
         RoboFightSpatials.material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         RoboFightSpatials.initializeFloor(terrainSize);
         viewPort.addProcessor(RoboFightSpatials.initializeBloom(assetManager));
-        flyCam.setMoveSpeed(20);
-        //disable the default flyby cam
-        flyCam.setEnabled(false);
-
+        
+        game.getGameControl().setFlyCameraSettings(flyCam);
 
         //initialization of Agents with their names and spatials
         player = new Agent("Player", RoboFightSpatials.initializeAgent("Player", ColorRGBA.Gray));
@@ -93,7 +89,6 @@ public class RobotFightGame extends SimpleApplication {
         for (int i = 0; i < enemies.length; i++) {
             game.getGameControl().spawn(enemies[i], new Vector3f(terrainSize * 2 - 5, 0, terrainSize * 2 - 5),
                     new Vector3f(-terrainSize * 2 + 5, 0, -terrainSize * 2 + 5));
-
         }
 
         //setting moveSpeed, rotationSpeed, mass
@@ -108,8 +103,8 @@ public class RobotFightGame extends SimpleApplication {
 
         //giving them weapons
         //player.setWeapon(new Knife("knife", player));
-        player.setWeapon(new Cannon("cannon", player));
-        //player.setWeapon(new LaserWeapon("laser", player));
+        //player.setWeapon(new Cannon("cannon", player));
+        player.setWeapon(new LaserWeapon("laser", player));
         for (int i = 0; i < enemies.length; i++) {
             if (i % 3 == 0) {
                 enemies[i].setWeapon(new LaserWeapon("laser", enemies[i]));

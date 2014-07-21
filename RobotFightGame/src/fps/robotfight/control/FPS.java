@@ -6,6 +6,7 @@ import com.jme3.ai.agents.behaviours.npc.SimpleAttackBehaviour;
 import com.jme3.ai.agents.util.GameObject;
 import com.jme3.ai.agents.util.control.Game;
 import com.jme3.ai.agents.util.control.GameControl;
+import com.jme3.input.FlyByCamera;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -15,6 +16,7 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import java.util.HashMap;
@@ -32,10 +34,10 @@ public class FPS implements GameControl {
 
     public FPS() {
         game = Game.getInstance();
-        inputManager = game.getInputManager();
+        inputManager = game.getApp().getInputManager();
     }
 
-    public void loadInputManagerMapping() {
+    public void setInputManagerMapping() {
         inputManager.addMapping("moveForward", new KeyTrigger(KeyInput.KEY_UP), new KeyTrigger(KeyInput.KEY_W));
         inputManager.addMapping("moveBackward", new KeyTrigger(KeyInput.KEY_DOWN), new KeyTrigger(KeyInput.KEY_S));
         inputManager.addMapping("moveRight", new KeyTrigger(KeyInput.KEY_D), new KeyTrigger(KeyInput.KEY_RIGHT));
@@ -46,7 +48,6 @@ public class FPS implements GameControl {
     public void addMoveListener(Agent agent, AnalogListener behaviour) {
         inputManager.addListener(behaviour, "moveForward", "moveBackward", "moveRight", "moveLeft");
     }
-
 
     public void addAttackListener(Agent agent, ActionListener behaviour) {
         inputManager.addListener(behaviour, "Shoot");
@@ -182,4 +183,13 @@ public class FPS implements GameControl {
         }
     }
 
+    public void setCameraSettings(Camera camera) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void setFlyCameraSettings(FlyByCamera flyCam) {
+        flyCam.setMoveSpeed(20);
+        //disable the default flyby cam
+        flyCam.setEnabled(false);
+    }
 }
