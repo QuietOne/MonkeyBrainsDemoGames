@@ -1,6 +1,6 @@
 //Copyright (c) 2014, Jesús Martín Berlanga. All rights reserved. Distributed under the BSD licence. Read "com/jme3/ai/license.txt".
 
-package steeringDemos.demos;
+package steeringDemos.simpleExamples;
 
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.util.control.Game;
@@ -10,12 +10,11 @@ import com.jme3.math.Vector3f;
 import com.jme3.material.Material;
 import com.jme3.scene.Spatial;
 
-import com.jme3.ai.agents.behaviours.npc.steering.SeparationBehaviour;
 import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.AlignmentBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.SeparationBehaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.UnalignedCollisionAvoidanceBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.WanderBehaviour;
-import com.jme3.math.FastMath;
 import java.util.ArrayList;
 
 import steeringDemos.control.CustomSteerControl;
@@ -24,19 +23,19 @@ import java.util.List;
 import java.util.Arrays;
 
 /**
- * AI Steer Test - Testing the cohesion behaviour
+ * AI Steer Test - Testing the unaligned collision avoidance behaviour
  *
  * @author Jesús Martín Berlanga
- * @version 1.2
+ * @version 1.0
  */
-public class AlignmentDemo extends SimpleApplication {
+public class UnalignedCollisionAvoidanceTest extends SimpleApplication {
 
     private Game game = Game.getInstance(); //creating game
     //TEST SETTINGS - START
     private final String BOID_MODEL_NAME = "Models/boid.j3o";
     private final String BOID_MATERIAL_NAME = "Common/MatDefs/Misc/Unshaded.j3md";
 
-    private final int NUMBER_NEIGHBOURS = 250;
+    private final int NUMBER_NEIGHBOURS = 200;
     private final ColorRGBA NEIGHBOURS_COLOR = ColorRGBA.Blue;
     private final float NEIGHBOURS_MOVE_SPEED = 0.96f;
     private final float NEIGHBOURS_ROTATION_SPEED = 30f;
@@ -45,7 +44,7 @@ public class AlignmentDemo extends SimpleApplication {
     //TEST SETTINGS - END
 
     public static void main(String[] args) {
-        AlignmentDemo app = new AlignmentDemo();
+        UnalignedCollisionAvoidanceTest app = new UnalignedCollisionAvoidanceTest();
         app.start();
     }
 
@@ -53,7 +52,7 @@ public class AlignmentDemo extends SimpleApplication {
     public void simpleInitApp() {
         //defining rootNode for game processing
         game.setApp(this);
-        game.setGameControl(new CustomSteerControl(50f));
+        game.setGameControl(new CustomSteerControl(5f));
 
         this.setupCamera();
 
@@ -64,7 +63,7 @@ public class AlignmentDemo extends SimpleApplication {
         
         for (int i = 0; i < this.NUMBER_NEIGHBOURS; i++) {
             boids[i] = this.createBoid("boid " + i, this.NEIGHBOURS_COLOR);
-            boids[i].setRadius(0.1f);
+            boids[i].setRadius(0.25f);
             game.addAgent(boids[i]); //Add the neighbours to the game
             this.setStats(boids[i], this.NEIGHBOURS_MOVE_SPEED,
                     this.NEIGHBOURS_ROTATION_SPEED, this.NEIGHBOURS_MASS,
@@ -78,26 +77,31 @@ public class AlignmentDemo extends SimpleApplication {
         SimpleMainBehaviour[] neighboursMainBehaviour = new SimpleMainBehaviour[boids.length];
 
         SeparationBehaviour[] separation = new SeparationBehaviour[boids.length];
-        AlignmentBehaviour[] alignment = new AlignmentBehaviour[boids.length];
+        //CohesionBehaviour[] cohesion = new CohesionBehaviour[boids.length];
         WanderBehaviour[] wander = new WanderBehaviour[boids.length];
+        UnalignedCollisionAvoidanceBehaviour[] avoid = new UnalignedCollisionAvoidanceBehaviour[boids.length];
 
         for (int i = 0; i < boids.length; i++) {
             neighboursMainBehaviour[i] = new SimpleMainBehaviour(boids[i]);
 
 
-            separation[i] = new SeparationBehaviour(boids[i], obstacles);
-            alignment[i] = new AlignmentBehaviour(boids[i], obstacles, 5f,  FastMath.PI / 4);
+            separation[i] = new SeparationBehaviour(boids[i], obstacles, 1);
+            //cohesion[i] = new CohesionBehaviour(boids[i], obstacles, 5f,  FastMath.PI / 4);
+            avoid[i] = new UnalignedCollisionAvoidanceBehaviour(boids[i], obstacles, 1, 3);
             wander[i] = new WanderBehaviour(boids[i]);
-            wander[i].setArea(Vector3f.ZERO, new Vector3f(75, 75, 75));
+            wander[i].setArea(Vector3f.ZERO, new Vector3f(80, 80, 80));
+            wander[i].setTimeInterval(10);
 
-            separation[i].setupStrengthControl(0.85f);
-            alignment[i].setupStrengthControl(2.15f);
-            wander[i].setupStrengthControl(0.35f);
-            
+            //cohesion[i].setupStrengthControl(2.15f);
+            avoid[i].setupStrengthControl(1.75f);
+            wander[i].setupStrengthControl(1.0f);
+            separation[i].setupStrengthControl(0.1f);
 
             CompoundSteeringBehaviour steer = new CompoundSteeringBehaviour(boids[i]);
 
-           steer.addSteerBehaviour(alignment[i]);
+           //steer.addSteerBehaviour(cohesion[i]);
+          
+           steer.addSteerBehaviour(avoid[i]);
            steer.addSteerBehaviour(separation[i]);
            steer.addSteerBehaviour(wander[i]);
            neighboursMainBehaviour[i].addBehaviour(steer);
@@ -126,7 +130,6 @@ public class AlignmentDemo extends SimpleApplication {
         Material mat = new Material(assetManager, this.BOID_MATERIAL_NAME);
         mat.setColor("Color", color);
         boidSpatial.setMaterial(mat);
-
         return new Agent(name, boidSpatial);
     }
 

@@ -21,7 +21,7 @@ import steeringDemos.control.CustomSteerControl;
  * Demo for the slow behaviour
  *
  * @author Jesús Martín Berlanga
- * @version 1.2
+ * @version 1.3
  */
 public class SlowDemo extends SimpleApplication {
     
@@ -43,10 +43,8 @@ public class SlowDemo extends SimpleApplication {
     
     @Override
     public void simpleInitApp() {
-        game.setRootNode(rootNode);
-        game.setInputManager(inputManager);
-        game.setGameControl(new CustomSteerControl(50f));
-        game.getGameControl().loadInputManagerMapping();
+        game.setApp(this);
+        game.setGameControl(new CustomSteerControl(5f));
         this.setupCamera();
         
         

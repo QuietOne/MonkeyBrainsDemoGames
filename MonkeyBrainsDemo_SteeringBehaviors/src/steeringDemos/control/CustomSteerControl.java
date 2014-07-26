@@ -6,18 +6,23 @@ import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.util.GameObject;
 import com.jme3.ai.agents.util.control.Game;
 import com.jme3.ai.agents.util.control.GameControl;
+import com.jme3.input.FlyByCamera;
 //import com.jme3.input.InputManager;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 
 /**
  *
  * Custom steer control.
  * 
  * @author Jesús Martín Berlanga
- * @version 1.0
+ * @version 1.1
  */
 public class CustomSteerControl implements GameControl {
     
+    public void setInputManagerMapping() {}
+    public void setCameraSettings(Camera cam) {}
+    public void setFlyCameraSettings(FlyByCamera flyCam) {}
     
     private float aleatoryFactor;
     private Game game;

@@ -11,20 +11,25 @@ import com.jme3.math.Vector3f;
 import com.jme3.material.Material;
 import com.jme3.scene.Spatial;
 
-import com.jme3.ai.agents.behaviours.npc.steering.SeekBehaviour;
 import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.EvadeBehaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.MoveBehaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.UnalignedCollisionAvoidanceBehaviour;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.shape.Sphere;
+import java.util.ArrayList;
+import java.util.List;
 
 
 import steeringDemos.control.CustomSteerControl;
 
 /**
- * AI Steer Test - Testing the Evade behaviour
+ * AI Steer Test - Testing the unalligned avoidance behaviour
  *
  * @author Jesús Martín Berlanga
- * @version 1.2
+ * @version 1.0
  */
-public class EvadeTest extends SimpleApplication {
+public class UnallignedCollisionAvoidanceTest2 extends SimpleApplication {
 
     private Game game = Game.getInstance(); //creating game
     //TEST SETTINGS - START
@@ -35,7 +40,7 @@ public class EvadeTest extends SimpleApplication {
     private final float TARGET_ROTATION_SPEED = 30;
     private final float TARGET_MASS = 50;
     private final float TARGET_MAX_FORCE = 20;
-    private final int NUMBER_NEIGHBOURS = 20;
+    private final int NUMBER_NEIGHBOURS = 1000;
     private final ColorRGBA NEIGHBOURS_COLOR = ColorRGBA.Blue;
     private final float NEIGHBOURS_MOVE_SPEED = 0.99f;
     private final float NEIGHBOURS_ROTATION_SPEED = 30;
@@ -44,7 +49,7 @@ public class EvadeTest extends SimpleApplication {
     //TEST SETTINGS - END
 
     public static void main(String[] args) {
-        EvadeTest app = new EvadeTest();
+        UnallignedCollisionAvoidanceTest2 app = new UnallignedCollisionAvoidanceTest2();
         app.start();
     }
 
@@ -56,48 +61,42 @@ public class EvadeTest extends SimpleApplication {
 
         this.setupCamera();
 
-        Vector3f[] spawnArea = null;
+        Agent agent = this.createBoid("Target", ColorRGBA.Blue);
+        agent.setRadius(0.1f);
 
-        Agent target = this.createBoid("Target", this.TARGET_COLOR);
-
-        game.addAgent(target); //Add the target to the game
-        game.getGameControl().spawn(target, new Vector3f());
-        this.setStats(target, this.TARGET_MOVE_SPEED, this.TARGET_ROTATION_SPEED,
+        game.addAgent(agent); //Add the target to the game
+        this.setStats(agent, this.TARGET_MOVE_SPEED, this.TARGET_ROTATION_SPEED,
                 this.TARGET_MASS, this.TARGET_MAX_FORCE);
-
-
-        Agent[] neighbours = new Agent[this.NUMBER_NEIGHBOURS];
-
-        for (int i = 0; i < this.NUMBER_NEIGHBOURS; i++) {
-            neighbours[i] = this.createBoid("Neighbour " + i, this.NEIGHBOURS_COLOR);
-            game.addAgent(neighbours[i]); //Add the neighbours to the game
-            this.setStats(neighbours[i], this.NEIGHBOURS_MOVE_SPEED,
+        game.getGameControl().spawn(agent, new Vector3f());
+        
+            Agent customNeigh1 = this.createSphere("customNeigh_1", ColorRGBA.Orange);
+            customNeigh1.setRadius(1f);
+            
+            game.addAgent(customNeigh1); //Add the neighbours to the game
+            this.setStats(customNeigh1, this.NEIGHBOURS_MOVE_SPEED,
                     this.NEIGHBOURS_ROTATION_SPEED, this.NEIGHBOURS_MASS,
                     this.NEIGHBOURS_MAX_FORCE);
-            game.getGameControl().spawn(neighbours[i], spawnArea);
-        }
-
-
-
-
-        SimpleMainBehaviour[] neighboursMainBehaviour = new SimpleMainBehaviour[neighbours.length];
-
-        for (int i = 0; i < neighbours.length; i++) {
-            neighboursMainBehaviour[i] = new SimpleMainBehaviour(neighbours[i]);
-            neighboursMainBehaviour[i].addBehaviour(new SeekBehaviour(neighbours[i], target));
-            neighbours[i].setMainBehaviour(neighboursMainBehaviour[i]);
-        }
-
-        SimpleMainBehaviour evaderMainBehaviour = new SimpleMainBehaviour(target);
-        BalancedCompoundSteeringBehaviour balancedCompoundSteeringBehaviour = new BalancedCompoundSteeringBehaviour(target);
+            game.getGameControl().spawn(customNeigh1, new Vector3f(16,0,0));
+            
+            SimpleMainBehaviour mainB = new SimpleMainBehaviour(customNeigh1);
+            customNeigh1.setMainBehaviour(mainB);
         
-        for (int i = 0; i < neighbours.length; i++) {
-            EvadeBehaviour evadeBehavior = new EvadeBehaviour(target, neighbours[i]);
-            balancedCompoundSteeringBehaviour.addSteerBehaviour(evadeBehavior);
-        }
-        evaderMainBehaviour.addBehaviour(balancedCompoundSteeringBehaviour);
-        target.setMainBehaviour(evaderMainBehaviour);
+        List<Agent> obstacles = new ArrayList<Agent>();
+        obstacles.add(customNeigh1); 
 
+        //ADD OBSTACLE AVOIDANCE TO THE TARGET
+        
+        CompoundSteeringBehaviour steer = new BalancedCompoundSteeringBehaviour(agent);
+        SimpleMainBehaviour targetMainB = new SimpleMainBehaviour(agent);
+        MoveBehaviour move = new MoveBehaviour(agent);
+        move.setMoveDirection(new Vector3f(1,0,0));
+        
+        steer.addSteerBehaviour(move);
+            UnalignedCollisionAvoidanceBehaviour avoid = new UnalignedCollisionAvoidanceBehaviour(agent, obstacles, 5f, 10);
+                    avoid.setupStrengthControl(1f);
+        steer.addSteerBehaviour(avoid);
+        targetMainB.addBehaviour(steer);
+        agent.setMainBehaviour(targetMainB);
 
         game.start();
     }
@@ -107,7 +106,7 @@ public class EvadeTest extends SimpleApplication {
         getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_X);
         getFlyByCamera().setMoveSpeed(50);
 
-        flyCam.setDragToRotate(true);
+        //flyCam.setDragToRotate(true);
         //flyCam.setEnabled(false); 
     }
 
@@ -121,6 +120,21 @@ public class EvadeTest extends SimpleApplication {
         boidSpatial.setMaterial(mat);
 
         return new Agent(name, boidSpatial);
+    }
+    
+    //Create a sphere
+    private Agent createSphere(String name, ColorRGBA color) {
+        Sphere sphere = new Sphere(10, 10, 8f);
+        Geometry sphereG = new Geometry("Sphere Geometry", sphere);
+        Spatial spatial = sphereG;
+        
+        spatial.setLocalScale(0.1f); //Resize0
+        
+        Material mat = new Material(assetManager, this.BOID_MATERIAL_NAME);
+        mat.setColor("Color", color);
+        spatial.setMaterial(mat);
+        
+        return new Agent(name, spatial);
     }
 
     //Setup the stats for an agent

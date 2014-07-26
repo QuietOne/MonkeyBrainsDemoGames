@@ -36,7 +36,7 @@ import java.util.Arrays;
  * AI Steer Test - Testing the pursuit and separation behaviours
  *
  * @author Jesús Martín Berlanga
- * @version 1.2
+ * @version 1.3
  */
 public class PursuitDemo extends SimpleApplication {
     
@@ -126,11 +126,8 @@ public class PursuitDemo extends SimpleApplication {
         
         
         //defining rootNode for game processing
-        game.setRootNode(rootNode);
-        
-        game.setInputManager(inputManager);
+        game.setApp(this);
         game.setGameControl(new CustomSteerControl(5f));
-        game.getGameControl().loadInputManagerMapping();
         
         this.setupCamera();
         

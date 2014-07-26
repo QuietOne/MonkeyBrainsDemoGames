@@ -37,7 +37,7 @@ import java.util.Arrays;
  * AI Steer Test - Testing the leader following and separation behaviours
  *
  * @author Jesús Martín Berlanga
- * @version 1.5
+ * @version 1.6
  */
 public class LeaderFollowingDemo extends SimpleApplication {
     
@@ -126,11 +126,8 @@ public class LeaderFollowingDemo extends SimpleApplication {
 
 
         //defining rootNode for game processing
-        game.setRootNode(rootNode);
-        
-        game.setInputManager(inputManager);
+        game.setApp(this);
         game.setGameControl(new CustomSteerControl(5f));
-        game.getGameControl().loadInputManagerMapping();
         
         this.setupCamera();
         

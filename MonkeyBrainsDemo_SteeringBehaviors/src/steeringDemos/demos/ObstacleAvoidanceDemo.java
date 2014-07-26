@@ -30,7 +30,7 @@ import steeringDemos.control.CustomSteerControl;
  * AI Steer Test - Testing the obstacle avoidance behaviour
  *
  * @author Jesús Martín Berlanga
- * @version 1.0
+ * @version 1.1
  */
 public class ObstacleAvoidanceDemo extends SimpleApplication {
 
@@ -43,7 +43,7 @@ public class ObstacleAvoidanceDemo extends SimpleApplication {
     private final float TARGET_ROTATION_SPEED = 30;
     private final float TARGET_MASS = 50;
     private final float TARGET_MAX_FORCE = 20;
-    private final int NUMBER_NEIGHBOURS = 75;
+    private final int NUMBER_NEIGHBOURS = 150;
     private final ColorRGBA NEIGHBOURS_COLOR = ColorRGBA.Blue;
     private final float NEIGHBOURS_MOVE_SPEED = 0.99f;
     private final float NEIGHBOURS_ROTATION_SPEED = 30;
@@ -63,18 +63,15 @@ public class ObstacleAvoidanceDemo extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         //defining rootNode for game processing
-        game.setRootNode(rootNode);
-
-        game.setInputManager(inputManager);
+        game.setApp(this);
         game.setGameControl(new CustomSteerControl(5.5f));
-        game.getGameControl().loadInputManagerMapping();
 
         this.setupCamera();
 
         Vector3f[] spawnArea = null;
 
         agent = this.createBoid("Target", ColorRGBA.Blue);
-        agent.setRadius(1.5f);
+        agent.setRadius(0.1f);
 
         game.addAgent(agent); //Add the target to the game
         this.setStats(agent, this.TARGET_MOVE_SPEED, this.TARGET_ROTATION_SPEED,
@@ -85,7 +82,7 @@ public class ObstacleAvoidanceDemo extends SimpleApplication {
 
         for (int i = 0; i < this.NUMBER_NEIGHBOURS; i++) {
             neighbours[i] = this.createSphere("neighbour_" + i, ColorRGBA.Orange, 3);
-            neighbours[i].setRadius(3f);
+            neighbours[i].setRadius(1f);
 
             game.addAgent(neighbours[i]); //Add the neighbours to the game
             this.setStats(neighbours[i], this.NEIGHBOURS_MOVE_SPEED,
@@ -120,8 +117,8 @@ public class ObstacleAvoidanceDemo extends SimpleApplication {
 
         SeekBehaviour seekSteer = new SeekBehaviour(agent, focus);
 
-        ObstacleAvoidanceBehaviour obstacleAvoidance = new ObstacleAvoidanceBehaviour(agent, obstacles, 1);
-        obstacleAvoidance.setupStrengthControl(0.65f);
+        ObstacleAvoidanceBehaviour obstacleAvoidance = new ObstacleAvoidanceBehaviour(agent, obstacles, 3, 15);
+        obstacleAvoidance.setupStrengthControl(10f);
 
         steer.addSteerBehaviour(seekSteer);
         steer.addSteerBehaviour(obstacleAvoidance);

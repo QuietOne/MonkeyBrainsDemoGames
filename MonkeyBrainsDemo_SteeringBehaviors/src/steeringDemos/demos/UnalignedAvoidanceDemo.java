@@ -1,5 +1,6 @@
 //Copyright (c) 2014, Jesús Martín Berlanga. All rights reserved. Distributed under the BSD licence. Read "com/jme3/ai/license.txt".
-package steeringDemos.simpleExamples;
+
+package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.behaviours.npc.steering.BalancedCompoundSteeringBehaviour;
@@ -12,24 +13,30 @@ import com.jme3.scene.Spatial;
 
 import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.ObstacleAvoidanceBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.WanderBehaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.MoveBehaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.SeekBehaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.SeparationBehaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.UnalignedCollisionAvoidanceBehaviour;
+import com.jme3.math.FastMath;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Sphere;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+import javax.swing.Timer;
 
 
 import steeringDemos.control.CustomSteerControl;
 
 /**
- * AI Steer Test - Testing the obstacle avoidance behaviour
+ * AI Steer Test - Unaligned avoidance demo
  *
  * @author Jesús Martín Berlanga
- * @version 1.1
+ * @version 1.0
  */
-public class ObstacleAvoidanceTest2 extends SimpleApplication {
+public class UnalignedAvoidanceDemo extends SimpleApplication {
 
     private Game game = Game.getInstance(); //creating game
     //TEST SETTINGS - START
@@ -40,7 +47,7 @@ public class ObstacleAvoidanceTest2 extends SimpleApplication {
     private final float TARGET_ROTATION_SPEED = 30;
     private final float TARGET_MASS = 50;
     private final float TARGET_MAX_FORCE = 20;
-    private final int NUMBER_NEIGHBOURS = 75;
+    private final int NUMBER_NEIGHBOURS = 150;
     private final ColorRGBA NEIGHBOURS_COLOR = ColorRGBA.Blue;
     private final float NEIGHBOURS_MOVE_SPEED = 0.99f;
     private final float NEIGHBOURS_ROTATION_SPEED = 30;
@@ -48,8 +55,27 @@ public class ObstacleAvoidanceTest2 extends SimpleApplication {
     private final float NEIGHBOURS_MAX_FORCE = 20;
     //TEST SETTINGS - END
 
+    private Agent agent;
+    private Agent focus;
+    private boolean positiveXSide = true;
+    
+    //ObstaclesMove
+    MoveBehaviour obstsaclesMoves[] = new MoveBehaviour[NUMBER_NEIGHBOURS];
+    
+    //Negate Direction Timer
+    private Timer iterationTimer;
+    
+    private java.awt.event.ActionListener negateMoveDir = new java.awt.event.ActionListener()
+    {
+        public void actionPerformed(ActionEvent event)
+        {
+            for(MoveBehaviour move : obstsaclesMoves)
+                move.setMoveDirection(move.getMoveDirection().negate());
+        }
+    };
+    
     public static void main(String[] args) {
-        ObstacleAvoidanceTest2 app = new ObstacleAvoidanceTest2();
+        UnalignedAvoidanceDemo app = new UnalignedAvoidanceDemo();
         app.start();
     }
 
@@ -57,14 +83,14 @@ public class ObstacleAvoidanceTest2 extends SimpleApplication {
     public void simpleInitApp() {
         //defining rootNode for game processing
         game.setApp(this);
-        game.setGameControl(new CustomSteerControl(5f));
+        game.setGameControl(new CustomSteerControl(4f));
 
         this.setupCamera();
 
         Vector3f[] spawnArea = null;
 
-        Agent agent = this.createBoid("Target", ColorRGBA.Blue);
-        agent.setRadius(1.5f);
+        agent = this.createBoid("Target", ColorRGBA.Blue);
+        agent.setRadius(0.11f);
 
         game.addAgent(agent); //Add the target to the game
         this.setStats(agent, this.TARGET_MOVE_SPEED, this.TARGET_ROTATION_SPEED,
@@ -72,20 +98,41 @@ public class ObstacleAvoidanceTest2 extends SimpleApplication {
         game.getGameControl().spawn(agent, new Vector3f());
 
         Agent[] neighbours = new Agent[this.NUMBER_NEIGHBOURS];
-
+        Random rand = FastMath.rand;
         for (int i = 0; i < this.NUMBER_NEIGHBOURS; i++) {
-            neighbours[i] = this.createSphere("neighbour_" + i, ColorRGBA.Orange, 3);
-            neighbours[i].setRadius(3f);
+            neighbours[i] = this.createSphere("neighbour_" + i, ColorRGBA.Orange, 2);
+            neighbours[i].setRadius(0.11f);
 
             game.addAgent(neighbours[i]); //Add the neighbours to the game
-            this.setStats(neighbours[i], this.NEIGHBOURS_MOVE_SPEED,
+            this.setStats(neighbours[i], this.NEIGHBOURS_MOVE_SPEED * (1 + rand.nextFloat()),
                     this.NEIGHBOURS_ROTATION_SPEED, this.NEIGHBOURS_MASS,
                     this.NEIGHBOURS_MAX_FORCE);
             game.getGameControl().spawn(neighbours[i], spawnArea);
 
             SimpleMainBehaviour mainB = new SimpleMainBehaviour(neighbours[i]);
+            
+            obstsaclesMoves[i] = new MoveBehaviour(neighbours[i]);
+            obstsaclesMoves[i].setMoveDirection(new Vector3f(rand.nextFloat() - 1, rand.nextFloat() - 1, rand.nextFloat() - 1));
+            
+            mainB.addBehaviour(obstsaclesMoves[i]);
             neighbours[i].setMainBehaviour(mainB);
         }
+        
+        this.iterationTimer = new Timer(4000, this.negateMoveDir); //4k ns = 4s
+        this.iterationTimer.start();
+        
+        focus = this.createSphere("focus", ColorRGBA.Green, 1.85f);
+        game.addAgent(focus);
+
+            game.addAgent(focus); //Add the neighbours to the game
+            this.setStats(focus, this.NEIGHBOURS_MOVE_SPEED,
+                    this.NEIGHBOURS_ROTATION_SPEED, this.NEIGHBOURS_MASS,
+                    this.NEIGHBOURS_MAX_FORCE);
+            game.getGameControl().spawn(focus, this.generateRandomPosition());
+
+            SimpleMainBehaviour mainB = new SimpleMainBehaviour(focus);
+            focus.setMainBehaviour(mainB);
+        
 
         List<Agent> obstacles = new ArrayList<Agent>();
         obstacles.addAll(Arrays.asList(neighbours));
@@ -95,15 +142,16 @@ public class ObstacleAvoidanceTest2 extends SimpleApplication {
         CompoundSteeringBehaviour steer = new BalancedCompoundSteeringBehaviour(agent);
         SimpleMainBehaviour targetMainB = new SimpleMainBehaviour(agent);
 
-        WanderBehaviour wanderBehaviour = new WanderBehaviour(agent);
-        wanderBehaviour.setArea(Vector3f.ZERO, new Vector3f(15f, 15f, 15f));
-        wanderBehaviour.setTimeInterval(4f);
+        SeekBehaviour seekSteer = new SeekBehaviour(agent, focus);
 
-        ObstacleAvoidanceBehaviour obstacleAvoidance = new ObstacleAvoidanceBehaviour(agent, obstacles, 1);
-        obstacleAvoidance.setupStrengthControl(0.25f);
-
-        steer.addSteerBehaviour(wanderBehaviour);
+        UnalignedCollisionAvoidanceBehaviour obstacleAvoidance =  new UnalignedCollisionAvoidanceBehaviour(agent, obstacles, 3, 5);
+            obstacleAvoidance.setupStrengthControl(1.75f);
+        SeparationBehaviour separation = new SeparationBehaviour(agent, obstacles, 2.35f);
+            separation.setupStrengthControl(0.1f);
+        
+        steer.addSteerBehaviour(seekSteer);
         steer.addSteerBehaviour(obstacleAvoidance);
+        steer.addSteerBehaviour(separation);
         targetMainB.addBehaviour(steer);
         agent.setMainBehaviour(targetMainB);
 
@@ -113,7 +161,7 @@ public class ObstacleAvoidanceTest2 extends SimpleApplication {
     private void setupCamera() {
         getCamera().setLocation(new Vector3f(0, 20, 0));
         getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_X);
-        getFlyByCamera().setMoveSpeed(50);
+        getFlyByCamera().setMoveSpeed(7);
 
         //flyCam.setDragToRotate(true);
         //flyCam.setEnabled(false); 
@@ -159,5 +207,29 @@ public class ObstacleAvoidanceTest2 extends SimpleApplication {
     @Override
     public void simpleUpdate(float tpf) {
         game.update(tpf);
+        
+        if(this.agent.distanceRelativeToAgent(this.focus) < 0.5f)
+        {
+            this.focus.setLocalTranslation(this.generateRandomPosition());
+        }
+    }
+    
+    private Vector3f generateRandomPosition()
+    {
+        Random rand = FastMath.rand;
+        Vector3f randomPos;
+        
+        if(this.positiveXSide)
+        {
+            randomPos = new Vector3f(7.5f, (rand.nextFloat() - 0.5f) * 7.5f, (rand.nextFloat() - 0.5f) * 7.5f);
+            this.positiveXSide = false;
+        }
+        else
+        {  
+            randomPos = new Vector3f(-7.5f, (rand.nextFloat() - 0.5f) * 7.5f, (rand.nextFloat() - 0.5f) * 7.5f); 
+            this.positiveXSide = true;
+        }
+        
+        return randomPos;
     }
 }

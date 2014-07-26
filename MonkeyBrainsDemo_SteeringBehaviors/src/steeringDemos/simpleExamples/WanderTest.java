@@ -20,7 +20,7 @@ import steeringDemos.control.CustomSteerControl;
  * AI Steer Test - Testing the wander behaviour
  * 
  * @author Jesús Martín Berlanga
- * @version 1.0
+ * @version 1.1
  */
 public class WanderTest extends SimpleApplication {
     
@@ -44,11 +44,8 @@ public class WanderTest extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         //defining rootNode for game processing
-        game.setRootNode(rootNode);
-        
-        game.setInputManager(inputManager);
-        game.setGameControl(new CustomSteerControl());
-        game.getGameControl().loadInputManagerMapping();
+        game.setApp(this);
+        game.setGameControl(new CustomSteerControl(5f));
         
         this.setupCamera();
         

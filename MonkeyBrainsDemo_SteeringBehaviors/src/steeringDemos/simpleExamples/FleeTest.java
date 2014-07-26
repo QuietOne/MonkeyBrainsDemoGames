@@ -21,7 +21,7 @@ import steeringDemos.control.CustomSteerControl;
  * AI Steer Test - Testing the flee behaviour
  * 
  * @author Jesús Martín Berlanga
- * @version 1.1
+ * @version 1.2
  */
 public class FleeTest extends SimpleApplication {
     
@@ -50,11 +50,8 @@ public class FleeTest extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         //defining rootNode for game processing
-        game.setRootNode(rootNode);
-        
-        game.setInputManager(inputManager);
+        game.setApp(this);
         game.setGameControl(new CustomSteerControl());
-        game.getGameControl().loadInputManagerMapping();
         
         this.setupCamera();
         

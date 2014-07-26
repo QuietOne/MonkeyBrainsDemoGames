@@ -14,22 +14,26 @@ import com.jme3.scene.Spatial;
 import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.MoveBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.ObstacleAvoidanceBehaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.UnalignedCollisionAvoidanceBehaviour;
+import com.jme3.math.FastMath;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Sphere;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import javax.swing.Timer;
 
 
 import steeringDemos.control.CustomSteerControl;
 
 /**
- * AI Steer Test - Testing the obstacle avoidance behaviour
+ * AI Steer Test - Testing the unalligned avoidance behaviour
  *
  * @author Jesús Martín Berlanga
- * @version 1.1
+ * @version 1.0
  */
-public class ObstacleAvoidanceTest extends SimpleApplication {
+public class UnallignedCollisionAvoidanceTest4 extends SimpleApplication {
 
     private Game game = Game.getInstance(); //creating game
     //TEST SETTINGS - START
@@ -42,14 +46,25 @@ public class ObstacleAvoidanceTest extends SimpleApplication {
     private final float TARGET_MAX_FORCE = 20;
     private final int NUMBER_NEIGHBOURS = 1000;
     private final ColorRGBA NEIGHBOURS_COLOR = ColorRGBA.Blue;
-    private final float NEIGHBOURS_MOVE_SPEED = 0.99f;
+    private final float NEIGHBOURS_MOVE_SPEED = 1f;
     private final float NEIGHBOURS_ROTATION_SPEED = 30;
     private final float NEIGHBOURS_MASS = 50;
     private final float NEIGHBOURS_MAX_FORCE = 20;
     //TEST SETTINGS - END
 
+    MoveBehaviour moveNeigh;
+        //Negate Direction Timer
+   /* private Timer iterationTimer;
+    private java.awt.event.ActionListener negateMoveDir = new java.awt.event.ActionListener()
+    {
+        public void actionPerformed(ActionEvent event)
+        {
+           moveNeigh.setMoveDirection(moveNeigh.getMoveDirection().negate());
+        }
+    }; */
+    
     public static void main(String[] args) {
-        ObstacleAvoidanceTest app = new ObstacleAvoidanceTest();
+        UnallignedCollisionAvoidanceTest4 app = new UnallignedCollisionAvoidanceTest4();
         app.start();
     }
 
@@ -62,24 +77,31 @@ public class ObstacleAvoidanceTest extends SimpleApplication {
         this.setupCamera();
 
         Agent agent = this.createBoid("Target", ColorRGBA.Blue);
-        agent.setRadius(3);
+        agent.setRadius(0.1f);
 
         game.addAgent(agent); //Add the target to the game
         this.setStats(agent, this.TARGET_MOVE_SPEED, this.TARGET_ROTATION_SPEED,
                 this.TARGET_MASS, this.TARGET_MAX_FORCE);
         game.getGameControl().spawn(agent, new Vector3f());
-        
+
             Agent customNeigh1 = this.createSphere("customNeigh_1", ColorRGBA.Orange);
-            customNeigh1.setRadius(1.5f);
+            customNeigh1.setRadius(1f);
             
             game.addAgent(customNeigh1); //Add the neighbours to the game
             this.setStats(customNeigh1, this.NEIGHBOURS_MOVE_SPEED,
                     this.NEIGHBOURS_ROTATION_SPEED, this.NEIGHBOURS_MASS,
                     this.NEIGHBOURS_MAX_FORCE);
-            game.getGameControl().spawn(customNeigh1, new Vector3f(16,0,0));
+            Vector3f nSpawnAt = new Vector3f(10, 9, 0);
+            game.getGameControl().spawn(customNeigh1, nSpawnAt);
             
             SimpleMainBehaviour mainB = new SimpleMainBehaviour(customNeigh1);
+                moveNeigh = new MoveBehaviour(customNeigh1);
+                moveNeigh.setMoveDirection(new Vector3f(0,-nSpawnAt.y, -nSpawnAt.z));                
+                mainB.addBehaviour(moveNeigh);
             customNeigh1.setMainBehaviour(mainB);
+        
+        //this.iterationTimer = new Timer((int) (2000 * (rand.nextFloat() + 0.25)), this.negateMoveDir); //1s
+        //this.iterationTimer.start();
         
         List<Agent> obstacles = new ArrayList<Agent>();
         obstacles.add(customNeigh1); 
@@ -92,7 +114,9 @@ public class ObstacleAvoidanceTest extends SimpleApplication {
         move.setMoveDirection(new Vector3f(1,0,0));
         
         steer.addSteerBehaviour(move);
-        steer.addSteerBehaviour(new ObstacleAvoidanceBehaviour(agent, obstacles, 1f));
+            UnalignedCollisionAvoidanceBehaviour avoid = new UnalignedCollisionAvoidanceBehaviour(agent, obstacles, 5f, 10);
+                    avoid.setupStrengthControl(1f);
+        steer.addSteerBehaviour(avoid);
         targetMainB.addBehaviour(steer);
         agent.setMainBehaviour(targetMainB);
 
@@ -122,7 +146,7 @@ public class ObstacleAvoidanceTest extends SimpleApplication {
     
     //Create a sphere
     private Agent createSphere(String name, ColorRGBA color) {
-        Sphere sphere = new Sphere(10, 10, 3f);
+        Sphere sphere = new Sphere(10, 10, 8f);
         Geometry sphereG = new Geometry("Sphere Geometry", sphere);
         Spatial spatial = sphereG;
         

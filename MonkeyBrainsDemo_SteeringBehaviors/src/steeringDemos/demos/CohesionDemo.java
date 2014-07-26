@@ -27,7 +27,7 @@ import java.util.Arrays;
  * AI Steer Test - Testing the cohesion behaviour
  *
  * @author Jesús Martín Berlanga
- * @version 1.1
+ * @version 1.2
  */
 public class CohesionDemo extends SimpleApplication {
 
@@ -52,11 +52,8 @@ public class CohesionDemo extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         //defining rootNode for game processing
-        game.setRootNode(rootNode);
-
-        game.setInputManager(inputManager);
+        game.setApp(this);
         game.setGameControl(new CustomSteerControl(50f));
-        game.getGameControl().loadInputManagerMapping();
 
         this.setupCamera();
 

@@ -20,7 +20,7 @@ import steeringDemos.control.CustomSteerControl;
  * Demo for ArriveBehaviour
  *
  * @author Jesús Martín Berlanga
- * @version 1.2
+ * @version 1.3
  */
 public class ArriveDemo extends SimpleApplication {
     
@@ -45,10 +45,8 @@ public class ArriveDemo extends SimpleApplication {
     
     @Override
     public void simpleInitApp() {
-        game.setRootNode(rootNode);
-        game.setInputManager(inputManager);
+        game.setApp(this);
         game.setGameControl(new CustomSteerControl(50f));
-        game.getGameControl().loadInputManagerMapping();
         this.setupCamera();
         
         this.target = this.createSphere("target", ColorRGBA.Red);
