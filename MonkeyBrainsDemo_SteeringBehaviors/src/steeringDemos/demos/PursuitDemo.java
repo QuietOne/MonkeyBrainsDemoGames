@@ -36,11 +36,13 @@ import java.util.Arrays;
  * AI Steer Test - Testing the pursuit and separation behaviours
  *
  * @author Jesús Martín Berlanga
- * @version 1.3
+ * @version 1.4
  */
 public class PursuitDemo extends SimpleApplication {
     
+    private CompoundSteeringBehaviour targetSteer;
     private SeparationBehaviour[] separation;
+    
     private boolean isStrengthEscalar = true;
     private float escalarStrength = 0.1f;
     private BitmapText escalarStrengthHudText;
@@ -166,7 +168,7 @@ public class PursuitDemo extends SimpleApplication {
         this.iterationTimer = new Timer(10000, this.changeDinamicMode); //10000ns = 10s
         this.iterationTimer.start();
         
-        CompoundSteeringBehaviour targetSteer = new CompoundSteeringBehaviour(target);
+        targetSteer = new CompoundSteeringBehaviour(target);
         targetSteer.addSteerBehaviour(targetMoveBehavior);
         targetSteer.addSteerBehaviour(targetWanderBehavior);
         
@@ -278,7 +280,9 @@ public class PursuitDemo extends SimpleApplication {
        if(this.isStrengthEscalar) 
        {
            for(SeparationBehaviour behaviour :  this.separation)
-                behaviour.setupStrengthControl(1, 1, 0);
+                behaviour.setupStrengthControl(1, 0, 1);
+           
+           targetSteer.setupStrengthControl(1, 0, 1);
            
            this.isStrengthEscalar = false;
        }
@@ -286,6 +290,8 @@ public class PursuitDemo extends SimpleApplication {
        {
            for(SeparationBehaviour behaviour :  this.separation)
                  behaviour.setupStrengthControl(escalarStrength);
+           
+           targetSteer.turnOffStrengthControl();
            
            this.isStrengthEscalar = true;
        }

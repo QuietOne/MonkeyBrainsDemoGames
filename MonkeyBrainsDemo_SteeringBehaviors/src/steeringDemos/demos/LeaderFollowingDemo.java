@@ -37,11 +37,13 @@ import java.util.Arrays;
  * AI Steer Test - Testing the leader following and separation behaviours
  *
  * @author Jesús Martín Berlanga
- * @version 1.6
+ * @version 1.7
  */
 public class LeaderFollowingDemo extends SimpleApplication {
     
-    private SeparationBehaviour[] separation;
+    private SeparationBehaviour separation[];
+    private CompoundSteeringBehaviour targetSteer;
+    
     private boolean isStrengthEscalar = true;
     private float escalarStrength = 0.1f;
     private BitmapText escalarStrengthHudText;
@@ -160,12 +162,12 @@ public class LeaderFollowingDemo extends SimpleApplication {
         targetMoveBehavior = new MoveBehaviour(target);
         targetMoveBehavior.setupStrengthControl(0.25f);
         targetWanderBehavior = new WanderBehaviour(target);
-        targetMoveBehavior.setMoveDirection(new Vector3f(1, 1, 0)); //moves in x-y direction
+        targetMoveBehavior.setMoveDirection(new Vector3f(1, 0, 1)); //moves in x-y direction
         
         this.iterationTimer = new Timer(10000, this.changeDinamicMode); //10000ns = 10s
         this.iterationTimer.start();
         
-        CompoundSteeringBehaviour targetSteer = new CompoundSteeringBehaviour(target);
+        targetSteer = new CompoundSteeringBehaviour(target);
         targetSteer.addSteerBehaviour(targetMoveBehavior);
         targetSteer.addSteerBehaviour(targetWanderBehavior);
         
@@ -189,16 +191,16 @@ public class LeaderFollowingDemo extends SimpleApplication {
                     4f,
                     FastMath.PI / 2.35f);
             
-            this.separation[i] = new SeparationBehaviour(neighbours[i], obstacles);
+            separation[i] = new SeparationBehaviour(neighbours[i], obstacles);
             
             separation[i].setupStrengthControl(escalarStrength);
             
-            BalancedCompoundSteeringBehaviour steer = new BalancedCompoundSteeringBehaviour(neighbours[i]);
+            BalancedCompoundSteeringBehaviour neighSteer = new BalancedCompoundSteeringBehaviour(neighbours[i]);
             
-            steer.addSteerBehaviour(separation[i]);
-            steer.addSteerBehaviour(follow);
+            neighSteer.addSteerBehaviour(separation[i]);
+            neighSteer.addSteerBehaviour(follow);
             
-            neighboursMainBehaviour[i].addBehaviour(steer);
+            neighboursMainBehaviour[i].addBehaviour(neighSteer);
             
             neighbours[i].setMainBehaviour(neighboursMainBehaviour[i]);
         }
@@ -278,14 +280,18 @@ public class LeaderFollowingDemo extends SimpleApplication {
         
         if (this.isStrengthEscalar) {
             for (SeparationBehaviour behaviour : this.separation) {
-                behaviour.setupStrengthControl(1, 1, 0);
+                behaviour.setupStrengthControl(1, 0, 1);
             }
+            
+            targetSteer.setupStrengthControl(1, 0, 1);
             
             this.isStrengthEscalar = false;
         } else {
             for (SeparationBehaviour behaviour : this.separation) {
                 behaviour.setupStrengthControl(escalarStrength);
             }
+            
+            targetSteer.turnOffStrengthControl();
             
             this.isStrengthEscalar = true;
         }

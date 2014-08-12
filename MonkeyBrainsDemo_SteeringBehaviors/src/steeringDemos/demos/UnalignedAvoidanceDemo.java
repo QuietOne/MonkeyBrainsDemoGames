@@ -3,7 +3,6 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.steering.BalancedCompoundSteeringBehaviour;
 import com.jme3.ai.agents.util.control.Game;
 import com.jme3.app.SimpleApplication;
 import com.jme3.math.ColorRGBA;
@@ -34,7 +33,7 @@ import steeringDemos.control.CustomSteerControl;
  * AI Steer Test - Unaligned avoidance demo
  *
  * @author Jesús Martín Berlanga
- * @version 1.0
+ * @version 1.1
  */
 public class UnalignedAvoidanceDemo extends SimpleApplication {
 
@@ -139,19 +138,19 @@ public class UnalignedAvoidanceDemo extends SimpleApplication {
 
         //ADD OBSTACLE AVOIDANCE TO THE TARGET
 
-        CompoundSteeringBehaviour steer = new BalancedCompoundSteeringBehaviour(agent);
+        CompoundSteeringBehaviour steer = new CompoundSteeringBehaviour(agent);//new BalancedCompoundSteeringBehaviour(agent);//new CompoundSteeringBehaviour(agent);
         SimpleMainBehaviour targetMainB = new SimpleMainBehaviour(agent);
 
         SeekBehaviour seekSteer = new SeekBehaviour(agent, focus);
 
         UnalignedCollisionAvoidanceBehaviour obstacleAvoidance =  new UnalignedCollisionAvoidanceBehaviour(agent, obstacles, 3, 5);
             obstacleAvoidance.setupStrengthControl(1.75f);
-        SeparationBehaviour separation = new SeparationBehaviour(agent, obstacles, 2.35f);
-            separation.setupStrengthControl(0.1f);
+        SeparationBehaviour separation = new SeparationBehaviour(agent, obstacles, neighbours[0].getRadius()  +  agent.getRadius() + 0.05f); //If the distance is less than 0.22 the agents bounding spheres are colliding
+            separation.setupStrengthControl(1f);
         
         steer.addSteerBehaviour(seekSteer);
-        steer.addSteerBehaviour(obstacleAvoidance);
-        steer.addSteerBehaviour(separation);
+        steer.addSteerBehaviour(separation, 1, 0.11f); //Higher priority
+        steer.addSteerBehaviour(obstacleAvoidance);        
         targetMainB.addBehaviour(steer);
         agent.setMainBehaviour(targetMainB);
 

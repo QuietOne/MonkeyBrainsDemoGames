@@ -7,6 +7,7 @@ import com.jme3.ai.agents.util.GameObject;
 import com.jme3.ai.agents.util.control.Game;
 import com.jme3.ai.agents.util.control.GameControl;
 import com.jme3.input.FlyByCamera;
+import com.jme3.math.FastMath;
 //import com.jme3.input.InputManager;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -16,7 +17,7 @@ import com.jme3.renderer.Camera;
  * Custom steer control.
  * 
  * @author Jesús Martín Berlanga
- * @version 1.1
+ * @version 1.2
  */
 public class CustomSteerControl implements GameControl {
     
@@ -24,19 +25,30 @@ public class CustomSteerControl implements GameControl {
     public void setCameraSettings(Camera cam) {}
     public void setFlyCameraSettings(FlyByCamera flyCam) {}
     
-    private float aleatoryFactor;
+    private float aleatoryFactorX, aleatoryFactorY, aleatoryFactorZ;
     private Game game;
     //private InputManager inputManager;
 
     public CustomSteerControl() {
         game = Game.getInstance();
-        this.aleatoryFactor = 10f;
+        this.aleatoryFactorX = 10f;
+        this.aleatoryFactorY = 10f;
+        this.aleatoryFactorZ = 10f;
         //inputManager = game.getInputManager();
     }
     
     public CustomSteerControl(float aleatoryFactor) {
        game = Game.getInstance();
-       this.aleatoryFactor = aleatoryFactor;
+        this.aleatoryFactorX = aleatoryFactor;
+        this.aleatoryFactorY = aleatoryFactor;
+        this.aleatoryFactorZ = aleatoryFactor;
+    }
+    
+    public CustomSteerControl(float aleatoryFactorX, float aleatoryFactorY, float aleatoryFactorZ) {
+       game = Game.getInstance();
+        this.aleatoryFactorX = aleatoryFactorX;
+        this.aleatoryFactorY = aleatoryFactorY;
+        this.aleatoryFactorZ = aleatoryFactorZ;
     }
     
     /**
@@ -88,12 +100,12 @@ public class CustomSteerControl implements GameControl {
      * @see GameControl#spawn(com.jme3.ai.agents.util.GameObject, com.jme3.math.Vector3f[]) 
      */
     public void spawn(GameObject gameObject, Vector3f... area){
-        
+                
         if(area == null)  //Random location
             gameObject.setLocalTranslation(
-                 ( (float)((Math.random()*2) - 1) )*this.aleatoryFactor, 
-                 ( (float)((Math.random()*2) - 1) )*this.aleatoryFactor, 
-                 ( (float)((Math.random()*2) - 1) )*this.aleatoryFactor);
+                 ( (float)((FastMath.nextRandomFloat()*2) - 1) )*this.aleatoryFactorX, 
+                 ( (float)((FastMath.nextRandomFloat()*2) - 1) )*this.aleatoryFactorY, 
+                 ( (float)((FastMath.nextRandomFloat()*2) - 1) )*this.aleatoryFactorZ);
         else if(area.length == 1){ //Spawn in a point
             gameObject.setLocalTranslation(area[0]);
         }
