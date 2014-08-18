@@ -3,57 +3,38 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.util.control.Game;
-import com.jme3.app.SimpleApplication;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector3f;
-import com.jme3.material.Material;
-import com.jme3.scene.Spatial;
-
 import com.jme3.ai.agents.behaviours.npc.steering.SeparationBehaviour;
 import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.ObstacleAvoidanceBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.QueuingBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.SeekBehaviour;
+
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
+import com.jme3.material.Material;
+import com.jme3.scene.Spatial;
 import com.jme3.material.RenderState;
 import com.jme3.math.FastMath;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Cylinder;
-import com.jme3.scene.shape.Sphere;
-import java.util.ArrayList;
 
+import steeringDemos.BasicDemo;
 import steeringDemos.control.CustomSteerControl;
 
 import java.util.List;
 import java.util.Arrays;
+import java.util.ArrayList;
 
 /**
- * AI Steer Demo - Queuing demo
+ * Queuing demo
  *
  * @author Jesús Martín Berlanga
- * @version 1.0
+ * @version 2.0
  */
-public class QueuingDemo extends SimpleApplication {
-       
-    private Game game = Game.getInstance(); //creating game
-    //TEST SETTINGS - START
-    private final String BOID_MODEL_NAME = "Models/boid.j3o";
-    private final String BOID_MATERIAL_NAME = "Common/MatDefs/Misc/Unshaded.j3md";
-    private final ColorRGBA TARGET_COLOR = ColorRGBA.Red;
-    private final float TARGET_MOVE_SPEED = 1f;
-    private final float TARGET_ROTATION_SPEED = 30;
-    private final float TARGET_MASS = 50;
-    private final float TARGET_MAX_FORCE = 20;
-    private final int NUMBER_NEIGHBOURS = 50;
-    private final ColorRGBA NEIGHBOURS_COLOR = ColorRGBA.Green;
-    private final float NEIGHBOURS_MOVE_SPEED = 0.96f;
-    private final float NEIGHBOURS_ROTATION_SPEED = 30;
-    private final float NEIGHBOURS_MASS = 50;
-    private final float NEIGHBOURS_MAX_FORCE = 20;
-    //TEST SETTINGS - END
-    
+public class QueuingDemo extends BasicDemo {
+          
     SeekBehaviour[] neighSeek;
     Agent[] neighbours;
     
@@ -63,39 +44,51 @@ public class QueuingDemo extends SimpleApplication {
     }
     
     @Override
-    public void simpleInitApp() {
-            
+    public void simpleInitApp() 
+    { 
+        this.steerControl = new CustomSteerControl(5, 5);
+        this.steerControl.setCameraSettings(getCamera());
+        this.steerControl.setFlyCameraSettings(getFlyByCamera());
+        
         //defining rootNode for game processing
         game.setApp(this);
-        game.setGameControl(new CustomSteerControl(5f));
+        game.setGameControl(this.steerControl);
         
-        this.setupCamera();
-        
+        this.numberNeighbours = 50;
         Vector3f[] spawnArea = null;
         
-        ColorRGBA targetColor = new ColorRGBA(ColorRGBA.Cyan.r, ColorRGBA.Cyan.g, ColorRGBA.Cyan.b, 0.25f);
+        ColorRGBA targetNewColor = new ColorRGBA(ColorRGBA.Cyan.r, ColorRGBA.Cyan.g, ColorRGBA.Cyan.b, 0.25f);
         
-        Agent target = this.createDoor("Door", targetColor, 0.28f);
+        Agent target = this.createDoor("Door", targetNewColor, 0.28f);
         game.addAgent(target); //Add the target to the game
-        this.setStats(target, this.TARGET_MOVE_SPEED,
-                this.TARGET_ROTATION_SPEED, this.TARGET_MASS,
-                this.TARGET_MAX_FORCE);
+        this.setStats
+                (
+                    target,
+                    this.targetMoveSpeed,
+                    this.targetRotationSpeed,
+                    this.targetMass,
+                    this.targetMaxForce
+                );
         game.getGameControl().spawn(target, new Vector3f(0,0,15));
         SimpleMainBehaviour targetMainB = new SimpleMainBehaviour(target);
         target.setMainBehaviour(targetMainB);
-        //this.setStats(target, this.TARGET_MOVE_SPEED, this.TARGET_ROTATION_SPEED, 
-        //        this.TARGET_MASS, this.TARGET_MAX_FORCE);
         
-        this.neighbours = new Agent[this.NUMBER_NEIGHBOURS];
+        this.neighbours = new Agent[this.numberNeighbours];
+        this.neighboursMoveSpeed *= 1.5f;
         
-        for (int i = 0; i < this.NUMBER_NEIGHBOURS; i++) {
-            this.neighbours[i] = this.createBoid("Neighbour " + i, this.NEIGHBOURS_COLOR);
+        for (int i = 0; i < this.numberNeighbours; i++) {
+            this.neighbours[i] = this.createBoid("Neighbour " + i, this.neighboursColor, 0.11f);
             game.addAgent(this.neighbours[i]); //Add the neighbours to the game
-            this.setStats(this.neighbours[i], this.NEIGHBOURS_MOVE_SPEED * 1.5f, //* (FastMath.nextRandomFloat() * 2) + 0.25f,
-                    this.NEIGHBOURS_ROTATION_SPEED, this.NEIGHBOURS_MASS,
-                    this.NEIGHBOURS_MAX_FORCE);
+            
+            this.setStats
+                    (
+                        neighbours[i], 
+                        this.neighboursMoveSpeed,
+                        this.neighboursRotationSpeed, 
+                        this.neighboursMass,
+                        this.neighboursMaxForce
+                    );
             game.getGameControl().spawn(this.neighbours[i], spawnArea);
-            this.neighbours[i].setRadius(0.11f);
         }
         
         List<Agent> obstacles = new ArrayList<Agent>();
@@ -129,13 +122,17 @@ public class QueuingDemo extends SimpleApplication {
         
         for(int i = 0; i < 16; i++)
         {
-            wallObstacle.add(this.createSphere("Door obstacle " + i, ColorRGBA.Blue, 0.65f));
+            wallObstacle.add(this.createSphere("Door obstacle " + i, ColorRGBA.Orange, 0.075f));
             
-            this.setStats(wallObstacle.get(i), this.NEIGHBOURS_MOVE_SPEED,
-                    this.NEIGHBOURS_ROTATION_SPEED, this.NEIGHBOURS_MASS,
-                    this.NEIGHBOURS_MAX_FORCE);
+            this.setStats
+                    (
+                        wallObstacle.get(i), 
+                        this.neighboursMoveSpeed,
+                        this.neighboursRotationSpeed, 
+                        this.neighboursMass,
+                        this.neighboursMaxForce
+                    );
             game.getGameControl().spawn(wallObstacle.get(i), spheresSpawnPositions[i]);
-            wallObstacle.get(i).setRadius(0.325f);
             
             SimpleMainBehaviour mainB = new SimpleMainBehaviour(wallObstacle.get(i));
             wallObstacle.get(i).setMainBehaviour(mainB);
@@ -169,33 +166,28 @@ public class QueuingDemo extends SimpleApplication {
             steer.addSteerBehaviour(queueSeparation);
             steer.addSteerBehaviour(separation, 1, 0.01f); //Highest layer => Highest priority
             
+            //Remove behaviour for testing purposes
+            steer.removeSteerBehaviour(separation);
+            steer.removeSteerBehaviour(this.neighSeek[i]);
+            steer.removeSteerBehaviour(obstacleAvoid);
+            steer.removeSteerBehaviour(extraSeek);
+            steer.removeSteerBehaviour(queue);
+            steer.removeSteerBehaviour(queueSeparation);
+            
+            //Add then again
+            steer.addSteerBehaviour(this.neighSeek[i]);
+            steer.addSteerBehaviour(extraSeek);
+            steer.addSteerBehaviour(obstacleAvoid);
+            steer.addSteerBehaviour(queue);
+            steer.addSteerBehaviour(queueSeparation);
+            steer.addSteerBehaviour(separation, 1, 0.01f); //Highest layer => Highest priority
+            
             neighboursMainBehaviour[i].addBehaviour(steer);
 
             this.neighbours[i].setMainBehaviour(neighboursMainBehaviour[i]);
         }
         
         game.start();
-    }
-    
-    private void setupCamera() {
-        getCamera().setLocation(new Vector3f(0, 20, 0));
-        getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_X);
-        getFlyByCamera().setMoveSpeed(6);
-
-        //flyCam.setDragToRotate(true);
-        //flyCam.setEnabled(false);  
-    }
-
-    //Create an agent with a name and a color
-    private Agent createBoid(String name, ColorRGBA color) {
-        Spatial boidSpatial = assetManager.loadModel(this.BOID_MODEL_NAME);
-        boidSpatial.setLocalScale(0.1f); //Resize
-        
-        Material mat = new Material(assetManager, this.BOID_MATERIAL_NAME);        
-        mat.setColor("Color", color);
-        boidSpatial.setMaterial(mat);
-        
-        return new Agent(name, boidSpatial);
     }
     
     private Agent createDoor(String name, ColorRGBA color, float radius)
@@ -207,7 +199,7 @@ public class QueuingDemo extends SimpleApplication {
          
         Spatial doorSpatial = origin;
         
-        Material mat = new Material(assetManager, this.BOID_MATERIAL_NAME); 
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md"); 
         mat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);         
         mat.setColor("Color", color);
         doorSpatial.setMaterial(mat);
@@ -215,33 +207,9 @@ public class QueuingDemo extends SimpleApplication {
         return new Agent(name, doorSpatial);   
     }
     
-    private Agent createSphere(String name, ColorRGBA color, float size) 
-    {
-        Sphere sphere = new Sphere(13, 12, size);
-        Geometry sphereG = new Geometry("Sphere Geometry", sphere);
-        Spatial spatial = sphereG;
-
-        spatial.setLocalScale(0.1f); //Resize0
-
-        Material mat = new Material(assetManager, this.BOID_MATERIAL_NAME);
-        mat.setColor("Color", color);
-        spatial.setMaterial(mat);
-
-        return new Agent(name, spatial);
-    }
-
-    //Setup the stats for an agent
-    private void setStats(Agent myAgent, float moveSpeed, float rotationSpeed,
-            float mass, float maxForce) {
-        
-        myAgent.setMoveSpeed(moveSpeed);
-        myAgent.setRotationSpeed(rotationSpeed);
-        myAgent.setMass(mass);
-        myAgent.setMaxForce(maxForce);
-    }
-    
     @Override
-    public void simpleUpdate(float tpf) {
+    public void simpleUpdate(float tpf) 
+    {
         game.update(tpf);
         
         for(int i = 0; i < this.neighbours.length; i++)

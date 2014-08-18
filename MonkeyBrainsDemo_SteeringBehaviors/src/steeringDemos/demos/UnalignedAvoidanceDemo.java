@@ -3,22 +3,16 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.util.control.Game;
-import com.jme3.app.SimpleApplication;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector3f;
-import com.jme3.material.Material;
-import com.jme3.scene.Spatial;
-
 import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.MoveBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.SeekBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.SeparationBehaviour;
 import com.jme3.ai.agents.behaviours.npc.steering.UnalignedCollisionAvoidanceBehaviour;
+
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
 import com.jme3.math.FastMath;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.shape.Sphere;
+
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,40 +20,23 @@ import java.util.List;
 import java.util.Random;
 import javax.swing.Timer;
 
-
+import steeringDemos.BasicDemo;
 import steeringDemos.control.CustomSteerControl;
 
 /**
- * AI Steer Test - Unaligned avoidance demo
+ * Unaligned avoidance demo
  *
  * @author Jesús Martín Berlanga
- * @version 1.1
+ * @version 2.0
  */
-public class UnalignedAvoidanceDemo extends SimpleApplication {
-
-    private Game game = Game.getInstance(); //creating game
-    //TEST SETTINGS - START
-    private final String BOID_MODEL_NAME = "Models/boid.j3o";
-    private final String BOID_MATERIAL_NAME = "Common/MatDefs/Misc/Unshaded.j3md";
-    private final ColorRGBA TARGET_COLOR = ColorRGBA.Red;
-    private final float TARGET_MOVE_SPEED = 1f;
-    private final float TARGET_ROTATION_SPEED = 30;
-    private final float TARGET_MASS = 50;
-    private final float TARGET_MAX_FORCE = 20;
-    private final int NUMBER_NEIGHBOURS = 150;
-    private final ColorRGBA NEIGHBOURS_COLOR = ColorRGBA.Blue;
-    private final float NEIGHBOURS_MOVE_SPEED = 0.99f;
-    private final float NEIGHBOURS_ROTATION_SPEED = 30;
-    private final float NEIGHBOURS_MASS = 50;
-    private final float NEIGHBOURS_MAX_FORCE = 20;
-    //TEST SETTINGS - END
+public class UnalignedAvoidanceDemo extends BasicDemo {
 
     private Agent agent;
     private Agent focus;
     private boolean positiveXSide = true;
     
     //ObstaclesMove
-    MoveBehaviour obstsaclesMoves[] = new MoveBehaviour[NUMBER_NEIGHBOURS];
+    MoveBehaviour obstsaclesMoves[] = new MoveBehaviour[150];
     
     //Negate Direction Timer
     private Timer iterationTimer;
@@ -79,33 +56,46 @@ public class UnalignedAvoidanceDemo extends SimpleApplication {
     }
 
     @Override
-    public void simpleInitApp() {
+    public void simpleInitApp() 
+    {
+        this.steerControl = new CustomSteerControl(11, 4);
+        this.steerControl.setCameraSettings(getCamera());
+        this.steerControl.setFlyCameraSettings(getFlyByCamera());
+        
         //defining rootNode for game processing
         game.setApp(this);
-        game.setGameControl(new CustomSteerControl(4f));
-
-        this.setupCamera();
+        game.setGameControl(this.steerControl);
 
         Vector3f[] spawnArea = null;
-
-        agent = this.createBoid("Target", ColorRGBA.Blue);
-        agent.setRadius(0.11f);
+        this.numberNeighbours = 150;
+        
+        agent = this.createBoid("Target", ColorRGBA.Blue, 0.31f);
 
         game.addAgent(agent); //Add the target to the game
-        this.setStats(agent, this.TARGET_MOVE_SPEED, this.TARGET_ROTATION_SPEED,
-                this.TARGET_MASS, this.TARGET_MAX_FORCE);
+        this.setStats
+                (
+                    agent,
+                    this.targetMoveSpeed,
+                    this.targetRotationSpeed,
+                    this.targetMass,
+                    this.targetMaxForce
+                );
         game.getGameControl().spawn(agent, new Vector3f());
 
-        Agent[] neighbours = new Agent[this.NUMBER_NEIGHBOURS];
+        Agent[] neighbours = new Agent[this.numberNeighbours];
         Random rand = FastMath.rand;
-        for (int i = 0; i < this.NUMBER_NEIGHBOURS; i++) {
-            neighbours[i] = this.createSphere("neighbour_" + i, ColorRGBA.Orange, 2);
-            neighbours[i].setRadius(0.11f);
-
+        for (int i = 0; i < this.numberNeighbours; i++) 
+        {
+            neighbours[i] = this.createSphere("neighbour_" + i, ColorRGBA.Orange, 0.25f);
             game.addAgent(neighbours[i]); //Add the neighbours to the game
-            this.setStats(neighbours[i], this.NEIGHBOURS_MOVE_SPEED * (1 + rand.nextFloat()),
-                    this.NEIGHBOURS_ROTATION_SPEED, this.NEIGHBOURS_MASS,
-                    this.NEIGHBOURS_MAX_FORCE);
+            this.setStats
+                    (
+                        neighbours[i], 
+                        this.neighboursMoveSpeed,
+                        this.neighboursRotationSpeed, 
+                        this.neighboursMass,
+                        this.neighboursMaxForce
+                    );
             game.getGameControl().spawn(neighbours[i], spawnArea);
 
             SimpleMainBehaviour mainB = new SimpleMainBehaviour(neighbours[i]);
@@ -120,13 +110,18 @@ public class UnalignedAvoidanceDemo extends SimpleApplication {
         this.iterationTimer = new Timer(4000, this.negateMoveDir); //4k ns = 4s
         this.iterationTimer.start();
         
-        focus = this.createSphere("focus", ColorRGBA.Green, 1.85f);
+        focus = this.createSphere("focus", ColorRGBA.Green, 0.35f);
         game.addAgent(focus);
 
             game.addAgent(focus); //Add the neighbours to the game
-            this.setStats(focus, this.NEIGHBOURS_MOVE_SPEED,
-                    this.NEIGHBOURS_ROTATION_SPEED, this.NEIGHBOURS_MASS,
-                    this.NEIGHBOURS_MAX_FORCE);
+            this.setStats
+                    (
+                        focus, 
+                        this.neighboursMoveSpeed,
+                        this.neighboursRotationSpeed, 
+                        this.neighboursMass,
+                        this.neighboursMaxForce
+                    );
             game.getGameControl().spawn(focus, this.generateRandomPosition());
 
             SimpleMainBehaviour mainB = new SimpleMainBehaviour(focus);
@@ -143,66 +138,17 @@ public class UnalignedAvoidanceDemo extends SimpleApplication {
 
         SeekBehaviour seekSteer = new SeekBehaviour(agent, focus);
 
-        UnalignedCollisionAvoidanceBehaviour obstacleAvoidance =  new UnalignedCollisionAvoidanceBehaviour(agent, obstacles, 3, 5);
-            obstacleAvoidance.setupStrengthControl(1.75f);
-        SeparationBehaviour separation = new SeparationBehaviour(agent, obstacles, neighbours[0].getRadius()  +  agent.getRadius() + 0.05f); //If the distance is less than 0.22 the agents bounding spheres are colliding
-            separation.setupStrengthControl(1f);
+        UnalignedCollisionAvoidanceBehaviour obstacleAvoidance =  new UnalignedCollisionAvoidanceBehaviour(agent, obstacles, 2, 5, 0.75f);
+            obstacleAvoidance.setupStrengthControl(5f);
         
         steer.addSteerBehaviour(seekSteer);
-        steer.addSteerBehaviour(separation, 1, 0.11f); //Higher priority
         steer.addSteerBehaviour(obstacleAvoidance);        
         targetMainB.addBehaviour(steer);
         agent.setMainBehaviour(targetMainB);
 
         game.start();
     }
-
-    private void setupCamera() {
-        getCamera().setLocation(new Vector3f(0, 20, 0));
-        getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_X);
-        getFlyByCamera().setMoveSpeed(7);
-
-        //flyCam.setDragToRotate(true);
-        //flyCam.setEnabled(false); 
-    }
-
-    //Create an agent with a name and a color
-    private Agent createBoid(String name, ColorRGBA color) {
-        Spatial boidSpatial = assetManager.loadModel(this.BOID_MODEL_NAME);
-        boidSpatial.setLocalScale(0.1f); //Resize
-
-        Material mat = new Material(assetManager, this.BOID_MATERIAL_NAME);
-        mat.setColor("Color", color);
-        boidSpatial.setMaterial(mat);
-
-        return new Agent(name, boidSpatial);
-    }
-
-    //Create a sphere
-    private Agent createSphere(String name, ColorRGBA color, float size) {
-        Sphere sphere = new Sphere(13, 12, size);
-        Geometry sphereG = new Geometry("Sphere Geometry", sphere);
-        Spatial spatial = sphereG;
-
-        spatial.setLocalScale(0.1f); //Resize0
-
-        Material mat = new Material(assetManager, this.BOID_MATERIAL_NAME);
-        mat.setColor("Color", color);
-        spatial.setMaterial(mat);
-
-        return new Agent(name, spatial);
-    }
-
-    //Setup the stats for an agent
-    private void setStats(Agent myAgent, float moveSpeed, float rotationSpeed,
-            float mass, float maxForce) {
-
-        myAgent.setMoveSpeed(moveSpeed);
-        myAgent.setRotationSpeed(rotationSpeed);
-        myAgent.setMass(mass);
-        myAgent.setMaxForce(maxForce);
-    }
-
+    
     @Override
     public void simpleUpdate(float tpf) {
         game.update(tpf);
