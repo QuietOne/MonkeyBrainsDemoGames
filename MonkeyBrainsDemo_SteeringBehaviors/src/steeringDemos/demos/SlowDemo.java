@@ -19,7 +19,7 @@ import steeringDemos.control.CustomSteerControl;
  * Slow demo
  *
  * @author Jesús Martín Berlanga
- * @version 2.0
+ * @version 2.0.1
  */
 public class SlowDemo extends BasicDemo {
     
@@ -81,7 +81,11 @@ public class SlowDemo extends BasicDemo {
         steer.addSteerBehaviour(slow);
         steer.addSteerBehaviour(slow2);
         
-        main.addBehaviour(steer);
+        //nested container test
+        CompoundSteeringBehaviour steer2 = new CompoundSteeringBehaviour(agent);
+        steer2.addSteerBehaviour(steer);
+        
+        main.addBehaviour(steer2);
         agent.setMainBehaviour(main);
         
         slow.setAcive(true);
