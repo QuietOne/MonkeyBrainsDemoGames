@@ -1,6 +1,6 @@
 package fps.robotfight.util;
 
-import com.jme3.ai.agents.util.control.Game;
+import com.jme3.ai.agents.util.control.AIAppState;
 import com.jme3.ai.agents.Agent;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
@@ -134,7 +134,7 @@ public class RoboFightSpatials {
      * Initializing floor.
      */
     public static void initializeFloor(float terrainSize) {
-        Game game = Game.getInstance();
+        AIAppState game = AIAppState.getInstance();
         // create a floor
         float gridsize = terrainSize / 10;
         Box bx = new Box(gridsize / 2, 0.02f, 0.02f);

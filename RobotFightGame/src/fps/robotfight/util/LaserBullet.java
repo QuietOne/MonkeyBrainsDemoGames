@@ -1,22 +1,20 @@
 package fps.robotfight.util;
 
-import com.jme3.ai.agents.util.AbstractBullet;
 import com.jme3.scene.Spatial;
-import com.jme3.ai.agents.util.AbstractWeapon;
-import com.jme3.ai.agents.util.control.Game;
-import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.ViewPort;
+import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.weapons.AbstractBullet;
+import com.jme3.ai.agents.util.weapons.AbstractFirearmWeapon;
 
 /**
  *
  * @author Tihomir Radosavljević
  */
-public class LaserBullet extends AbstractBullet{
+public class LaserBullet extends AbstractBullet {
 
     private float lifeTime;
     private float maxLifeTime = 0.25f;
-    
-    public LaserBullet(AbstractWeapon weapon, Spatial spatial) {
+
+    public LaserBullet(AbstractFirearmWeapon weapon, Spatial spatial) {
         super(weapon, spatial);
         this.lifeTime = maxLifeTime;
     }
@@ -31,7 +29,7 @@ public class LaserBullet extends AbstractBullet{
             //more bullets than one at moment, but it should be used to define
             //what kind of bullets are in that kind of weapon
             weapon.setBullet(null);
-            Game.getInstance().removeGameObject(this);
+            AIAppState.getInstance().removeGameEntity(this);
         } else {
             lifeTime -= tpf;
         }
@@ -44,12 +42,4 @@ public class LaserBullet extends AbstractBullet{
     public void setLifeTime(float lifeTime) {
         this.lifeTime = lifeTime;
     }
-
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    
-    
 }

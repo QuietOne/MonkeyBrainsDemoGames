@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package behaviours;
 
 import com.jme3.ai.agents.Agent;

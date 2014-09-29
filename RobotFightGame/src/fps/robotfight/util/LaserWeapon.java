@@ -7,18 +7,19 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
-import com.jme3.ai.agents.util.AbstractWeapon;
-import com.jme3.ai.agents.util.AbstractBullet;
-import com.jme3.ai.agents.util.control.Game;
+import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.weapons.AbstractBullet;
+import com.jme3.ai.agents.util.weapons.AbstractFirearmWeapon;
 
 /**
- * Specific weapon for this game. 
+ * Specific weapon for this game.
+ *
  * @author Tihomir Radosavljević
- * @version 1.0
+ * @version 1.0.2
  */
-public class LaserWeapon extends AbstractWeapon{
+public class LaserWeapon extends AbstractFirearmWeapon {
 
-    public LaserWeapon(String name, Agent agent){
+    public LaserWeapon(String name, Agent agent) {
         this.name = name;
         this.agent = agent;
         this.maxAttackRange = 40f;
@@ -32,11 +33,11 @@ public class LaserWeapon extends AbstractWeapon{
     //laser is instant weapon so damage part can be put into weapon, so
     //bullet won't check it everytime on update
     protected AbstractBullet controlAttack(Vector3f direction, float tpf) {
-        if (bullet!=null) {
+        if (bullet != null) {
             return null;
         }
         float laserLength = maxAttackRange;
-        Game game = Game.getInstance();
+        AIAppState game = AIAppState.getInstance();
         CollisionResults collsions = new CollisionResults();
         Vector3f click3d = new Vector3f(agent.getLocalTranslation());
         Vector3f dir = direction.subtract(click3d).normalizeLocal();
@@ -50,8 +51,8 @@ public class LaserWeapon extends AbstractWeapon{
                 if (!game.isFriendlyFire() && agent.isSameTeam(target)) {
                     break;
                 }
-                game.agentAttack(agent, target);
-                ((Quad) ((Geometry) ((Node) target.getSpatial()).getChild("healthbar")).getMesh()).updateGeometry(target.getHitPoint() / 100 * 4, 0.2f);
+                game.agentAttack(agent, target, this);
+                ((Quad) ((Geometry) ((Node) target.getSpatial()).getChild("healthbar")).getMesh()).updateGeometry(target.getHpSystem().getCurrentHP() / 100 * 4, 0.2f);
                 laserLength = agent.getLocalTranslation().distance(target.getLocalTranslation());
                 break;
             }
