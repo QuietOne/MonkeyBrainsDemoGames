@@ -1,7 +1,8 @@
 package org.aitest.ai.model;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.util.control.Game;
+import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.systems.HPSystem;
 import com.jme3.animation.AnimControl;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.BetterCharacterControl;
@@ -17,6 +18,7 @@ import java.util.List;
 import org.aitest.ai.control.AIGameUpdateManager;
 import org.aitest.ai.utils.AIGameSpatials;
 import org.aitest.ai.utils.Gun;
+import org.aitest.ai.utils.Inventory;
 import org.aitest.ai.utils.Sword;
 
 /*
@@ -31,14 +33,6 @@ public class AIModel extends BetterCharacterControl {
      * Reference to agent to which this model is attached.
      */
     private Agent agent;
-    /**
-     * Sword that this agent has.
-     */
-    private Sword sword;
-    /**
-     * Gun that this agent has.
-     */
-    private Gun gun;
     /**
      * List of animation that this agent has.
      */
@@ -56,14 +50,14 @@ public class AIModel extends BetterCharacterControl {
         agent.setMoveSpeed(7.0f);
         agent.setRotationSpeed(1.0f);
         agent.setMaxForce(3);
-        sword = new Sword(agent);
-        gun = new Gun(agent);
+        agent.setHpSystem(new HPSystem(agent));
+        agent.setInventory(new Inventory(agent));
 
         animationList = new LinkedList<AnimControl>();
         agent.getSpatial().addControl(this); // FORCE TO ADD THE CONTROL TO THE SPATIAL
 
         //add this character under the influence of physics
-        Game.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().add(this);
+        AIAppState.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().add(this);
 
         
         //same spatial is used in agent.spatial and physics space
@@ -72,7 +66,7 @@ public class AIModel extends BetterCharacterControl {
         // add arrow
         Mesh arrow = new Arrow(Vector3f.UNIT_Z);
         Geometry geoArrow = new Geometry("arrow", arrow);
-        Material matArrow = new Material(Game.getInstance().getApp().getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        Material matArrow = new Material(AIAppState.getInstance().getApp().getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         matArrow.setColor("Color", ColorRGBA.White);
         geoArrow.setMaterial(matArrow);
         geoArrow.setLocalTranslation(0f, 0.1f, 0f);
@@ -87,7 +81,7 @@ public class AIModel extends BetterCharacterControl {
     @Override
     public void update(float tpf) {
         // Update only for fixed rate
-        if (Game.getInstance().getApp().getStateManager().getState(AIGameUpdateManager.class).IsUpdate()) {
+        if (AIAppState.getInstance().getApp().getStateManager().getState(AIGameUpdateManager.class).IsUpdate()) {
             //update character
             super.update(tpf);
         }
@@ -103,22 +97,6 @@ public class AIModel extends BetterCharacterControl {
 
     public void setAgent(Agent agent) {
         this.agent = agent;
-    }
-
-    public Sword getSword() {
-        return sword;
-    }
-
-    public void setSword(Sword sword) {
-        this.sword = sword;
-    }
-
-    public Gun getGun() {
-        return gun;
-    }
-
-    public void setGun(Gun gun) {
-        this.gun = gun;
     }
 
     public List<AnimControl> getAnimationList() {

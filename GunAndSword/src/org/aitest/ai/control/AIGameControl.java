@@ -2,9 +2,10 @@ package org.aitest.ai.control;
 
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.Team;
-import com.jme3.ai.agents.util.GameObject;
-import com.jme3.ai.agents.util.control.Game;
-import com.jme3.ai.agents.util.control.GameControl;
+import com.jme3.ai.agents.util.GameEntity;
+import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.control.AIControl;
+import com.jme3.ai.agents.util.systems.HPSystem;
 import com.jme3.app.Application;
 import com.jme3.asset.DesktopAssetManager;
 import com.jme3.bullet.BulletAppState;
@@ -34,7 +35,7 @@ import org.aitest.physics.AIStaticObjectType;
  * @author Tihomir Radosavljevic
  * @version 1.0
  */
-public class AIGameControl implements GameControl {
+public class AIGameControl implements AIControl {
 
     private InputManager inputManager;
     private DesktopAssetManager dasm;
@@ -44,10 +45,10 @@ public class AIGameControl implements GameControl {
     private boolean gameDebug;
 
     public AIGameControl() {
-        inputManager = Game.getInstance().getApp().getInputManager();
-        app = Game.getInstance().getApp();
+        inputManager = AIAppState.getInstance().getApp().getInputManager();
+        app = AIAppState.getInstance().getApp();
         dasm = (DesktopAssetManager) app.getAssetManager();
-        rootNode = Game.getInstance().getRootNode();
+        rootNode = AIAppState.getInstance().getRootNode();
         sceneNode = new Node("Scene");
         gameDebug = false;
         rootNode.attachChild(sceneNode);
@@ -99,13 +100,13 @@ public class AIGameControl implements GameControl {
         rootNode.detachAllChildren();
         // attach it again
         rootNode.attachChild(sceneNode);
-        Game.getInstance().getAgents().clear();
-        Game.getInstance().getGameObjects().clear();
+        AIAppState.getInstance().getAgents().clear();
+        AIAppState.getInstance().getGameEntities().clear();
         loadScene();
-        Game.getInstance().start();
+        AIAppState.getInstance().start();
     }
 
-    public void spawn(GameObject gameObject, Vector3f... area) {
+    public void spawn(GameEntity gameObject, Vector3f... area) {
         //for this game it is implemented in Blender
     }
 
@@ -120,8 +121,8 @@ public class AIGameControl implements GameControl {
         model.setGraphicModel();
         player.setMainBehaviour(new PlayerMainBehaviour(player));
 
-        AIGameSpatials.getInstance().attachCameraTo(player, Game.getInstance().getApp().getCamera());
-        Game.getInstance().addAgent(player);
+        AIGameSpatials.getInstance().attachCameraTo(player, AIAppState.getInstance().getApp().getCamera());
+        AIAppState.getInstance().addAgent(player);
         Team team = new Team("Enemy");
         int i = 1;
         for (Spatial sp : sceneBase.getChildren()) {
@@ -143,7 +144,7 @@ public class AIGameControl implements GameControl {
                 enemyAgent.setMainBehaviour(new AIMainBehaviour(enemyAgent));
                 enemyAgent.setTeam(team);
                 //adding it to game
-                Game.getInstance().addAgent(enemyAgent);
+                AIAppState.getInstance().addAgent(enemyAgent);
 
             } else {
                 //adding static objects

@@ -2,14 +2,13 @@ package org.aitest.ai.behaviours.npc;
 
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.behaviours.Behaviour;
+import com.jme3.ai.agents.behaviours.npc.steering.RelativeWanderBehaviour;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.ViewPort;
 
 /**
  *
- * @author Tihomir Radosavljevic
- * @version 1.0
+ * @author Tihomir Radosavljević
+ * @version 1.0.4
  */
 public class AIMainBehaviour extends Behaviour {
 
@@ -38,12 +37,8 @@ public class AIMainBehaviour extends Behaviour {
         if (seekBehaviour.getTarget() != null && seekBehaviour.getTarget().isEnabled()) {
             seekBehaviour.update(tpf);
         } else {
-            //wanderBehaviour.update(tpf);
+            wanderBehaviour.update(tpf);
             //need to include obstacles avoidance
         }
-    }
-
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
     }
 }

@@ -2,8 +2,8 @@ package org.aitest.ai.behaviours.npc;
 
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.behaviours.npc.SimpleLookBehaviour;
-import com.jme3.ai.agents.util.GameObject;
-import com.jme3.ai.agents.util.control.Game;
+import com.jme3.ai.agents.util.GameEntity;
+import com.jme3.ai.agents.util.control.AIAppState;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.PhysicsRayTestResult;
@@ -21,16 +21,16 @@ import java.util.List;
  */
 public class AILookBehaviour extends SimpleLookBehaviour {
 
-    Game game;
+    AIAppState game;
 
     public AILookBehaviour(Agent agent) {
         super(agent);
-        game = Game.getInstance();
+        game = AIAppState.getInstance();
     }
 
     @Override
-    protected List<GameObject> look(Agent agent, float viewAngle) {
-        List<GameObject> temp = new LinkedList<GameObject>();
+    protected List<GameEntity> look(Agent agent, float viewAngle) {
+        List<GameEntity> temp = new LinkedList<GameEntity>();
         //are there agents in seeing angle
         for (Agent agentInGame : game.getAgents()) {
             if (agentInGame.isEnabled()) {
@@ -43,7 +43,7 @@ public class AILookBehaviour extends SimpleLookBehaviour {
         Vector3f vecStart = agent.getLocalTranslation().clone().setY(1);
         BulletAppState bulletState = game.getApp().getStateManager().getState(BulletAppState.class);
         for (int i = 0; i < temp.size(); i++) {
-            GameObject agentInRange = temp.get(i);
+            GameEntity agentInRange = temp.get(i);
             Vector3f vecEnd = agentInRange.getLocalTranslation().clone().setY(1);
             //what has bullet hit
             List<PhysicsRayTestResult> rayTest = bulletState.getPhysicsSpace().rayTest(vecStart, vecEnd);

@@ -1,6 +1,6 @@
 package org.aitest.gui;
 
-import com.jme3.ai.agents.util.control.Game;
+import com.jme3.ai.agents.util.control.AIAppState;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.niftygui.NiftyJmeDisplay;
@@ -46,7 +46,7 @@ public class AIGuiManager extends AbstractAppState implements ScreenController {
     }
 
     public void setDebugButton() {
-        AIGameControl control = (AIGameControl) Game.getInstance().getGameControl();
+        AIGameControl control = (AIGameControl) AIAppState.getInstance().getAIControl();
         if (control.isGameDebug()) {
             control.setGameDebug(false);
         } else {
@@ -68,7 +68,7 @@ public class AIGuiManager extends AbstractAppState implements ScreenController {
     }
 
     public void resetSceneButton() {
-        Game.getInstance().getGameControl().restart();
+        AIAppState.getInstance().getAIControl().restart();
         gameScreen.getFocusHandler().resetFocusElements();
     }
 

@@ -8,12 +8,12 @@ import org.aitest.ai.model.AIModel;
 
 /**
  *
- * @author Tihomir Radosavljevic
- * @version 1.0
+ * @author Tihomir Radosavljević
+ * @version 1.0.2
  */
 public class AIWanderBehaviour extends WanderBehaviour{
 
-    AIModel model;
+    private AIModel model;
     
     public AIWanderBehaviour(Agent agent) {
         super(agent);
@@ -23,8 +23,6 @@ public class AIWanderBehaviour extends WanderBehaviour{
 
     @Override
     protected void controlUpdate(float tpf) {
-        System.out.println("Area: " + area[0] + " "+ area[1]);
-        System.out.println("Target" + targetPosition);
         changeTargetPosition(tpf);
         Vector3f vel = calculateNewVelocity();
         model.setWalkDirection(vel);

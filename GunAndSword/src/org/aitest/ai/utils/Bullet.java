@@ -1,8 +1,8 @@
 package org.aitest.ai.utils;
 
-import com.jme3.ai.agents.util.AbstractBullet;
-import com.jme3.ai.agents.util.AbstractWeapon;
-import com.jme3.ai.agents.util.control.Game;
+import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.weapons.AbstractBullet;
+import com.jme3.ai.agents.util.weapons.AbstractFirearmWeapon;
 import com.jme3.app.Application;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
@@ -11,8 +11,6 @@ import com.jme3.bullet.control.GhostControl;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -44,7 +42,7 @@ public class Bullet extends AbstractBullet {
     private Application app;
     private Geometry geoRay;
 
-    public Bullet(AbstractWeapon weapon, Vector3f origin) {
+    public Bullet(AbstractFirearmWeapon weapon, Vector3f origin) {
         super(weapon, AIGameSpatials.getInstance().getBulletSpatial());
 
         Spatial agentSpatial = weapon.getAgent().getSpatial();
@@ -53,7 +51,7 @@ public class Bullet extends AbstractBullet {
         spatial.addControl(this);
 
         bornPlace = new Vector3f(origin.setY(spatial.getLocalTranslation().getY()));
-        this.app = Game.getInstance().getApp();
+        this.app = AIAppState.getInstance().getApp();
 
         bulletPathLength = weapon.getMaxAttackRange();
 
@@ -89,12 +87,13 @@ public class Bullet extends AbstractBullet {
                 //if bullet hit agent
                 if (targetedSpatial.getControl(AIModel.class) != null) {
                     AIModel model = targetedSpatial.getControl(AIModel.class);
-                    Game.getInstance().agentAttack(weapon.getAgent(), model.getAgent(), weapon);
+                    AIAppState.getInstance().agentAttack(weapon.getAgent(), model.getAgent(), weapon);
                     if (!model.getAgent().isEnabled()) {
                         //remove agent from physic space
                         app.getStateManager().getState(BulletAppState.class).getPhysicsSpace().remove(model);
                         //remove agent's sword from physics space
-                        app.getStateManager().getState(BulletAppState.class).getPhysicsSpace().remove(model.getSword().getSpatial());
+                        app.getStateManager().getState(BulletAppState.class).getPhysicsSpace()
+                                .remove(((Inventory) model.getAgent().getInventory()).getSword().getSpatial());
                     }
 
                 }
@@ -102,7 +101,7 @@ public class Bullet extends AbstractBullet {
         }
 
         // testRay forDebug
-        if (((AIGameControl) Game.getInstance().getGameControl()).isGameDebug()) {
+        if (((AIGameControl) AIAppState.getInstance().getAIControl()).isGameDebug()) {
             Vector3f endVecToDebug = vecEnd;
             if (contactPoint != null) {
                 endVecToDebug = contactPoint;
@@ -114,7 +113,7 @@ public class Bullet extends AbstractBullet {
             Node root = (Node) this.app.getViewPort().getScenes().get(0);
             root.attachChild(geoRay);
         }
-        Game.getInstance().getRootNode().attachChild(spatial);
+        AIAppState.getInstance().getRootNode().attachChild(spatial);
     }
 
     @Override
@@ -130,12 +129,12 @@ public class Bullet extends AbstractBullet {
                     //now is time for explosion
                     Node nd = new Node("expl");
                     nd.addControl(new ExplosionControl(contactPoint, nd, app));
-                    Game.getInstance().getRootNode().attachChild(nd);
+                    AIAppState.getInstance().getRootNode().attachChild(nd);
                     if (geoRay != null) {
                         geoRay.removeFromParent();
                         geoRay = null;
                     }
-                    Game.getInstance().removeGameObject(this);
+                    AIAppState.getInstance().removeGameEntity(this);
                     return;
                 }
             }
@@ -146,14 +145,10 @@ public class Bullet extends AbstractBullet {
                     geoRay.removeFromParent();
                     geoRay = null;
                 }
-                Game.getInstance().removeGameObject(this);
+                AIAppState.getInstance().removeGameEntity(this);
                 return;
             }
             spatial.move(vecMove);
         }
-    }
-
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
     }
 }

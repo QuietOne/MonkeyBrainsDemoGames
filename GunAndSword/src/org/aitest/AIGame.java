@@ -1,7 +1,7 @@
 package org.aitest;
 
 import org.aitest.ai.control.AIGameUpdateManager;
-import com.jme3.ai.agents.util.control.Game;
+import com.jme3.ai.agents.util.control.AIAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.math.ColorRGBA;
@@ -13,12 +13,13 @@ import org.aitest.ai.utils.AIGameSpatials;
  * Main game class.
  *
  * @author normenhansen
- * @version 1.0
+ * @author Tihomir Radosavljević
+ * @version 1.1.0
  */
 public class AIGame extends SimpleApplication {
 
     //Defining game
-    private Game game = Game.getInstance();
+    private AIAppState aiAppState = AIAppState.getInstance();
 
     public static void main(String[] args) {
         AIGame app = new AIGame();
@@ -28,31 +29,31 @@ public class AIGame extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         //defining app
-        game.setApp(this);
-        
+        aiAppState.setApp(this);
+
         //setting game control
-        game.setGameControl(new AIGameControl());
-        
+        aiAppState.setAIControl(new AIGameControl());
+
         //registering input
-        game.getGameControl().setInputManagerMapping();
-        
+        aiAppState.getAIControl().setInputManagerMapping();
+
         //setting camera
-        game.getGameControl().setCameraSettings(cam);
-        
+        aiAppState.getAIControl().setCameraSettings(cam);
+
         //setting flying camera
-        game.getGameControl().setFlyCameraSettings(flyCam);
-        
+        aiAppState.getAIControl().setFlyCameraSettings(flyCam);
+
         //setting background game color
         viewPort.setBackgroundColor(ColorRGBA.DarkGray);
-        
+
         //setting lightings
         AIGameSpatials.getInstance().setGameLighting();
 
         //approves updates for controls
-        ////////this maybe add to Game update
+        ////////this maybe add to AIAppState update
         AIGameUpdateManager updateManager = new AIGameUpdateManager();
         stateManager.attach(updateManager);
-        
+
         //starting game physics
         BulletAppState bulletState = new BulletAppState();
         bulletState.setThreadingType(BulletAppState.ThreadingType.PARALLEL);
@@ -60,19 +61,19 @@ public class AIGame extends SimpleApplication {
 
         //loading scene used in game
         //It loads all needed graphics and it creates agents for game
-        ((AIGameControl) game.getGameControl()).loadScene();
-        
+        ((AIGameControl) aiAppState.getAIControl()).loadScene();
+
         //initializing GUI
         AIGuiManager guiManager = new AIGuiManager(this);
         stateManager.attach(guiManager);
 
         //setting game options
-        game.setFriendlyFire(false);
+        aiAppState.setFriendlyFire(false);
 
         //starting game (enabling the agents)
         //without this agents wouldn't do anything
-        game.start();
-        
-        stateManager.attach(game);
+        aiAppState.start();
+
+        stateManager.attach(aiAppState);
     }
 }

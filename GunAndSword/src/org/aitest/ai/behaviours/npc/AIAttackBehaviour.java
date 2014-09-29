@@ -2,19 +2,19 @@ package org.aitest.ai.behaviours.npc;
 
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.behaviours.npc.SimpleAttackBehaviour;
-import com.jme3.ai.agents.events.GameObjectSeenEvent;
+import com.jme3.ai.agents.events.GameEntitySeenEvent;
 import java.util.Random;
-import org.aitest.ai.model.AIModel;
+import org.aitest.ai.utils.Inventory;
 
 /**
  * Behaviour for attacking opponent if opponnet is seen.
  *
  * @author Tihomir Radosavljevic
- * @version 1.0
+ * @version 1.0.1
  */
 public class AIAttackBehaviour extends SimpleAttackBehaviour {
 
-    private AIModel weapons;
+    private Inventory weapons;
     /**
      * Bigger value means easier game, if it is 1, then agent will never miss.
      * Must be greater or equal to 1.
@@ -27,7 +27,7 @@ public class AIAttackBehaviour extends SimpleAttackBehaviour {
 
     public AIAttackBehaviour(Agent agent) {
         super(agent);
-        weapons = (AIModel) agent.getModel();
+        weapons = (Inventory) agent.getInventory();
         random = new Random();
     }
 
@@ -55,15 +55,12 @@ public class AIAttackBehaviour extends SimpleAttackBehaviour {
                 missOrNot((Agent) targetedObject);
             }
         }
-        //update cooldown for weapons
-        weapons.getGun().update(tpf);
-        weapons.getSword().update(tpf);
     }
 
     @Override
-    public void handleGameObjectSeenEvent(GameObjectSeenEvent event) {
-        if (event.getGameObjectSeen() instanceof Agent) {
-            Agent targetAgent = (Agent) event.getGameObjectSeen();
+    public void handleGameEntitySeenEvent(GameEntitySeenEvent event) {
+        if (event.getGameEntitySeen() instanceof Agent) {
+            Agent targetAgent = (Agent) event.getGameEntitySeen();
             if (agent.isSameTeam(targetAgent)) {
                 return;
             }

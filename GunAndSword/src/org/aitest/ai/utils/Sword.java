@@ -1,9 +1,8 @@
 package org.aitest.ai.utils;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.util.AbstractBullet;
-import com.jme3.ai.agents.util.AbstractWeapon;
-import com.jme3.ai.agents.util.control.Game;
+import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.weapons.AbstractWeapon;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.LoopMode;
 import com.jme3.bullet.BulletAppState;
@@ -18,7 +17,7 @@ import org.aitest.ai.model.AIModel;
  *
  * @author Tihomir Radosavljevic
  * @author mifth
- * @version 1.0
+ * @version 1.0.1
  */
 public class Sword extends AbstractWeapon {
 
@@ -27,27 +26,27 @@ public class Sword extends AbstractWeapon {
         name = "sword";
         cooldown = 0.6f;
         attackDamage = 30f;
-        numberOfBullets = -1;
         minAttackRange = 0;
-        //CHECK: if number is correct.
         maxAttackRange = 1f;
+        mass = 3;
     }
 
     @Override
-    protected AbstractBullet controlAttack(Vector3f direction, float tpf) {
+    public void attack(Vector3f targetPosition, float tpf) {
         for (PhysicsCollisionObject physObj : spatial.getControl(GhostControl.class).getOverlappingObjects()) {
             Spatial spObj = (Spatial) physObj.getUserObject();
             AIModel aiModel = spObj.getControl(AIModel.class);
 
             //if somebody is being hit and that one is not me
             if (aiModel != null && !aiModel.equals((AIModel) agent.getModel())) {
-                Game.getInstance().agentAttack(agent, aiModel.getAgent(), this);
+                AIAppState.getInstance().agentAttack(agent, aiModel.getAgent(), this);
                 if (!aiModel.getAgent().isEnabled()) {
-                        //remove agent from physic space
-                        Game.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().remove(aiModel);
-                        //remove agent's sword from physics space
-                        Game.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().remove(aiModel.getSword().getSpatial());
-                    }
+                    //remove agent from physic space
+                    AIAppState.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().remove(aiModel);
+                    //remove agent's sword from physics space
+                    AIAppState.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace()
+                            .remove(((Inventory) aiModel.getAgent().getInventory()).getSword().getSpatial());
+                }
                 break;
             }
         }
@@ -60,6 +59,19 @@ public class Sword extends AbstractWeapon {
                 animation.getChannel(0).setLoopMode(LoopMode.DontLoop);
             }
         }
-        return null;
+    }
+
+    @Override
+    public boolean isUsable() {
+        return true;
+    }
+
+    @Override
+    protected boolean isUnlimitedUse() {
+        return true;
+    }
+
+    @Override
+    protected void useWeapon() {
     }
 }

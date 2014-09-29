@@ -1,8 +1,8 @@
 package org.aitest.ai.utils;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.util.AbstractBullet;
-import com.jme3.ai.agents.util.AbstractWeapon;
+import com.jme3.ai.agents.util.weapons.AbstractBullet;
+import com.jme3.ai.agents.util.weapons.AbstractFirearmWeapon;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.LoopMode;
 import com.jme3.math.Vector3f;
@@ -12,9 +12,9 @@ import org.aitest.ai.model.AIModel;
 /**
  *
  * @author Tihomir Radosavljevic
- * @version 1.0
+ * @version 1.0.0
  */
-public class Gun extends AbstractWeapon {
+public class Gun extends AbstractFirearmWeapon {
 
     public Gun(Agent agent) {
         this.agent = agent;
@@ -24,6 +24,7 @@ public class Gun extends AbstractWeapon {
         numberOfBullets = -1;
         maxAttackRange = 1000f;
         minAttackRange = 3f;
+        mass = 10;
     }
 
     @Override

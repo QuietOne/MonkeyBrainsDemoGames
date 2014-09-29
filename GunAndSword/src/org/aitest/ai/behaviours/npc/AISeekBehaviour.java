@@ -2,8 +2,8 @@ package org.aitest.ai.behaviours.npc;
 
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.behaviours.npc.steering.SeekBehaviour;
-import com.jme3.ai.agents.events.GameObjectSeenEvent;
-import com.jme3.ai.agents.events.GameObjectSeenListener;
+import com.jme3.ai.agents.events.GameEntitySeenEvent;
+import com.jme3.ai.agents.events.GameEntitySeenListener;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import org.aitest.ai.model.AIModel;
@@ -12,20 +12,20 @@ import org.aitest.ai.model.AIModel;
  * Behaviour for coming closer to enemy.
  *
  * @author Tihomir Radosavljevic
- * @version 1.0
+ * @version 1.0.0
  */
-public class AISeekBehaviour extends SeekBehaviour implements GameObjectSeenListener {
+public class AISeekBehaviour extends SeekBehaviour implements GameEntitySeenListener {
 
     AIModel model;
     
     public AISeekBehaviour(Agent agent) {
-        super(agent, null);
+        super(agent);
         model = (AIModel) agent.getModel();
     }
 
-    public void handleGameObjectSeenEvent(GameObjectSeenEvent event) {
-        if (event.getGameObjectSeen() instanceof Agent) {
-            Agent targetAgent = (Agent) event.getGameObjectSeen();
+    public void handleGameEntitySeenEvent(GameEntitySeenEvent event) {
+        if (event.getGameEntitySeen() instanceof Agent) {
+            Agent targetAgent = (Agent) event.getGameEntitySeen();
             if (agent.isSameTeam(targetAgent)) {
                 return;
             }
