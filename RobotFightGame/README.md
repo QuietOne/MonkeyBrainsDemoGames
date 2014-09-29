@@ -9,6 +9,7 @@ Testing demo game for MonkeyBrains framework. Some introduction to game:
   - green: runs away from player, have cannon and always shooting at player
 - all three robots are in the same team
 - if tree robot are to easy for you you can add more with just increasing initial enemies array size. The game will do the rest.
+- it is possible to switch weapons with right click
 
 ##Note:
 
