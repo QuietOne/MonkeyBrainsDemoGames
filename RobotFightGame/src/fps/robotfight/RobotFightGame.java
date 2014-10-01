@@ -15,7 +15,7 @@ import com.jme3.ai.agents.behaviours.npc.SimpleLookBehaviour;
 import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
 import com.jme3.ai.agents.behaviours.player.SimplePlayerAttackBehaviour;
 import com.jme3.ai.agents.behaviours.player.SimplePlayerMoveBehaviour;
-import com.jme3.ai.agents.util.systems.HPSystem;
+import com.jme3.ai.agents.util.systems.BasicAgentHPSystem;
 import com.jme3.app.SimpleApplication;
 import com.jme3.font.BitmapText;
 import com.jme3.material.Material;
@@ -104,11 +104,11 @@ public class RobotFightGame extends SimpleApplication {
             enemies[i].setMaxForce(3);
         }
 
-        //setting HPSystem and Inventory to agents
-        player.setHpSystem(new HPSystem(player));
+        //setting BasicAgentHPSystem and Inventory to agents
+        player.setHpSystem(new BasicAgentHPSystem(player));
         player.setInventory(new Inventory());
         for (Agent enemy : enemies) {
-            enemy.setHpSystem(new HPSystem(enemy));
+            enemy.setHpSystem(new BasicAgentHPSystem(enemy));
             enemy.setInventory(new Inventory());
         }
 
@@ -148,7 +148,6 @@ public class RobotFightGame extends SimpleApplication {
                     enemies[i].setVisibilityRange(500f);
                 }
             }
-
         }
 
         //attaching camera to player
@@ -177,34 +176,25 @@ public class RobotFightGame extends SimpleApplication {
 
         //setting main behaviour to bots
         for (int i = 0; i < enemies.length; i++) {
+            SimpleMainBehaviour enemyMain = new SimpleMainBehaviour(enemies[i]);
+            SimpleAttackBehaviour attack = new SimpleAttackBehaviour(enemies[i]);
             if (i % 3 == 0) {
-                SimpleMainBehaviour enemyMain = new SimpleMainBehaviour(enemies[i]);
                 SimpleLookBehaviour look = new SimpleLookBehaviour(enemies[i]);
-                SimpleAttackBehaviour attack = new SimpleAttackBehaviour(enemies[i]);
+                look.setTypeOfWatching(SimpleLookBehaviour.TypeOfWatching.AGENT_WATCHING);
                 look.addListener(attack);
                 enemyMain.addBehaviour(look);
-                enemyMain.addBehaviour(attack);
                 enemyMain.addBehaviour(new WanderInsideTerrain(enemies[i], terrainSize));
-                enemies[i].setMainBehaviour(enemyMain);
             } else {
                 if (i % 3 == 1) {
-                    SimpleMainBehaviour enemyMain = new SimpleMainBehaviour(enemies[i]);
-                    SimpleAttackBehaviour attack = new SimpleAttackBehaviour(enemies[i]);
                     attack.setTarget(player);
-                    enemyMain.addBehaviour(attack);
                     enemyMain.addBehaviour(new FleeInsideTerrain(terrainSize, enemies[i], player));
-                    enemies[i].setMainBehaviour(enemyMain);
                 } else {
-                    SimpleMainBehaviour enemyMain = new SimpleMainBehaviour(enemies[i]);
-                    SimpleLookBehaviour look = new SimpleLookBehaviour(enemies[i]);
-                    SimpleAttackBehaviour attack = new SimpleAttackBehaviour(enemies[i]);
-                    look.addListener(attack);
-                    enemyMain.addBehaviour(look);
-                    enemyMain.addBehaviour(attack);
+                    attack.setTarget(player);
                     enemyMain.addBehaviour(new SeekInsideTerrain(terrainSize, enemies[i], player));
-                    enemies[i].setMainBehaviour(enemyMain);
                 }
             }
+            enemyMain.addBehaviour(attack);
+            enemies[i].setMainBehaviour(enemyMain);
         }
 
         //starting agents
