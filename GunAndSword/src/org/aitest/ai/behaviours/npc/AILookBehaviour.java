@@ -17,31 +17,31 @@ import java.util.List;
  * Behaviour for scanning environment.
  *
  * @author Tihomir Radosavljevic
- * @version 1.0
+ * @version 1.0.1
  */
 public class AILookBehaviour extends SimpleLookBehaviour {
 
-    AIAppState game;
+    AIAppState aiAppState;
 
     public AILookBehaviour(Agent agent) {
         super(agent);
-        game = AIAppState.getInstance();
+        aiAppState = AIAppState.getInstance();
     }
 
     @Override
     protected List<GameEntity> look(Agent agent, float viewAngle) {
         List<GameEntity> temp = new LinkedList<GameEntity>();
         //are there agents in seeing angle
-        for (Agent agentInGame : game.getAgents()) {
+        for (Agent agentInGame : aiAppState.getAgents()) {
             if (agentInGame.isEnabled()) {
-                if (!agentInGame.equals(agent) && !agent.isSameTeam(agentInGame) && game.lookable(agent, agentInGame, viewAngle)) {
+                if (!agentInGame.equals(agent) && !agent.isSameTeam(agentInGame) && lookable(agent, agentInGame)) {
                     temp.add(agentInGame);
                 }
             }
         }
         //is there obstacle between agent and observer
         Vector3f vecStart = agent.getLocalTranslation().clone().setY(1);
-        BulletAppState bulletState = game.getApp().getStateManager().getState(BulletAppState.class);
+        BulletAppState bulletState = aiAppState.getApp().getStateManager().getState(BulletAppState.class);
         for (int i = 0; i < temp.size(); i++) {
             GameEntity agentInRange = temp.get(i);
             Vector3f vecEnd = agentInRange.getLocalTranslation().clone().setY(1);

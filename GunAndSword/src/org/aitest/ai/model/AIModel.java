@@ -2,7 +2,7 @@ package org.aitest.ai.model;
 
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.util.control.AIAppState;
-import com.jme3.ai.agents.util.systems.HPSystem;
+import com.jme3.ai.agents.util.systems.BasicAgentHPSystem;
 import com.jme3.animation.AnimControl;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.BetterCharacterControl;
@@ -50,7 +50,7 @@ public class AIModel extends BetterCharacterControl {
         agent.setMoveSpeed(7.0f);
         agent.setRotationSpeed(1.0f);
         agent.setMaxForce(3);
-        agent.setHpSystem(new HPSystem(agent));
+        agent.setHpSystem(new BasicAgentHPSystem(agent));
         agent.setInventory(new Inventory(agent));
 
         animationList = new LinkedList<AnimControl>();

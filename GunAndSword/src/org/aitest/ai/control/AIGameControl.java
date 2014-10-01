@@ -5,7 +5,7 @@ import com.jme3.ai.agents.Team;
 import com.jme3.ai.agents.util.GameEntity;
 import com.jme3.ai.agents.util.control.AIAppState;
 import com.jme3.ai.agents.util.control.AIControl;
-import com.jme3.ai.agents.util.systems.HPSystem;
+import com.jme3.ai.agents.util.systems.BasicAgentHPSystem;
 import com.jme3.app.Application;
 import com.jme3.asset.DesktopAssetManager;
 import com.jme3.bullet.BulletAppState;
