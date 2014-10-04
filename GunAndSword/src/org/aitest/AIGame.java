@@ -7,6 +7,7 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.math.ColorRGBA;
 import org.aitest.gui.AIGuiManager;
 import org.aitest.ai.control.AIGameControl;
+import org.aitest.ai.control.HPControl;
 import org.aitest.ai.utils.AIGameSpatials;
 
 /**
@@ -30,6 +31,9 @@ public class AIGame extends SimpleApplication {
     public void simpleInitApp() {
         //defining app
         aiAppState.setApp(this);
+        
+        //setting hp control
+        aiAppState.setAIHPControl(new HPControl());
 
         //setting game control
         aiAppState.setAIControl(new AIGameControl());
