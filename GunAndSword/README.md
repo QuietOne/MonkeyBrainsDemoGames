@@ -1,4 +1,4 @@
-#Sword & Gun
+#Gun & Sword
 
 Testing demo game for MonkeyBrains framework. Some introduction to game:
 - this game is original game made by Mifth and QuietOne
