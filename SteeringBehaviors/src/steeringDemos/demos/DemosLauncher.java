@@ -1,16 +1,16 @@
 //Copyright (c) 2014, Jesús Martín Berlanga. All rights reserved. Distributed under the BSD licence. Read "com/jme3/ai/license.txt".
-
 package steeringDemos.demos;
 
 /**
  * Demos laucher
+ *
  * @author Jesús Martín Berlanga
  * @version 1.3
  */
 public class DemosLauncher extends javax.swing.JFrame {
 
     private Thread appThread;
-    
+
     /**
      * Creates new form laucherForm
      */
@@ -339,344 +339,296 @@ public class DemosLauncher extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-      
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            AlignmentDemo.main(null);
+
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                AlignmentDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-       
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            SlowDemo.main(null);
+
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                SlowDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            CohesionDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                CohesionDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            CohesionAndAlignmentDemo.main(null);
+
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                CohesionAndAlignmentDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            ArriveDemo.main(null);
+
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                ArriveDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-       
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            LeaderFollowingDemo.main(null);
+
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                LeaderFollowingDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            PursuitDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                PursuitDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            ObstacleAvoidanceDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                ObstacleAvoidanceDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            UnalignedAvoidanceDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                UnalignedAvoidanceDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            ContainmentDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                ContainmentDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            CohesionAndAlignmentDemo2D.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                CohesionAndAlignmentDemo2D.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            PathFollowDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                PathFollowDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton12ActionPerformed
 
     private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            WallApproachDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                WallApproachDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton13ActionPerformed
 
     private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            QueuingDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                QueuingDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton14ActionPerformed
 
     private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            WanderDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                WanderDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton15ActionPerformed
 
     private void jButton16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton16ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            RelativeWanderDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                RelativeWanderDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton16ActionPerformed
 
     private void jButton17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton17ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            SphereWanderDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                SphereWanderDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton17ActionPerformed
 
     private void jButton18ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton18ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            BoxExploreDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                BoxExploreDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton18ActionPerformed
 
     private void jButton19ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton19ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            HideBehaviourDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                HideBehaviourDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton19ActionPerformed
 
     private void jButton20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton20ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            SeekDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                SeekDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton20ActionPerformed
 
     private void jButton21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton21ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            FleeDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                FleeDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton21ActionPerformed
 
     private void jButton22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton22ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            EvadeDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                EvadeDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton22ActionPerformed
 
     private void jButton23ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton23ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            MoveDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                MoveDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton23ActionPerformed
 
     private void jButton24ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton24ActionPerformed
-        this.appThread = new Thread(new Runnable() 
-        {
-            public void run() 
-            {
-            PriorityDemo.main(null);
+        this.appThread = new Thread(new Runnable() {
+            public void run() {
+                PriorityDemo.main(null);
             }
         });
-        
+
         this.appThread.start();
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton24ActionPerformed
 

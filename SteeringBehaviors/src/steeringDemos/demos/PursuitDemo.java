@@ -174,7 +174,7 @@ public class PursuitDemo extends BasicDemo {
             neighboursMainBehaviour[i].addBehaviour(neighSteer);
             neighbours[i].setMainBehaviour(neighboursMainBehaviour[i]);
         }
-
+        
         aiAppState.start();
     }
 
