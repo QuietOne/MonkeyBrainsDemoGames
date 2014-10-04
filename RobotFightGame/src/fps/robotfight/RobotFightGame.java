@@ -22,6 +22,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import fps.robotfight.control.FPS;
+import fps.robotfight.control.HPControl;
 import fps.robotfight.util.Inventory;
 import fps.robotfight.util.Knife;
 
@@ -59,8 +60,10 @@ public class RobotFightGame extends SimpleApplication {
     public void simpleInitApp() {
         //defining app for game processing
         aiAppState.setApp(this);
-        //setting game Genre
+        //setting game control
         aiAppState.setAIControl(new FPS());
+        //setting hp controls for game
+        aiAppState.setAIHPControl(new HPControl());
         //registering input
         aiAppState.getAIControl().setInputManagerMapping();
         aiAppState.setFriendlyFire(false);
