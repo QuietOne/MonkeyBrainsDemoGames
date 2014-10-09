@@ -39,15 +39,15 @@ public class PursuitDemo extends BasicDemo {
 
     private SeparationBehaviour separation[];
     private CompoundSteeringBehaviour targetSteer;
-    private boolean isStrengthEscalar = true;
-    private float escalarStrength = 0.1f;
-    private BitmapText escalarStrengthHudText;
-    private BitmapText escalarInfoHudtext;
+    Agent target;
+    private boolean isStrengthScalar = true;
+    private float scalarStrength = 0.1f;
+    private BitmapText scalarStrengthHudText;
+    private BitmapText scalarInfoHudtext;
     private final String ESCALAR_INFO_HUD_MESSAGE = "Press H to increase the separation escalar strength, L to decrease.";
     MoveBehaviour targetMoveBehavior;
     WanderBehaviour targetWanderBehavior;
     private boolean turnDinamicMode = true;
-    
     private java.awt.event.ActionListener changeDinamicMode = new java.awt.event.ActionListener() {
         public void actionPerformed(ActionEvent event) {
             if (turnDinamicMode) {
@@ -64,7 +64,7 @@ public class PursuitDemo extends BasicDemo {
     private Timer iterationTimer;
 
     public static void main(String[] args) {
-        LeaderFollowingDemo app = new LeaderFollowingDemo();
+        PursuitDemo app = new PursuitDemo();
         app.start();
     }
 
@@ -76,25 +76,37 @@ public class PursuitDemo extends BasicDemo {
 
         //HUD TEXT
         BitmapText hudText = new BitmapText(guiFont, false);
-        hudText.setSize(guiFont.getCharSet().getRenderedSize() * 0.65f);      // font size
-        hudText.setColor(ColorRGBA.Red);                             // font color
-        hudText.setText("Press N to switch betwen escalar 'separation strength' and 'plane strength'.");             // the text
-        hudText.setLocalTranslation(0, 475, 0); // position
+        // font size
+        hudText.setSize(guiFont.getCharSet().getRenderedSize() * 0.65f);
+        // font color
+        hudText.setColor(ColorRGBA.Red);
+        // the text
+        hudText.setText("Press N to switch betwen escalar 'separation strength' and 'plane strength'.");
+        // position
+        hudText.setLocalTranslation(0, 475, 0);
         guiNode.attachChild(hudText);
 
-        this.escalarStrengthHudText = new BitmapText(guiFont, false);
-        this.escalarStrengthHudText.setSize(guiFont.getCharSet().getRenderedSize() * 0.65f);      // font size
-        this.escalarStrengthHudText.setColor(ColorRGBA.Orange);                             // font color
-        this.escalarStrengthHudText.setText(String.valueOf(this.escalarStrength));             // the text
-        this.escalarStrengthHudText.setLocalTranslation(0, 430, 0); // position
-        guiNode.attachChild(escalarStrengthHudText);
+        this.scalarStrengthHudText = new BitmapText(guiFont, false);
+        // font size
+        this.scalarStrengthHudText.setSize(guiFont.getCharSet().getRenderedSize() * 0.65f);
+        // font color
+        this.scalarStrengthHudText.setColor(ColorRGBA.Orange);
+        // the text
+        this.scalarStrengthHudText.setText(String.valueOf(this.scalarStrength));
+        // position
+        this.scalarStrengthHudText.setLocalTranslation(0, 430, 0);
+        guiNode.attachChild(scalarStrengthHudText);
 
-        this.escalarInfoHudtext = new BitmapText(guiFont, false);
-        this.escalarInfoHudtext.setSize(guiFont.getCharSet().getRenderedSize() * 0.65f);      // font size
-        this.escalarInfoHudtext.setColor(ColorRGBA.Orange);                             // font color
-        this.escalarInfoHudtext.setText(this.ESCALAR_INFO_HUD_MESSAGE);             // the text
-        this.escalarInfoHudtext.setLocalTranslation(0, 450, 0); // position
-        guiNode.attachChild(escalarInfoHudtext);
+        this.scalarInfoHudtext = new BitmapText(guiFont, false);
+        // font size
+        this.scalarInfoHudtext.setSize(guiFont.getCharSet().getRenderedSize() * 0.65f);
+        // font color
+        this.scalarInfoHudtext.setColor(ColorRGBA.Orange);
+        // the text
+        this.scalarInfoHudtext.setText(this.ESCALAR_INFO_HUD_MESSAGE);
+        // position
+        this.scalarInfoHudtext.setLocalTranslation(0, 450, 0);
+        guiNode.attachChild(scalarInfoHudtext);
 
         this.steerControl = new CustomSteerControl(11, 30);
         this.steerControl.setCameraSettings(getCamera());
@@ -102,38 +114,42 @@ public class PursuitDemo extends BasicDemo {
 
         //defining rootNode for aiAppState processing
         aiAppState.setApp(this);
-        aiAppState.setAIControl(this.steerControl);
+        aiAppState.setGameControl(this.steerControl);
 
         Vector3f[] spawnArea = null;
         this.numberNeighbours = 25;
 
-        Agent target = this.createBoid("Target", this.targetColor, 0.11f);
-        aiAppState.addAgent(target); //Add the target to the aiAppState
+        target = this.createBoid("Target", this.targetColor, 0.11f);
+
+        //Add the target to the aiAppState
+        aiAppState.addAgent(target);
         this.setStats(
                 target,
                 this.targetMoveSpeed,
                 this.targetRotationSpeed,
                 this.targetMass,
                 this.targetMaxForce);
-        aiAppState.getAIControl().spawn(target, new Vector3f());
+        aiAppState.getGameControl().spawn(target, new Vector3f());
 
         Agent[] neighbours = new Agent[this.numberNeighbours];
 
         for (int i = 0; i < this.numberNeighbours; i++) {
             neighbours[i] = this.createBoid("Neighbour " + i, this.neighboursColor, 0.11f);
-            aiAppState.addAgent(neighbours[i]); //Add the neighbours to the aiAppState
+            //Add the neighbours to the aiAppState
+            aiAppState.addAgent(neighbours[i]);
             this.setStats(
                     neighbours[i],
                     this.neighboursMoveSpeed,
                     this.neighboursRotationSpeed,
                     this.neighboursMass,
                     this.neighboursMaxForce);
-            aiAppState.getAIControl().spawn(neighbours[i], spawnArea);
+            aiAppState.getGameControl().spawn(neighbours[i], spawnArea);
         }
 
         List<GameEntity> obstacles = new ArrayList<GameEntity>();
         obstacles.addAll(Arrays.asList(neighbours));
 
+        //adding behaviours to target
         SimpleMainBehaviour targetMainBehaviour = new SimpleMainBehaviour(target);
         targetMoveBehavior = new MoveBehaviour(target);
         targetMoveBehavior.setupStrengthControl(0.25f);
@@ -158,6 +174,7 @@ public class PursuitDemo extends BasicDemo {
 
         separation = new SeparationBehaviour[neighbours.length];
 
+        //adding pursuit behaviours to agents
         for (int i = 0; i < neighbours.length; i++) {
             neighboursMainBehaviour[i] = new SimpleMainBehaviour(neighbours[i]);
 
@@ -166,7 +183,7 @@ public class PursuitDemo extends BasicDemo {
                     target);
 
             separation[i] = new SeparationBehaviour(neighbours[i], obstacles);
-            separation[i].setupStrengthControl(escalarStrength);
+            separation[i].setupStrengthControl(scalarStrength);
 
             BalancedCompoundSteeringBehaviour neighSteer = new BalancedCompoundSteeringBehaviour(neighbours[i]);
             neighSteer.addSteerBehaviour(separation[i]);
@@ -174,7 +191,7 @@ public class PursuitDemo extends BasicDemo {
             neighboursMainBehaviour[i].addBehaviour(neighSteer);
             neighbours[i].setMainBehaviour(neighboursMainBehaviour[i]);
         }
-        
+
         aiAppState.start();
     }
 
@@ -182,12 +199,12 @@ public class PursuitDemo extends BasicDemo {
     public void simpleUpdate(float tpf) {
         aiAppState.update(tpf);
 
-        if (this.isStrengthEscalar) {
-            escalarStrengthHudText.setText(String.valueOf(escalarStrength));
-            this.escalarInfoHudtext.setText(this.ESCALAR_INFO_HUD_MESSAGE);
+        if (this.isStrengthScalar) {
+            scalarStrengthHudText.setText(String.valueOf(scalarStrength));
+            this.scalarInfoHudtext.setText(this.ESCALAR_INFO_HUD_MESSAGE);
         } else {
-            escalarStrengthHudText.setText("");
-            this.escalarInfoHudtext.setText("");
+            scalarStrengthHudText.setText("");
+            this.scalarInfoHudtext.setText("");
         }
     }
 
@@ -217,27 +234,26 @@ public class PursuitDemo extends BasicDemo {
 
     private void changeMode() {
 
-        if (this.isStrengthEscalar) {
+        if (this.isStrengthScalar) {
             for (SeparationBehaviour behaviour : this.separation) {
                 behaviour.setupStrengthControl(1, 0, 1);
             }
 
             targetSteer.setupStrengthControl(1, 0, 1);
 
-            this.isStrengthEscalar = false;
+            this.isStrengthScalar = false;
         } else {
             for (SeparationBehaviour behaviour : this.separation) {
-                behaviour.setupStrengthControl(escalarStrength);
+                behaviour.setupStrengthControl(scalarStrength);
             }
 
             targetSteer.turnOffStrengthControl();
 
-            this.isStrengthEscalar = true;
+            this.isStrengthScalar = true;
         }
     }
     private AnalogListener analogListener = new AnalogListener() {
         public void onAnalog(String name, float value, float tpf) {
-
 
             if (name.equals("Increase separation")) {
                 increaseSeparation();
@@ -250,11 +266,11 @@ public class PursuitDemo extends BasicDemo {
 
     private void increaseSeparation() {
 
-        if (this.isStrengthEscalar) {
-            this.escalarStrength = this.escalarStrength + 0.05f;
+        if (this.isStrengthScalar) {
+            this.scalarStrength = this.scalarStrength + 0.05f;
 
             for (SeparationBehaviour behaviour : this.separation) {
-                behaviour.setupStrengthControl(this.escalarStrength);
+                behaviour.setupStrengthControl(this.scalarStrength);
             }
         }
 
@@ -262,15 +278,15 @@ public class PursuitDemo extends BasicDemo {
 
     private void decreaseSeparation() {
 
-        if (this.isStrengthEscalar) {
-            this.escalarStrength = this.escalarStrength - 0.075f;
+        if (this.isStrengthScalar) {
+            this.scalarStrength = this.scalarStrength - 0.075f;
 
-            if (this.escalarStrength < 0) {
-                this.escalarStrength = 0;
+            if (this.scalarStrength < 0) {
+                this.scalarStrength = 0;
             }
 
             for (SeparationBehaviour behaviour : this.separation) {
-                behaviour.setupStrengthControl(this.escalarStrength);
+                behaviour.setupStrengthControl(this.scalarStrength);
             }
         }
 

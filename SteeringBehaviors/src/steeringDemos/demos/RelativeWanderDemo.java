@@ -33,12 +33,12 @@ public class RelativeWanderDemo extends BasicDemo {
         
         //defining rootNode for aiAppState processing
         aiAppState.setApp(this);
-        aiAppState.setAIControl(new CustomSteerControl(5f));
+        aiAppState.setGameControl(new CustomSteerControl(5f));
                        
         Agent target = this.createBoid("Target", this.targetColor, 0.11f);
    
         aiAppState.addAgent(target); //Add the target to the aiAppState
-        aiAppState.getAIControl().spawn(target, Vector3f.ZERO);
+        aiAppState.getGameControl().spawn(target, Vector3f.ZERO);
         this.setStats
                 (
                     target,

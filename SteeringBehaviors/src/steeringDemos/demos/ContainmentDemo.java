@@ -39,11 +39,11 @@ public class ContainmentDemo extends BasicDemo {
 
         //defining rootNode for aiAppState processing
         aiAppState.setApp(this);
-        aiAppState.setAIControl(this.steerControl);
+        aiAppState.setGameControl(this.steerControl);
 
         Agent target = this.createBoid("Target", this.targetColor, 0.11f);
         aiAppState.addAgent(target); //Add the target to the aiAppState
-        aiAppState.getAIControl().spawn(target, new Vector3f());
+        aiAppState.getGameControl().spawn(target, new Vector3f());
 
         this.setStats(
                 target,

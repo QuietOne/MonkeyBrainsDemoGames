@@ -4,7 +4,7 @@ package steeringDemos.control;
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.util.GameEntity;
 import com.jme3.ai.agents.util.control.AIAppState;
-import com.jme3.ai.agents.util.control.AIControl;
+import com.jme3.ai.agents.util.control.GameControl;
 
 import com.jme3.input.FlyByCamera;
 import com.jme3.math.FastMath;
@@ -17,7 +17,7 @@ import com.jme3.renderer.Camera;
  * @author Jesús Martín Berlanga
  * @version 1.3
  */
-public class CustomSteerControl implements AIControl {
+public class CustomSteerControl implements GameControl {
 
     private float cameraMoveSpeed;
 
@@ -64,14 +64,14 @@ public class CustomSteerControl implements AIControl {
     /**
      * There is no imput mapping by default
      *
-     * @see AIControl#loadInputManagerMapping()
+     * @see GameControl#loadInputManagerMapping()
      */
     public void loadInputManagerMapping() {
         //Void
     }
 
     /**
-     * @see AIControl#finish()
+     * @see GameControl#finish()
      *
      * @return Always return false.
      */
@@ -80,7 +80,7 @@ public class CustomSteerControl implements AIControl {
     }
 
     /**
-     * @see AIControl#win(com.jme3.ai.agents.Agent)
+     * @see GameControl#win(com.jme3.ai.agents.Agent)
      *
      * @param agent
      * @return Always return false.
@@ -92,7 +92,7 @@ public class CustomSteerControl implements AIControl {
     /**
      * There is no restart
      *
-     * @see AIControl#restart()
+     * @see GameControl#restart()
      */
     public void restart() {
         //Void
@@ -108,7 +108,7 @@ public class CustomSteerControl implements AIControl {
      * @param area Null for random location and a point for a stablished
      * location.
      *
-     * @see AIControl#spawn(com.jme3.ai.agents.util.GameEntity,
+     * @see GameControl#spawn(com.jme3.ai.agents.util.GameEntity,
      * com.jme3.math.Vector3f[])
      */
     public void spawn(GameEntity gameObject, Vector3f... area) {

@@ -36,13 +36,13 @@ public class HideBehaviourDemo extends BasicDemo {
 
         //defining rootNode for aiAppState processing
         aiAppState.setApp(this);
-        aiAppState.setAIControl(this.steerControl);
+        aiAppState.setGameControl(this.steerControl);
 
         Vector3f[] spawnArea = null;
 
         Agent target = this.createBoid("Target", this.targetColor, 0.11f);
         aiAppState.addAgent(target); //Add the target to the aiAppState
-        aiAppState.getAIControl().spawn(target, new Vector3f(0, 0, -1));
+        aiAppState.getGameControl().spawn(target, new Vector3f(0, 0, -1));
         this.setStats(
                 target,
                 this.targetMoveSpeed,
@@ -58,7 +58,7 @@ public class HideBehaviourDemo extends BasicDemo {
                 this.neighboursMoveSpeed,
                 this.neighboursMass,
                 this.neighboursMaxForce);
-        aiAppState.getAIControl().spawn(hider, spawnArea);
+        aiAppState.getGameControl().spawn(hider, spawnArea);
 
         Agent obstacle = this.createSphere("Obstacle", ColorRGBA.Yellow, 0.35f);
         aiAppState.addAgent(obstacle);
@@ -68,7 +68,7 @@ public class HideBehaviourDemo extends BasicDemo {
                 this.neighboursRotationSpeed,
                 this.neighboursMass,
                 this.neighboursMaxForce);
-        aiAppState.getAIControl().spawn(obstacle, new Vector3f(2.5f, 2.5f, 2.5f));
+        aiAppState.getGameControl().spawn(obstacle, new Vector3f(2.5f, 2.5f, 2.5f));
 
         Agent farAwayObstacle = this.createSphere("Obstacle", ColorRGBA.Yellow, 0.35f);
         aiAppState.addAgent(farAwayObstacle);
@@ -78,7 +78,7 @@ public class HideBehaviourDemo extends BasicDemo {
                 this.neighboursRotationSpeed,
                 this.neighboursMass,
                 this.neighboursMaxForce);
-        aiAppState.getAIControl().spawn(farAwayObstacle, new Vector3f(7.5f, 7.5f, 5f));
+        aiAppState.getGameControl().spawn(farAwayObstacle, new Vector3f(7.5f, 7.5f, 5f));
 
         List<GameEntity> obstacles = new ArrayList<GameEntity>();
         obstacles.add(obstacle);

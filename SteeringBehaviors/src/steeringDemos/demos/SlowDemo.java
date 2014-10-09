@@ -50,7 +50,7 @@ public class SlowDemo extends BasicDemo {
         this.steerControl.setFlyCameraSettings(getFlyByCamera());
         
         aiAppState.setApp(this);
-        aiAppState.setAIControl(this.steerControl);
+        aiAppState.setGameControl(this.steerControl);
              
         Agent agent = this.createBoid("boid ", this.neighboursColor, 0.1f);
         aiAppState.addAgent(agent); //Add the neighbours to the aiAppState
@@ -64,7 +64,7 @@ public class SlowDemo extends BasicDemo {
                     this.neighboursMaxForce
                 );
         
-        aiAppState.getAIControl().spawn(agent, new Vector3f());
+        aiAppState.getGameControl().spawn(agent, new Vector3f());
         
         this.iterationTimer = new Timer(6000, this.resetSlows);
         this.iterationTimer.start();

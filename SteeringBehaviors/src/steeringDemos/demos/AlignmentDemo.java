@@ -43,7 +43,7 @@ public class AlignmentDemo extends BasicDemo {
         //defining rootNode for aiAppState processing
         aiAppState.setApp(this);
         this.numberNeighbours = 150;
-        aiAppState.setAIControl(this.steerControl);
+        aiAppState.setGameControl(this.steerControl);
 
         Vector3f[] spawnArea = null;
 
@@ -58,7 +58,7 @@ public class AlignmentDemo extends BasicDemo {
                     this.neighboursRotationSpeed,
                     this.neighboursMass,
                     this.neighboursMaxForce);
-            aiAppState.getAIControl().spawn(boids[i], spawnArea);
+            aiAppState.getGameControl().spawn(boids[i], spawnArea);
         }
 
         List<GameEntity> obstacles = new ArrayList<GameEntity>();

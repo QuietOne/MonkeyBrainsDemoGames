@@ -39,7 +39,7 @@ public class SeekDemo extends BasicDemo {
 
         //defining rootNode for aiAppState processing
         aiAppState.setApp(this);
-        aiAppState.setAIControl(new CustomSteerControl(5f));
+        aiAppState.setGameControl(new CustomSteerControl(5f));
 
         target = this.createBoid("Target", this.targetColor, 0.11f);
 
@@ -48,7 +48,7 @@ public class SeekDemo extends BasicDemo {
         }
 
         aiAppState.addAgent(target); //Add the target to the aiAppState
-        aiAppState.getAIControl().spawn(target, Vector3f.ZERO);
+        aiAppState.getGameControl().spawn(target, Vector3f.ZERO);
         this.setStats(
                 target,
                 this.targetMoveSpeed,

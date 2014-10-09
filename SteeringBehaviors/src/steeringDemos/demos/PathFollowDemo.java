@@ -46,7 +46,7 @@ public class PathFollowDemo extends BasicDemo {
 
         //defining rootNode for aiAppState processing
         aiAppState.setApp(this);
-        aiAppState.setAIControl(this.steerControl);
+        aiAppState.setGameControl(this.steerControl);
 
         this.numberNeighbours = 10;
         Vector3f[] spawnArea = null;
@@ -62,7 +62,7 @@ public class PathFollowDemo extends BasicDemo {
                     this.neighboursRotationSpeed,
                     this.neighboursMass,
                     this.neighboursMaxForce);
-            aiAppState.getAIControl().spawn(neighbours[i], spawnArea);
+            aiAppState.getGameControl().spawn(neighbours[i], spawnArea);
         }
         ArrayList<GameEntity> neighObstacles = new ArrayList<GameEntity>();
         neighObstacles.addAll(Arrays.asList(neighbours));

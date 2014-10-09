@@ -38,7 +38,7 @@ public class FleeDemo extends BasicDemo {
         
         //defining rootNode for aiAppState processing
         aiAppState.setApp(this);
-        aiAppState.setAIControl(this.steerControl);
+        aiAppState.setGameControl(this.steerControl);
 
         Vector3f[] spawnArea = null;
         this.numberNeighbours = 20;
@@ -46,7 +46,7 @@ public class FleeDemo extends BasicDemo {
         Agent target = this.createBoid("Target", this.targetColor, 0.1f);
 
         aiAppState.addAgent(target); //Add the target to the aiAppState
-        aiAppState.getAIControl().spawn(target, new Vector3f
+        aiAppState.getGameControl().spawn(target, new Vector3f
                 (
                     (FastMath.nextRandomFloat() - 0.5f) * 5, 
                     (FastMath.nextRandomFloat() - 0.5f) * 5, 
@@ -76,7 +76,7 @@ public class FleeDemo extends BasicDemo {
                         this.neighboursMass,
                         this.neighboursMaxForce
                     );
-            aiAppState.getAIControl().spawn(neighbours[i], spawnArea);
+            aiAppState.getGameControl().spawn(neighbours[i], spawnArea);
         }
 
         for (int i = 0; i < neighbours.length; i++) 

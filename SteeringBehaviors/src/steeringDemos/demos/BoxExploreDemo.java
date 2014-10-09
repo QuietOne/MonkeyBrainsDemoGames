@@ -33,14 +33,14 @@ public class BoxExploreDemo extends BasicDemo {
         
         //defining rootNode for aiAppState processing
         aiAppState.setApp(this);
-        aiAppState.setAIControl(this.steerControl);
+        aiAppState.setGameControl(this.steerControl);
         
         Vector3f[] spawnArea = null;
         
         Agent target = this.createBoid("Target", this.targetColor, 0.11f);
    
         aiAppState.addAgent(target); //Add the target to the aiAppState
-        aiAppState.getAIControl().spawn(target, spawnArea);
+        aiAppState.getGameControl().spawn(target, spawnArea);
         this.setStats(target, this.targetMoveSpeed, this.targetRotationSpeed, 
                 this.targetMass, this.targetMaxForce);
                 

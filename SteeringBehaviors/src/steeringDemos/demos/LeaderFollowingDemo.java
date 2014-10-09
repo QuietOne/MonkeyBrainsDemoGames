@@ -103,7 +103,7 @@ public class LeaderFollowingDemo extends BasicDemo {
 
         //defining rootNode for aiAppState processing
         aiAppState.setApp(this);
-        aiAppState.setAIControl(this.steerControl);
+        aiAppState.setGameControl(this.steerControl);
 
         Vector3f[] spawnArea = null;
         this.numberNeighbours = 15;
@@ -116,7 +116,7 @@ public class LeaderFollowingDemo extends BasicDemo {
                 this.targetRotationSpeed,
                 this.targetMass,
                 this.targetMaxForce);
-        aiAppState.getAIControl().spawn(target, new Vector3f());
+        aiAppState.getGameControl().spawn(target, new Vector3f());
 
         Agent[] neighbours = new Agent[this.numberNeighbours];
 
@@ -129,7 +129,7 @@ public class LeaderFollowingDemo extends BasicDemo {
                     this.neighboursRotationSpeed,
                     this.neighboursMass,
                     this.neighboursMaxForce);
-            aiAppState.getAIControl().spawn(neighbours[i], spawnArea);
+            aiAppState.getGameControl().spawn(neighbours[i], spawnArea);
         }
 
         List<GameEntity> obstacles = new ArrayList<GameEntity>();
@@ -242,7 +242,6 @@ public class LeaderFollowingDemo extends BasicDemo {
     
     private AnalogListener analogListener = new AnalogListener() {
         public void onAnalog(String name, float value, float tpf) {
-
 
             if (name.equals("Increase separation")) {
                 increaseSeparation();

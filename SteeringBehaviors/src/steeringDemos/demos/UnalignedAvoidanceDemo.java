@@ -59,7 +59,7 @@ public class UnalignedAvoidanceDemo extends BasicDemo {
 
         //defining rootNode for aiAppState processing
         aiAppState.setApp(this);
-        aiAppState.setAIControl(this.steerControl);
+        aiAppState.setGameControl(this.steerControl);
 
         Vector3f[] spawnArea = null;
         this.numberNeighbours = 150;
@@ -73,7 +73,7 @@ public class UnalignedAvoidanceDemo extends BasicDemo {
                 this.targetRotationSpeed,
                 this.targetMass,
                 this.targetMaxForce);
-        aiAppState.getAIControl().spawn(agent, new Vector3f());
+        aiAppState.getGameControl().spawn(agent, new Vector3f());
 
         Agent[] neighbours = new Agent[this.numberNeighbours];
         Random rand = FastMath.rand;
@@ -86,7 +86,7 @@ public class UnalignedAvoidanceDemo extends BasicDemo {
                     this.neighboursRotationSpeed,
                     this.neighboursMass,
                     this.neighboursMaxForce);
-            aiAppState.getAIControl().spawn(neighbours[i], spawnArea);
+            aiAppState.getGameControl().spawn(neighbours[i], spawnArea);
 
             SimpleMainBehaviour mainB = new SimpleMainBehaviour(neighbours[i]);
 
@@ -110,7 +110,7 @@ public class UnalignedAvoidanceDemo extends BasicDemo {
                 this.neighboursRotationSpeed,
                 this.neighboursMass,
                 this.neighboursMaxForce);
-        aiAppState.getAIControl().spawn(focus, this.generateRandomPosition());
+        aiAppState.getGameControl().spawn(focus, this.generateRandomPosition());
 
         SimpleMainBehaviour mainB = new SimpleMainBehaviour(focus);
         focus.setMainBehaviour(mainB);

@@ -51,7 +51,7 @@ public class QueuingDemo extends BasicDemo {
 
         //defining rootNode for aiAppState processing
         aiAppState.setApp(this);
-        aiAppState.setAIControl(this.steerControl);
+        aiAppState.setGameControl(this.steerControl);
 
         this.numberNeighbours = 50;
         Vector3f[] spawnArea = null;
@@ -66,7 +66,7 @@ public class QueuingDemo extends BasicDemo {
                 this.targetRotationSpeed,
                 this.targetMass,
                 this.targetMaxForce);
-        aiAppState.getAIControl().spawn(target, new Vector3f(0, 0, 15));
+        aiAppState.getGameControl().spawn(target, new Vector3f(0, 0, 15));
         SimpleMainBehaviour targetMainB = new SimpleMainBehaviour(target);
         target.setMainBehaviour(targetMainB);
 
@@ -83,7 +83,7 @@ public class QueuingDemo extends BasicDemo {
                     this.neighboursRotationSpeed,
                     this.neighboursMass,
                     this.neighboursMaxForce);
-            aiAppState.getAIControl().spawn(this.neighbours[i], spawnArea);
+            aiAppState.getGameControl().spawn(this.neighbours[i], spawnArea);
         }
 
         List<GameEntity> obstacles = new ArrayList<GameEntity>();
@@ -118,7 +118,7 @@ public class QueuingDemo extends BasicDemo {
                     this.neighboursRotationSpeed,
                     this.neighboursMass,
                     this.neighboursMaxForce);
-            aiAppState.getAIControl().spawn(wallObstacle.get(i), spheresSpawnPositions[i]);
+            aiAppState.getGameControl().spawn(wallObstacle.get(i), spheresSpawnPositions[i]);
 
             SimpleMainBehaviour mainB = new SimpleMainBehaviour((Agent) wallObstacle.get(i));
             ((Agent) wallObstacle.get(i)).setMainBehaviour(mainB);

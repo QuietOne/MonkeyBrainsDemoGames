@@ -38,12 +38,12 @@ public class ArriveDemo extends BasicDemo {
         this.steerControl.setFlyCameraSettings(getFlyByCamera());
 
         aiAppState.setApp(this);
-        aiAppState.setAIControl(this.steerControl);
+        aiAppState.setGameControl(this.steerControl);
 
 
         this.target = this.createSphere("target", ColorRGBA.Red, 0.25f);
         aiAppState.addAgent(target);
-        aiAppState.getAIControl().spawn(target, new Vector3f());
+        aiAppState.getGameControl().spawn(target, new Vector3f());
 
         for (int i = 0; i < this.agents.length; i++) {
             agents[i] = this.createBoid("boid " + i, this.neighboursColor, 0.1f);
@@ -53,9 +53,9 @@ public class ArriveDemo extends BasicDemo {
                     this.neighboursMaxForce);
         }
 
-        aiAppState.getAIControl().spawn(agents[0], new Vector3f(-10, 0, 0));
-        aiAppState.getAIControl().spawn(agents[1], new Vector3f(8, 0, 0));
-        aiAppState.getAIControl().spawn(agents[2], new Vector3f(0, 50, 2));
+        aiAppState.getGameControl().spawn(agents[0], new Vector3f(-10, 0, 0));
+        aiAppState.getGameControl().spawn(agents[1], new Vector3f(8, 0, 0));
+        aiAppState.getGameControl().spawn(agents[2], new Vector3f(0, 50, 2));
 
         arrive = new ArriveBehaviour[3];
 

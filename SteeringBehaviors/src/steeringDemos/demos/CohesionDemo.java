@@ -38,7 +38,7 @@ public class CohesionDemo extends BasicDemo {
 
         //defining rootNode for aiAppState processing
         aiAppState.setApp(this);
-        aiAppState.setAIControl(this.steerControl);
+        aiAppState.setGameControl(this.steerControl);
 
         this.numberNeighbours = 150;
         Vector3f[] spawnArea = null;
@@ -50,7 +50,7 @@ public class CohesionDemo extends BasicDemo {
             this.setStats(boids[i], this.neighboursMoveSpeed,
                     this.neighboursRotationSpeed, this.neighboursMass,
                     this.neighboursMaxForce);
-            aiAppState.getAIControl().spawn(boids[i], spawnArea);
+            aiAppState.getGameControl().spawn(boids[i], spawnArea);
         }
 
         List<GameEntity> obstacles = new ArrayList<GameEntity>();
