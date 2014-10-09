@@ -52,7 +52,7 @@ public class LaserWeapon extends AbstractFirearmWeapon {
                     break;
                 }
                 game.agentAttack(agent, target, this);
-                ((Quad) ((Geometry) ((Node) target.getSpatial()).getChild("healthbar")).getMesh()).updateGeometry(target.getHpSystem().getCurrentHP() / 100 * 4, 0.2f);
+                ((Quad) ((Geometry) ((Node) target.getSpatial()).getChild("healthbar")).getMesh()).updateGeometry(target.getHitPoints().getCurrentHP() / 100 * 4, 0.2f);
                 laserLength = agent.getLocalTranslation().distance(target.getLocalTranslation());
                 break;
             }

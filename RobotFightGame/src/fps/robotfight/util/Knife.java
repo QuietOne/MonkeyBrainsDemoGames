@@ -21,7 +21,7 @@ public class Knife extends AbstractWeapon {
         this.agent = agent;
         this.maxAttackRange = 20f;
         this.minAttackRange = 0;
-        this.attackDamage = agent.getHpSystem().getMaxHP();
+        this.attackDamage = agent.getHitPoints().getMaxHP();
         this.cooldown = 0.02f;
     }
 
@@ -32,7 +32,7 @@ public class Knife extends AbstractWeapon {
         for (Agent target : game.getAgents()) {
             if (hurts(target) && !agent.equals(target)) {
                 game.agentAttack(agent, target, this);
-                ((Quad) ((Geometry) ((Node) target.getSpatial()).getChild("healthbar")).getMesh()).updateGeometry(target.getHpSystem().getCurrentHP() / 100 * 4, 0.2f);
+                ((Quad) ((Geometry) ((Node) target.getSpatial()).getChild("healthbar")).getMesh()).updateGeometry(target.getHitPoints().getCurrentHP() / 100 * 4, 0.2f);
             }
         }
     }

@@ -6,7 +6,7 @@ import com.jme3.ai.agents.behaviours.Behaviour;
 import com.jme3.ai.agents.behaviours.npc.SimpleAttackBehaviour;
 import com.jme3.ai.agents.util.GameEntity;
 import com.jme3.ai.agents.util.control.AIAppState;
-import com.jme3.ai.agents.util.control.AIControl;
+import com.jme3.ai.agents.util.control.GameControl;
 import com.jme3.input.FlyByCamera;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
@@ -26,7 +26,7 @@ import java.util.Random;
  *
  * @author Tihomir Radosavljević
  */
-public class FPS implements AIControl {
+public class FPS implements GameControl {
 
     AIAppState aiAppState;
     InputManager inputManager;

@@ -1,6 +1,6 @@
 package fps.robotfight.util;
 
-import com.jme3.ai.agents.util.systems.InventorySystem;
+import com.jme3.ai.agents.util.systems.Inventory;
 import com.jme3.ai.agents.util.weapons.AbstractWeapon;
 
 /**
@@ -8,7 +8,7 @@ import com.jme3.ai.agents.util.weapons.AbstractWeapon;
  * @author Tihomir Radosavljevic
  * @version 1.0.0
  */
-public class Inventory implements InventorySystem {
+public class RobotFightInventory implements Inventory{
 
     private AbstractWeapon activeWeapon;
     private AbstractWeapon secondaryWeapon;

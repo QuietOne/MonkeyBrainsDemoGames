@@ -3,7 +3,7 @@ package behaviours;
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.behaviours.Behaviour;
 import com.jme3.input.controls.ActionListener;
-import fps.robotfight.util.Inventory;
+import fps.robotfight.util.RobotFightInventory;
 
 /**
  *
@@ -22,7 +22,7 @@ public class SwitchWeaponsBehaviour extends Behaviour implements ActionListener 
 
     public void onAction(String name, boolean isPressed, float tpf) {
         if (name.equals("Switch") && isPressed) {
-            ((Inventory) agent.getInventory()).switchWeapons();
+            ((RobotFightInventory) agent.getInventory()).switchWeapons();
         }
     }
 }

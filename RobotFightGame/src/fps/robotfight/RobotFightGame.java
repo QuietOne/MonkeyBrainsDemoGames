@@ -15,7 +15,7 @@ import com.jme3.ai.agents.behaviours.npc.SimpleLookBehaviour;
 import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
 import com.jme3.ai.agents.behaviours.player.SimplePlayerAttackBehaviour;
 import com.jme3.ai.agents.behaviours.player.SimplePlayerMoveBehaviour;
-import com.jme3.ai.agents.util.systems.BasicAgentHPSystem;
+import com.jme3.ai.agents.util.systems.SimpleAgentHPSystem;
 import com.jme3.app.SimpleApplication;
 import com.jme3.font.BitmapText;
 import com.jme3.material.Material;
@@ -23,7 +23,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import fps.robotfight.control.FPS;
 import fps.robotfight.control.HPControl;
-import fps.robotfight.util.Inventory;
+import fps.robotfight.util.RobotFightInventory;
 import fps.robotfight.util.Knife;
 
 /**
@@ -44,7 +44,7 @@ public class RobotFightGame extends SimpleApplication {
 
     //defining players
     private Agent player;
-    private Agent[] enemies = new Agent[3];
+    private Agent[] enemies = new Agent[6];
     //Defining game
     private AIAppState aiAppState = AIAppState.getInstance();
     private float gameFinishCountDown = 5f;
@@ -61,11 +61,11 @@ public class RobotFightGame extends SimpleApplication {
         //defining app for game processing
         aiAppState.setApp(this);
         //setting game control
-        aiAppState.setAIControl(new FPS());
+        aiAppState.setGameControl(new FPS());
         //setting hp controls for game
-        aiAppState.setAIHPControl(new HPControl());
+        aiAppState.setHitPointsControl(new HPControl());
         //registering input
-        aiAppState.getAIControl().setInputManagerMapping();
+        aiAppState.getGameControl().setInputManagerMapping();
         aiAppState.setFriendlyFire(false);
 
         //DefinedSpatials for graphics for this game
@@ -73,7 +73,7 @@ public class RobotFightGame extends SimpleApplication {
         RoboFightSpatials.initializeFloor(terrainSize);
         viewPort.addProcessor(RoboFightSpatials.initializeBloom(assetManager));
 
-        aiAppState.getAIControl().setFlyCameraSettings(flyCam);
+        aiAppState.getGameControl().setFlyCameraSettings(flyCam);
 
         //initialization of Agents with their names and spatials
         player = new Agent("Player", RoboFightSpatials.initializeAgent("Player", ColorRGBA.Gray));
@@ -93,7 +93,7 @@ public class RobotFightGame extends SimpleApplication {
         //adding them to game
         aiAppState.addAgent(player);
         for (int i = 0; i < enemies.length; i++) {
-            aiAppState.getAIControl().spawn(enemies[i], new Vector3f(terrainSize * 2 - 5, 0, terrainSize * 2 - 5),
+            aiAppState.getGameControl().spawn(enemies[i], new Vector3f(terrainSize * 2 - 5, 0, terrainSize * 2 - 5),
                     new Vector3f(-terrainSize * 2 + 5, 0, -terrainSize * 2 + 5));
         }
 
@@ -107,25 +107,25 @@ public class RobotFightGame extends SimpleApplication {
             enemies[i].setMaxForce(3);
         }
 
-        //setting BasicAgentHPSystem and Inventory to agents
-        player.setHpSystem(new BasicAgentHPSystem(player));
-        player.setInventory(new Inventory());
+        //setting SimpleAgentHPSystem and RobotFightInventory to agents
+        player.setHitPoints(new SimpleAgentHPSystem(player));
+        player.setInventory(new RobotFightInventory());
         for (Agent enemy : enemies) {
-            enemy.setHpSystem(new BasicAgentHPSystem(enemy));
-            enemy.setInventory(new Inventory());
+            enemy.setHitPoints(new SimpleAgentHPSystem(enemy));
+            enemy.setInventory(new RobotFightInventory());
         }
 
         //giving them weapons
-        ((Inventory) player.getInventory()).setActiveWeapon(new Cannon("cannon", player));
-        ((Inventory) player.getInventory()).setSecondaryWeapon(new LaserWeapon("laser", player));
+        ((RobotFightInventory) player.getInventory()).setActiveWeapon(new Cannon("cannon", player));
+        ((RobotFightInventory) player.getInventory()).setSecondaryWeapon(new LaserWeapon("laser", player));
         for (int i = 0; i < enemies.length; i++) {
             if (i % 3 == 0) {
-                ((Inventory) enemies[i].getInventory()).setActiveWeapon(new LaserWeapon("laser", enemies[i]));
+                ((RobotFightInventory) enemies[i].getInventory()).setActiveWeapon(new LaserWeapon("laser", enemies[i]));
             } else {
                 if (i % 3 == 1) {
-                    ((Inventory) enemies[i].getInventory()).setActiveWeapon(new Cannon("cannon", enemies[i]));
+                    ((RobotFightInventory) enemies[i].getInventory()).setActiveWeapon(new Cannon("cannon", enemies[i]));
                 } else {
-                    ((Inventory) enemies[i].getInventory()).setActiveWeapon(new Knife("knife", enemies[i]));
+                    ((RobotFightInventory) enemies[i].getInventory()).setActiveWeapon(new Knife("knife", enemies[i]));
                 }
             }
         }
@@ -158,17 +158,17 @@ public class RobotFightGame extends SimpleApplication {
 
         //making move behaviour for player
         SimplePlayerMoveBehaviour playerMove = new SimplePlayerMoveBehaviour(player, null);
-        ((FPS) aiAppState.getAIControl()).addMoveListener(player, playerMove);
-        playerMove.addSupportedOperations(((FPS) aiAppState.getAIControl()).getPlayerMoveSupportedOperations(player));
+        ((FPS) aiAppState.getGameControl()).addMoveListener(player, playerMove);
+        playerMove.addSupportedOperations(((FPS) aiAppState.getGameControl()).getPlayerMoveSupportedOperations(player));
 
         //making attack behaviour for player
         SimplePlayerAttackBehaviour playerAttack = new SimplePlayerAttackBehaviour(player, null);
-        ((FPS) aiAppState.getAIControl()).addAttackListener(player, playerAttack);
-        playerAttack.addSupportedOperations(((FPS) aiAppState.getAIControl()).getPlayerAttackSupportedOperations(player));
+        ((FPS) aiAppState.getGameControl()).addAttackListener(player, playerAttack);
+        playerAttack.addSupportedOperations(((FPS) aiAppState.getGameControl()).getPlayerAttackSupportedOperations(player));
 
         //making switch weapon behaviour for player
         SwitchWeaponsBehaviour playerSwitch = new SwitchWeaponsBehaviour(player);
-        ((FPS) aiAppState.getAIControl()).addSwitchListener(player, playerSwitch);
+        ((FPS) aiAppState.getGameControl()).addSwitchListener(player, playerSwitch);
 
         //making main behaviour for player and adding behaviours to it
         SimpleMainBehaviour playerMain = new SimpleMainBehaviour(player);
@@ -206,7 +206,7 @@ public class RobotFightGame extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
-        if (aiAppState.getAIControl().finish()) {
+        if (aiAppState.getGameControl().finish()) {
             if (gameFinishCountDown <= 0) {
                 this.stop();
             } else {
@@ -214,7 +214,7 @@ public class RobotFightGame extends SimpleApplication {
                 BitmapText hudText = new BitmapText(guiFont, false);
                 hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
                 hudText.setColor(ColorRGBA.Red); // font color
-                if (aiAppState.getAIControl().win(player)) {
+                if (aiAppState.getGameControl().win(player)) {
                     hudText.setText(player.getTeam().getName() + " wins."); // the text
                 } else {
                     hudText.setText(enemies[0].getTeam().getName() + " wins."); // the text

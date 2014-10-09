@@ -44,7 +44,7 @@ public class CannonBall extends AbstractBullet {
         for (Agent target : game.getAgents()) {
             if (hurts(target) && !weapon.getAgent().equals(target)) {
                 game.agentAttack(weapon.getAgent(), target, weapon);
-                ((Quad) ((Geometry) ((Node) target.getSpatial()).getChild("healthbar")).getMesh()).updateGeometry(target.getHpSystem().getCurrentHP() / 100 * 4, 0.2f);
+                ((Quad) ((Geometry) ((Node) target.getSpatial()).getChild("healthbar")).getMesh()).updateGeometry(target.getHitPoints().getCurrentHP() / 100 * 4, 0.2f);
                 weapon.setBullet(null);
                 game.removeGameEntity(this);
             }
