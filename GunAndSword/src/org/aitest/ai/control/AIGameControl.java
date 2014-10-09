@@ -4,8 +4,8 @@ import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.Team;
 import com.jme3.ai.agents.util.GameEntity;
 import com.jme3.ai.agents.util.control.AIAppState;
-import com.jme3.ai.agents.util.control.AIControl;
-import com.jme3.ai.agents.util.systems.BasicAgentHPSystem;
+import com.jme3.ai.agents.util.control.GameControl;
+import com.jme3.ai.agents.util.systems.SimpleAgentHPSystem;
 import com.jme3.app.Application;
 import com.jme3.asset.DesktopAssetManager;
 import com.jme3.bullet.BulletAppState;
@@ -35,7 +35,7 @@ import org.aitest.physics.AIStaticObjectType;
  * @author Tihomir Radosavljevic
  * @version 1.0
  */
-public class AIGameControl implements AIControl {
+public class AIGameControl implements GameControl {
 
     private InputManager inputManager;
     private DesktopAssetManager dasm;

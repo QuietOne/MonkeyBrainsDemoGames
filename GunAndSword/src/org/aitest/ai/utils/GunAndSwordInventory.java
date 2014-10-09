@@ -1,7 +1,7 @@
 package org.aitest.ai.utils;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.util.systems.InventorySystem;
+import com.jme3.ai.agents.util.systems.Inventory;
 import com.jme3.ai.agents.util.weapons.AbstractWeapon;
 
 /**
@@ -9,7 +9,7 @@ import com.jme3.ai.agents.util.weapons.AbstractWeapon;
  * @author Tihomir Radosavljević
  * @version 1.0.0
  */
-public class Inventory implements InventorySystem{
+public class GunAndSwordInventory implements Inventory{
 
     /**
      * Sword that this agent has.
@@ -20,7 +20,7 @@ public class Inventory implements InventorySystem{
      */
     private Gun gun;
 
-    public Inventory(Agent agent) {
+    public GunAndSwordInventory(Agent agent) {
         sword = new Sword(agent);
         gun = new Gun(agent);
     }

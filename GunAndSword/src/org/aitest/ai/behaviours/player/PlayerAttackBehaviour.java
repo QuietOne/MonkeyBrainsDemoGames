@@ -6,7 +6,7 @@ import com.jme3.animation.AnimControl;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.math.Vector3f;
 import java.util.List;
-import org.aitest.ai.utils.Inventory;
+import org.aitest.ai.utils.GunAndSwordInventory;
 
 /**
  *
@@ -15,12 +15,12 @@ import org.aitest.ai.utils.Inventory;
  */
 public class PlayerAttackBehaviour extends Behaviour implements AnalogListener {
 
-    Inventory inventory;
+    GunAndSwordInventory inventory;
     List<AnimControl> animationList;
 
     public PlayerAttackBehaviour(Agent agent) {
         super(agent);
-        inventory = (Inventory) agent.getInventory();
+        inventory = (GunAndSwordInventory) agent.getInventory();
     }
 
     @Override

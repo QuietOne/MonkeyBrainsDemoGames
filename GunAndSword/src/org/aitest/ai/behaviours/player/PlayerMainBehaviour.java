@@ -26,9 +26,9 @@ public class PlayerMainBehaviour extends Behaviour {
         //game model that will be updated
         model = (AIModel) agent.getModel();
         //adding listeners to appropriate behaviours
-        ((AIGameControl) AIAppState.getInstance().getAIControl()).addGunAttackListener(attackBehaviour);
-        ((AIGameControl) AIAppState.getInstance().getAIControl()).addSwordAttackListener(attackBehaviour);
-        ((AIGameControl) AIAppState.getInstance().getAIControl()).addMoveListener(moveBehaviour);
+        ((AIGameControl) AIAppState.getInstance().getGameControl()).addGunAttackListener(attackBehaviour);
+        ((AIGameControl) AIAppState.getInstance().getGameControl()).addSwordAttackListener(attackBehaviour);
+        ((AIGameControl) AIAppState.getInstance().getGameControl()).addMoveListener(moveBehaviour);
     }
 
     @Override

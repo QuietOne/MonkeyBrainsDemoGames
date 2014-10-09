@@ -93,7 +93,7 @@ public class Bullet extends AbstractBullet {
                         app.getStateManager().getState(BulletAppState.class).getPhysicsSpace().remove(model);
                         //remove agent's sword from physics space
                         app.getStateManager().getState(BulletAppState.class).getPhysicsSpace()
-                                .remove(((Inventory) model.getAgent().getInventory()).getSword().getSpatial());
+                                .remove(((GunAndSwordInventory) model.getAgent().getInventory()).getSword().getSpatial());
                     }
 
                 }
@@ -101,7 +101,7 @@ public class Bullet extends AbstractBullet {
         }
 
         // testRay forDebug
-        if (((AIGameControl) AIAppState.getInstance().getAIControl()).isGameDebug()) {
+        if (((AIGameControl) AIAppState.getInstance().getGameControl()).isGameDebug()) {
             Vector3f endVecToDebug = vecEnd;
             if (contactPoint != null) {
                 endVecToDebug = contactPoint;

@@ -46,7 +46,7 @@ public class AIGuiManager extends AbstractAppState implements ScreenController {
     }
 
     public void setDebugButton() {
-        AIGameControl control = (AIGameControl) AIAppState.getInstance().getAIControl();
+        AIGameControl control = (AIGameControl) AIAppState.getInstance().getGameControl();
         if (control.isGameDebug()) {
             control.setGameDebug(false);
         } else {
@@ -68,7 +68,7 @@ public class AIGuiManager extends AbstractAppState implements ScreenController {
     }
 
     public void resetSceneButton() {
-        AIAppState.getInstance().getAIControl().restart();
+        AIAppState.getInstance().getGameControl().restart();
         gameScreen.getFocusHandler().resetFocusElements();
     }
 

@@ -2,7 +2,7 @@ package org.aitest.ai.model;
 
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.util.control.AIAppState;
-import com.jme3.ai.agents.util.systems.BasicAgentHPSystem;
+import com.jme3.ai.agents.util.systems.SimpleAgentHPSystem;
 import com.jme3.animation.AnimControl;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.BetterCharacterControl;
@@ -17,9 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.aitest.ai.control.AIGameUpdateManager;
 import org.aitest.ai.utils.AIGameSpatials;
-import org.aitest.ai.utils.Gun;
-import org.aitest.ai.utils.Inventory;
-import org.aitest.ai.utils.Sword;
+import org.aitest.ai.utils.GunAndSwordInventory;
 
 /*
  *
@@ -50,8 +48,8 @@ public class AIModel extends BetterCharacterControl {
         agent.setMoveSpeed(7.0f);
         agent.setRotationSpeed(1.0f);
         agent.setMaxForce(3);
-        agent.setHpSystem(new BasicAgentHPSystem(agent));
-        agent.setInventory(new Inventory(agent));
+        agent.setHitPoints(new SimpleAgentHPSystem(agent));
+        agent.setInventory(new GunAndSwordInventory(agent));
 
         animationList = new LinkedList<AnimControl>();
         agent.getSpatial().addControl(this); // FORCE TO ADD THE CONTROL TO THE SPATIAL

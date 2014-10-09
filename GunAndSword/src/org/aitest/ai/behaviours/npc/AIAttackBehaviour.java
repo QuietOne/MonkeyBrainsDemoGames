@@ -4,7 +4,7 @@ import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.behaviours.npc.SimpleAttackBehaviour;
 import com.jme3.ai.agents.events.GameEntitySeenEvent;
 import java.util.Random;
-import org.aitest.ai.utils.Inventory;
+import org.aitest.ai.utils.GunAndSwordInventory;
 
 /**
  * Behaviour for attacking opponent if opponnet is seen.
@@ -14,7 +14,7 @@ import org.aitest.ai.utils.Inventory;
  */
 public class AIAttackBehaviour extends SimpleAttackBehaviour {
 
-    private Inventory weapons;
+    private GunAndSwordInventory weapons;
     /**
      * Bigger value means easier game, if it is 1, then agent will never miss.
      * Must be greater or equal to 1.
@@ -27,7 +27,7 @@ public class AIAttackBehaviour extends SimpleAttackBehaviour {
 
     public AIAttackBehaviour(Agent agent) {
         super(agent);
-        weapons = (Inventory) agent.getInventory();
+        weapons = (GunAndSwordInventory) agent.getInventory();
         random = new Random();
     }
 

@@ -33,19 +33,19 @@ public class AIGame extends SimpleApplication {
         aiAppState.setApp(this);
         
         //setting hp control
-        aiAppState.setAIHPControl(new HPControl());
+        aiAppState.setHitPointsControl(new HPControl());
 
         //setting game control
-        aiAppState.setAIControl(new AIGameControl());
+        aiAppState.setGameControl(new AIGameControl());
 
         //registering input
-        aiAppState.getAIControl().setInputManagerMapping();
+        aiAppState.getGameControl().setInputManagerMapping();
 
         //setting camera
-        aiAppState.getAIControl().setCameraSettings(cam);
+        aiAppState.getGameControl().setCameraSettings(cam);
 
         //setting flying camera
-        aiAppState.getAIControl().setFlyCameraSettings(flyCam);
+        aiAppState.getGameControl().setFlyCameraSettings(flyCam);
 
         //setting background game color
         viewPort.setBackgroundColor(ColorRGBA.DarkGray);
@@ -65,7 +65,7 @@ public class AIGame extends SimpleApplication {
 
         //loading scene used in game
         //It loads all needed graphics and it creates agents for game
-        ((AIGameControl) aiAppState.getAIControl()).loadScene();
+        ((AIGameControl) aiAppState.getGameControl()).loadScene();
 
         //initializing GUI
         AIGuiManager guiManager = new AIGuiManager(this);

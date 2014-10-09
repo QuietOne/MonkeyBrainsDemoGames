@@ -45,7 +45,7 @@ public class Sword extends AbstractWeapon {
                     AIAppState.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().remove(aiModel);
                     //remove agent's sword from physics space
                     AIAppState.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace()
-                            .remove(((Inventory) aiModel.getAgent().getInventory()).getSword().getSpatial());
+                            .remove(((GunAndSwordInventory) aiModel.getAgent().getInventory()).getSword().getSpatial());
                 }
                 break;
             }

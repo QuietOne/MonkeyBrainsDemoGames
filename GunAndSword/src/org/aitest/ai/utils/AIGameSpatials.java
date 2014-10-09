@@ -105,8 +105,8 @@ public class AIGameSpatials {
                     // PERFORMANCE IS MUCH MUCH BETTER WITH HW SKINNING
                     skeletonControl.setHardwareSkinningPreferred(true);
 
-                    if (((Inventory) agent.getInventory()).getSword().getSpatial() == null) {
-                        createSword(agent, skeletonControl, ((Inventory) agent.getInventory()).getSword().getName());
+                    if (((GunAndSwordInventory) agent.getInventory()).getSword().getSpatial() == null) {
+                        createSword(agent, skeletonControl, ((GunAndSwordInventory) agent.getInventory()).getSword().getName());
                     }
 
                     // return animation list?
@@ -130,7 +130,7 @@ public class AIGameSpatials {
 
         Node n = skeletonControl.getAttachmentsNode(name);
         n.attachChild(swordModel);
-        ((Inventory) agent.getInventory()).getSword().setSpatial(swordModel);
+        ((GunAndSwordInventory) agent.getInventory()).getSword().setSpatial(swordModel);
     }
 
     public Geometry getBulletSpatial() {
