@@ -1,7 +1,7 @@
 package org.aitest.ai.behaviours.player;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.Behaviour;
+import com.jme3.ai.agents.behaviors.Behavior;
 import com.jme3.animation.AnimControl;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.math.Vector3f;
@@ -13,7 +13,7 @@ import org.aitest.ai.utils.GunAndSwordInventory;
  * @author Tihomir Radosavljevic
  * @version 1.1.0
  */
-public class PlayerAttackBehaviour extends Behaviour implements AnalogListener {
+public class PlayerAttackBehaviour extends Behavior implements AnalogListener {
 
     GunAndSwordInventory inventory;
     List<AnimControl> animationList;

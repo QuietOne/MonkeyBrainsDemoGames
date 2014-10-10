@@ -2,10 +2,10 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.PathFollowBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.SeparationBehaviour;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.CompoundSteeringBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.PathFollowBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.SeparationBehavior;
 import com.jme3.ai.agents.util.GameEntity;
 
 import com.jme3.math.ColorRGBA;
@@ -31,7 +31,7 @@ import java.util.Arrays;
  */
 public class PathFollowDemo extends BasicDemo {
 
-    private PathFollowBehaviour targetPathFollow[];
+    private PathFollowBehavior targetPathFollow[];
 
     public static void main(String[] args) {
         PathFollowDemo app = new PathFollowDemo();
@@ -96,19 +96,19 @@ public class PathFollowDemo extends BasicDemo {
         this.drawPathSegment(orderedPointsList.get(5), orderedPointsList.get(6), 1, ColorRGBA.Green, 1);
         ////////////////////////////////////////////////////////////////////////////
 
-        this.targetPathFollow = new PathFollowBehaviour[neighbours.length];
+        this.targetPathFollow = new PathFollowBehavior[neighbours.length];
         for (int i = 0; i < neighbours.length; i++) {
-            SimpleMainBehaviour targetMainBehaviour = new SimpleMainBehaviour(neighbours[i]);
-            targetPathFollow[i] = new PathFollowBehaviour(neighbours[i], orderedPointsList, 1, 1);
+            SimpleMainBehavior targetMainBehaviour = new SimpleMainBehavior(neighbours[i]);
+            targetPathFollow[i] = new PathFollowBehavior(neighbours[i], orderedPointsList, 1, 1);
             targetPathFollow[i].setupStrengthControl(0.225f);
-            SeparationBehaviour neighSeparation = new SeparationBehaviour(neighbours[i], neighObstacles, 0.75f);
+            SeparationBehavior neighSeparation = new SeparationBehavior(neighbours[i], neighObstacles, 0.75f);
             neighSeparation.setupStrengthControl(0.45f);
 
-            CompoundSteeringBehaviour steer = new CompoundSteeringBehaviour(neighbours[i]);
-            steer.addSteerBehaviour(neighSeparation);
-            steer.addSteerBehaviour(targetPathFollow[i]);
+            CompoundSteeringBehavior steer = new CompoundSteeringBehavior(neighbours[i]);
+            steer.addSteerBehavior(neighSeparation);
+            steer.addSteerBehavior(targetPathFollow[i]);
 
-            targetMainBehaviour.addBehaviour(steer);
+            targetMainBehaviour.addBehavior(steer);
             neighbours[i].setMainBehaviour(targetMainBehaviour);
         }
 
@@ -146,7 +146,7 @@ public class PathFollowDemo extends BasicDemo {
     public void simpleUpdate(float tpf) {
         aiAppState.update(tpf);
 
-        for (PathFollowBehaviour path : this.targetPathFollow) {
+        for (PathFollowBehavior path : this.targetPathFollow) {
             if (!path.isActive()) {
                 path.reset();
             }

@@ -3,10 +3,10 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.WallApproachBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.WanderBehaviour;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.CompoundSteeringBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.WallApproachBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.WanderBehavior;
 
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -67,16 +67,16 @@ public class WallApproachDemo extends BasicDemo {
             rootNode.attachChild(wall);
         ////////////////////////////////////////////////////////////////////////////
         
-        SimpleMainBehaviour targetMainBehaviour =  new SimpleMainBehaviour(target);
-        CompoundSteeringBehaviour wallSteer = new CompoundSteeringBehaviour(target);
+        SimpleMainBehavior targetMainBehaviour =  new SimpleMainBehavior(target);
+        CompoundSteeringBehavior wallSteer = new CompoundSteeringBehavior(target);
         
-        WanderBehaviour targetMoveBehavior = new WanderBehaviour(target);       
-        WallApproachBehaviour wallApproach = new WallApproachBehaviour(target, wall, 0.25f);
+        WanderBehavior targetMoveBehavior = new WanderBehavior(target);       
+        WallApproachBehavior wallApproach = new WallApproachBehavior(target, wall, 0.25f);
         
-        wallSteer.addSteerBehaviour(targetMoveBehavior);
-        wallSteer.addSteerBehaviour(wallApproach);
+        wallSteer.addSteerBehavior(targetMoveBehavior);
+        wallSteer.addSteerBehavior(wallApproach);
         
-        targetMainBehaviour.addBehaviour(wallSteer);
+        targetMainBehaviour.addBehavior(wallSteer);
         target.setMainBehaviour(targetMainBehaviour);
   
         aiAppState.start();

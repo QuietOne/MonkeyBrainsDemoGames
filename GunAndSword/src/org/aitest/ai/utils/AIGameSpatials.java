@@ -1,7 +1,7 @@
 package org.aitest.ai.utils;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.SkeletonControl;
@@ -35,7 +35,7 @@ public class AIGameSpatials {
     private Geometry bulletGeom;
 
     private AIGameSpatials() {
-        assetManager = AIAppState.getInstance().getApp().getAssetManager();
+        assetManager = MonkeyBrainsAppState.getInstance().getApp().getAssetManager();
         
         Box b = new Box(Vector3f.ZERO, 1f, 1f, 1f);
         bulletGeom = new Geometry("Box", b);
@@ -80,13 +80,13 @@ public class AIGameSpatials {
         //setting ambiental lighting
         AmbientLight amb = new AmbientLight();
         amb.setColor(new ColorRGBA(0.7f, 0.8f, 1.0f, 1f));
-        AIAppState.getInstance().getRootNode().addLight(amb);
+        MonkeyBrainsAppState.getInstance().getRootNode().addLight(amb);
 
         //setting directional lighting
         DirectionalLight dl = new DirectionalLight();
         dl.setDirection(new Vector3f(-0.5501984f, -0.6679371f, 0.5011405f));
         dl.setColor(new ColorRGBA(1.0f, 1.0f, 0.7f, 1f));
-        AIAppState.getInstance().getRootNode().addLight(dl);
+        MonkeyBrainsAppState.getInstance().getRootNode().addLight(dl);
     }
 
     public void prepareModel(Agent agent, Node agentNode) {
@@ -126,7 +126,7 @@ public class AIGameSpatials {
         GhostControl gh = new GhostControl(new BoxCollisionShape(new Vector3f(0.3f, 1f, 0.3f)));
         swordModel.addControl(gh);
         //add sword to physic space
-        AIAppState.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().add(gh);
+        MonkeyBrainsAppState.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().add(gh);
 
         Node n = skeletonControl.getAttachmentsNode(name);
         n.attachChild(swordModel);

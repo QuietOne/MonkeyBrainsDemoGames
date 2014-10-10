@@ -3,10 +3,10 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.MoveBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.SlowBehaviour;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.CompoundSteeringBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.MoveBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.SlowBehavior;
 
 import com.jme3.math.Vector3f;
 import java.awt.event.ActionEvent;
@@ -23,8 +23,8 @@ import steeringDemos.control.CustomSteerControl;
  */
 public class SlowDemo extends BasicDemo {
     
-    private SlowBehaviour slow;
-    private SlowBehaviour slow2;
+    private SlowBehavior slow;
+    private SlowBehavior slow2;
     
     private java.awt.event.ActionListener resetSlows = new java.awt.event.ActionListener()
     {
@@ -69,23 +69,23 @@ public class SlowDemo extends BasicDemo {
         this.iterationTimer = new Timer(6000, this.resetSlows);
         this.iterationTimer.start();
         
-        SimpleMainBehaviour main = new SimpleMainBehaviour(agent);
-        MoveBehaviour move = new MoveBehaviour(agent);
-        slow = new SlowBehaviour(agent, 250, 0.0625f);
-        slow2 = new SlowBehaviour(agent, 250, 0.0625f);
+        SimpleMainBehavior main = new SimpleMainBehavior(agent);
+        MoveBehavior move = new MoveBehavior(agent);
+        slow = new SlowBehavior(agent, 250, 0.0625f);
+        slow2 = new SlowBehavior(agent, 250, 0.0625f);
         
         move.setMoveDirection(new Vector3f(1, 0, 0));
-        CompoundSteeringBehaviour steer = new CompoundSteeringBehaviour(agent);
+        CompoundSteeringBehavior steer = new CompoundSteeringBehavior(agent);
         
-        steer.addSteerBehaviour(move);
-        steer.addSteerBehaviour(slow);
-        steer.addSteerBehaviour(slow2);
+        steer.addSteerBehavior(move);
+        steer.addSteerBehavior(slow);
+        steer.addSteerBehavior(slow2);
         
         //nested container test
-        CompoundSteeringBehaviour steer2 = new CompoundSteeringBehaviour(agent);
-        steer2.addSteerBehaviour(steer);
+        CompoundSteeringBehavior steer2 = new CompoundSteeringBehavior(agent);
+        steer2.addSteerBehavior(steer);
         
-        main.addBehaviour(steer2);
+        main.addBehavior(steer2);
         agent.setMainBehaviour(main);
         
         slow.setAcive(true);

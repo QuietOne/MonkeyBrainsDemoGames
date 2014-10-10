@@ -1,8 +1,8 @@
 package org.aitest.ai.behaviours.player;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.Behaviour;
-import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.behaviors.Behavior;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import org.aitest.ai.control.AIGameControl;
@@ -13,7 +13,7 @@ import org.aitest.ai.model.AIModel;
  * @author Tihomir Radosavljevic
  * @version 1.0
  */
-public class PlayerMainBehaviour extends Behaviour {
+public class PlayerMainBehaviour extends Behavior {
 
     PlayerAttackBehaviour attackBehaviour;
     PlayerMoveBehaviour moveBehaviour;
@@ -26,9 +26,9 @@ public class PlayerMainBehaviour extends Behaviour {
         //game model that will be updated
         model = (AIModel) agent.getModel();
         //adding listeners to appropriate behaviours
-        ((AIGameControl) AIAppState.getInstance().getGameControl()).addGunAttackListener(attackBehaviour);
-        ((AIGameControl) AIAppState.getInstance().getGameControl()).addSwordAttackListener(attackBehaviour);
-        ((AIGameControl) AIAppState.getInstance().getGameControl()).addMoveListener(moveBehaviour);
+        ((AIGameControl) MonkeyBrainsAppState.getInstance().getGameControl()).addGunAttackListener(attackBehaviour);
+        ((AIGameControl) MonkeyBrainsAppState.getInstance().getGameControl()).addSwordAttackListener(attackBehaviour);
+        ((AIGameControl) MonkeyBrainsAppState.getInstance().getGameControl()).addMoveListener(moveBehaviour);
     }
 
     @Override

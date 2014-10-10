@@ -3,8 +3,8 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.RelativeWanderBehaviour;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.RelativeWanderBehavior;
 
 import com.jme3.math.Vector3f;
 
@@ -48,9 +48,9 @@ public class RelativeWanderDemo extends BasicDemo {
                     this.targetMaxForce
                 );
                 
-        SimpleMainBehaviour targetMainBehaviour =  new SimpleMainBehaviour(target);
-        RelativeWanderBehaviour targetMoveBehavior = new RelativeWanderBehaviour(target, new Vector3f(-5,-5,-5), new Vector3f(5,5,5), 0.2f);
-        targetMainBehaviour.addBehaviour(targetMoveBehavior);
+        SimpleMainBehavior targetMainBehaviour =  new SimpleMainBehavior(target);
+        RelativeWanderBehavior targetMoveBehavior = new RelativeWanderBehavior(target, new Vector3f(-5,-5,-5), new Vector3f(5,5,5), 0.2f);
+        targetMainBehaviour.addBehavior(targetMoveBehavior);
         target.setMainBehaviour(targetMainBehaviour);
  
         aiAppState.start();

@@ -3,10 +3,10 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.ContainmentBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.WanderBehaviour;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.CompoundSteeringBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.ContainmentBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.WanderBehavior;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.material.Material;
@@ -77,17 +77,17 @@ public class ContainmentDemo extends BasicDemo {
         rootNode.attachChild(geomWire);
         ////////////////////////////////////////////////////////////////////////////
 
-        SimpleMainBehaviour targetMainBehaviour = new SimpleMainBehaviour(target);
-        CompoundSteeringBehaviour steering = new CompoundSteeringBehaviour(target);
+        SimpleMainBehavior targetMainBehaviour = new SimpleMainBehavior(target);
+        CompoundSteeringBehavior steering = new CompoundSteeringBehavior(target);
 
-        WanderBehaviour targetMoveBehavior = new WanderBehaviour(target);
-        ContainmentBehaviour contain = new ContainmentBehaviour(target, containmentArea);
+        WanderBehavior targetMoveBehavior = new WanderBehavior(target);
+        ContainmentBehavior contain = new ContainmentBehavior(target, containmentArea);
         contain.setupStrengthControl(75);
 
-        steering.addSteerBehaviour(targetMoveBehavior);
-        steering.addSteerBehaviour(contain);
+        steering.addSteerBehavior(targetMoveBehavior);
+        steering.addSteerBehavior(contain);
 
-        targetMainBehaviour.addBehaviour(steering);
+        targetMainBehaviour.addBehavior(steering);
         target.setMainBehaviour(targetMainBehaviour);
 
         aiAppState.start();

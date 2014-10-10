@@ -6,15 +6,15 @@ import steeringDemos.control.CustomSteerControl;
 import steeringDemos.BasicDemo;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.ArriveBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.BalancedCompoundSteeringBehaviour;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.ArriveBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.BalancedCompoundSteeringBehavior;
 
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 
 /**
- * Demo for ArriveBehaviour
+ * Demo for ArriveBehavior
  *
  * @author Jesús Martín Berlanga
  * @version 2.0
@@ -23,7 +23,7 @@ public class ArriveDemo extends BasicDemo {
 
     private Agent[] agents = new Agent[3];
     private Agent target;
-    private ArriveBehaviour[] arrive;
+    private ArriveBehavior[] arrive;
 
     public static void main(String[] args) {
         ArriveDemo app = new ArriveDemo();
@@ -57,28 +57,28 @@ public class ArriveDemo extends BasicDemo {
         aiAppState.getGameControl().spawn(agents[1], new Vector3f(8, 0, 0));
         aiAppState.getGameControl().spawn(agents[2], new Vector3f(0, 50, 2));
 
-        arrive = new ArriveBehaviour[3];
+        arrive = new ArriveBehavior[3];
 
-        SimpleMainBehaviour main0 = new SimpleMainBehaviour(agents[0]);
-        SimpleMainBehaviour main1 = new SimpleMainBehaviour(agents[1]);
-        SimpleMainBehaviour main2 = new SimpleMainBehaviour(agents[2]);
+        SimpleMainBehavior main0 = new SimpleMainBehavior(agents[0]);
+        SimpleMainBehavior main1 = new SimpleMainBehavior(agents[1]);
+        SimpleMainBehavior main2 = new SimpleMainBehavior(agents[2]);
 
-        arrive[0] = new ArriveBehaviour(agents[0], target);
-        arrive[1] = new ArriveBehaviour(agents[1], target);
-        arrive[2] = new ArriveBehaviour(agents[2], target);
+        arrive[0] = new ArriveBehavior(agents[0], target);
+        arrive[1] = new ArriveBehavior(agents[1], target);
+        arrive[2] = new ArriveBehavior(agents[2], target);
 
-        BalancedCompoundSteeringBehaviour steer1 = new BalancedCompoundSteeringBehaviour(agents[1]);
-        steer1.addSteerBehaviour(arrive[1]);
+        BalancedCompoundSteeringBehavior steer1 = new BalancedCompoundSteeringBehavior(agents[1]);
+        steer1.addSteerBehavior(arrive[1]);
 
-        main0.addBehaviour(arrive[0]);
-        main1.addBehaviour(steer1);
-        main2.addBehaviour(arrive[2]);
+        main0.addBehavior(arrive[0]);
+        main1.addBehavior(steer1);
+        main2.addBehavior(arrive[2]);
 
         agents[0].setMainBehaviour(main0);
         agents[1].setMainBehaviour(main1);
         agents[2].setMainBehaviour(main2);
 
-        SimpleMainBehaviour targetMain = new SimpleMainBehaviour(target);
+        SimpleMainBehavior targetMain = new SimpleMainBehavior(target);
         target.setMainBehaviour(targetMain);
 
         aiAppState.start();
@@ -89,7 +89,7 @@ public class ArriveDemo extends BasicDemo {
         aiAppState.update(tpf);
 
         for (int i = 0; i < this.arrive.length; i++) {
-            if (this.agents[i].distanceRelativeToGameObject(target) <= 0.001f + target.getRadius()) {
+            if (this.agents[i].distanceRelativeToGameEntity(target) <= 0.001f + target.getRadius()) {
                 Vector3f resetPosition = null;
 
                 switch (i) {

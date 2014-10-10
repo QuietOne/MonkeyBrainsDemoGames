@@ -1,7 +1,7 @@
 package behaviours;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.Behaviour;
+import com.jme3.ai.agents.behaviors.Behavior;
 import com.jme3.input.controls.ActionListener;
 import fps.robotfight.util.RobotFightInventory;
 
@@ -10,7 +10,7 @@ import fps.robotfight.util.RobotFightInventory;
  * @author Tihomir Radosavljevic
  * @version 1.0.0
  */
-public class SwitchWeaponsBehaviour extends Behaviour implements ActionListener {
+public class SwitchWeaponsBehaviour extends Behavior implements ActionListener {
 
     public SwitchWeaponsBehaviour(Agent agent) {
         super(agent);

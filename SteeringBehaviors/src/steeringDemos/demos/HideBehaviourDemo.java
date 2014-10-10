@@ -2,9 +2,9 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.HideBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.PathFollowBehaviour;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.HideBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.PathFollowBehavior;
 import com.jme3.ai.agents.util.GameEntity;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -21,7 +21,7 @@ import steeringDemos.control.CustomSteerControl;
  */
 public class HideBehaviourDemo extends BasicDemo {
 
-    PathFollowBehaviour targetPathFollow;
+    PathFollowBehavior targetPathFollow;
 
     public static void main(String[] args) {
         HideBehaviourDemo app = new HideBehaviourDemo();
@@ -93,17 +93,17 @@ public class HideBehaviourDemo extends BasicDemo {
         orderedPointsList.add(new Vector3f(0, 5, 0));
         orderedPointsList.add(new Vector3f(0, 0, 0));
 
-        SimpleMainBehaviour targetMainBehaviour = new SimpleMainBehaviour(target);
-        this.targetPathFollow = new PathFollowBehaviour(target, orderedPointsList, 1, 1);
-        targetMainBehaviour.addBehaviour(this.targetPathFollow);
+        SimpleMainBehavior targetMainBehaviour = new SimpleMainBehavior(target);
+        this.targetPathFollow = new PathFollowBehavior(target, orderedPointsList, 1, 1);
+        targetMainBehaviour.addBehavior(this.targetPathFollow);
         target.setMainBehaviour(targetMainBehaviour);
 
-        obstacle.setMainBehaviour(new SimpleMainBehaviour(obstacle));
-        farAwayObstacle.setMainBehaviour(new SimpleMainBehaviour(obstacle));
+        obstacle.setMainBehaviour(new SimpleMainBehavior(obstacle));
+        farAwayObstacle.setMainBehaviour(new SimpleMainBehavior(obstacle));
 
-        SimpleMainBehaviour hiderMainBehaviour = new SimpleMainBehaviour(hider);
-        HideBehaviour hide = new HideBehaviour(hider, target, obstacles, 1f);
-        hiderMainBehaviour.addBehaviour(hide);
+        SimpleMainBehavior hiderMainBehaviour = new SimpleMainBehavior(hider);
+        HideBehavior hide = new HideBehavior(hider, target, obstacles, 1f);
+        hiderMainBehaviour.addBehavior(hide);
         hider.setMainBehaviour(hiderMainBehaviour);
 
         aiAppState.start();

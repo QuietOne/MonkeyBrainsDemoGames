@@ -2,11 +2,11 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.steering.BalancedCompoundSteeringBehaviour;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.ObstacleAvoidanceBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.SeekBehaviour;
+import com.jme3.ai.agents.behaviors.npc.steering.BalancedCompoundSteeringBehavior;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.CompoundSteeringBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.ObstacleAvoidanceBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.SeekBehavior;
 import com.jme3.ai.agents.util.GameEntity;
 
 import com.jme3.math.ColorRGBA;
@@ -76,7 +76,7 @@ public class ObstacleAvoidanceDemo extends BasicDemo {
                     this.neighboursMaxForce);
             aiAppState.getGameControl().spawn(neighbours[i], spawnArea);
 
-            SimpleMainBehaviour mainB = new SimpleMainBehaviour(neighbours[i]);
+            SimpleMainBehavior mainB = new SimpleMainBehavior(neighbours[i]);
             neighbours[i].setMainBehaviour(mainB);
         }
 
@@ -92,7 +92,7 @@ public class ObstacleAvoidanceDemo extends BasicDemo {
                 this.neighboursMaxForce);
         aiAppState.getGameControl().spawn(focus, this.generateRandomPosition());
 
-        SimpleMainBehaviour mainB = new SimpleMainBehaviour(focus);
+        SimpleMainBehavior mainB = new SimpleMainBehavior(focus);
         focus.setMainBehaviour(mainB);
 
 
@@ -101,17 +101,17 @@ public class ObstacleAvoidanceDemo extends BasicDemo {
 
         //ADD OBSTACLE AVOIDANCE TO THE TARGET
 
-        CompoundSteeringBehaviour steer = new BalancedCompoundSteeringBehaviour(agent);
-        SimpleMainBehaviour targetMainB = new SimpleMainBehaviour(agent);
+        CompoundSteeringBehavior steer = new BalancedCompoundSteeringBehavior(agent);
+        SimpleMainBehavior targetMainB = new SimpleMainBehavior(agent);
 
-        SeekBehaviour seekSteer = new SeekBehaviour(agent, focus);
+        SeekBehavior seekSteer = new SeekBehavior(agent, focus);
 
-        ObstacleAvoidanceBehaviour obstacleAvoidance = new ObstacleAvoidanceBehaviour(agent, obstacles, 15f, 15);
+        ObstacleAvoidanceBehavior obstacleAvoidance = new ObstacleAvoidanceBehavior(agent, obstacles, 15f, 15);
         obstacleAvoidance.setupStrengthControl(10f);
 
-        steer.addSteerBehaviour(seekSteer);
-        steer.addSteerBehaviour(obstacleAvoidance);
-        targetMainB.addBehaviour(steer);
+        steer.addSteerBehavior(seekSteer);
+        steer.addSteerBehavior(obstacleAvoidance);
+        targetMainB.addBehavior(steer);
         agent.setMainBehaviour(targetMainB);
 
         aiAppState.start();
@@ -121,7 +121,7 @@ public class ObstacleAvoidanceDemo extends BasicDemo {
     public void simpleUpdate(float tpf) {
         aiAppState.update(tpf);
 
-        if (this.agent.distanceRelativeToGameObject(this.focus) < 0.5f) {
+        if (this.agent.distanceRelativeToGameEntity(this.focus) < 0.5f) {
             this.focus.setLocalTranslation(this.generateRandomPosition());
         }
     }

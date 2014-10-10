@@ -2,8 +2,8 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.SeekBehaviour;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.SeekBehavior;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import steeringDemos.BasicDemo;
@@ -18,7 +18,7 @@ import steeringDemos.control.CustomSteerControl;
 public class SeekDemo extends BasicDemo {
 
     private Agent target;
-    private SeekBehaviour targetMove;
+    private SeekBehavior targetMove;
     Vector3f[] locations = new Vector3f[]{
         new Vector3f(7, 0, 0),
         new Vector3f(0, 7, 0),
@@ -56,11 +56,11 @@ public class SeekDemo extends BasicDemo {
                 this.targetMass,
                 this.targetMaxForce);
 
-        SimpleMainBehaviour targetMainBehaviour = new SimpleMainBehaviour(target);
+        SimpleMainBehavior targetMainBehaviour = new SimpleMainBehavior(target);
 
-        this.targetMove = new SeekBehaviour(target, this.locations[0]);
+        this.targetMove = new SeekBehavior(target, this.locations[0]);
         this.currentFocus = 0;
-        targetMainBehaviour.addBehaviour(this.targetMove);
+        targetMainBehaviour.addBehavior(this.targetMove);
 
         target.setMainBehaviour(targetMainBehaviour);
 

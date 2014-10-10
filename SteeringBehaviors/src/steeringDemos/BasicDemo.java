@@ -4,7 +4,7 @@ package steeringDemos;
 
 import steeringDemos.control.CustomSteerControl;
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
@@ -25,7 +25,7 @@ public abstract class BasicDemo extends SimpleApplication {
 
     protected CustomSteerControl steerControl;
     //creating aiAppState
-    protected AIAppState aiAppState = AIAppState.getInstance(); 
+    protected MonkeyBrainsAppState aiAppState = MonkeyBrainsAppState.getInstance(); 
     private static final String BOID_MODEL_NAME = "Models/boid.j3o";
     private static final float BOID_MODEL_SIZE = 0.1f;
     private static final String BOID_MATERIAL_NAME = "Common/MatDefs/Misc/Unshaded.j3md";

@@ -3,8 +3,8 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.SphereWanderBehaviour;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.SphereWanderBehavior;
 import com.jme3.math.Vector3f;
 import steeringDemos.BasicDemo;
 import steeringDemos.control.CustomSteerControl;
@@ -46,9 +46,9 @@ public class SphereWanderDemo extends BasicDemo {
                     this.targetMaxForce
                 );
                 
-        SimpleMainBehaviour targetMainBehaviour =  new SimpleMainBehaviour(target);
-        SphereWanderBehaviour targetMoveBehavior = new SphereWanderBehaviour(target, 0.1f, 0.8f, 0.15f);
-        targetMainBehaviour.addBehaviour(targetMoveBehavior);
+        SimpleMainBehavior targetMainBehaviour =  new SimpleMainBehavior(target);
+        SphereWanderBehavior targetMoveBehavior = new SphereWanderBehavior(target, 0.1f, 0.8f, 0.15f);
+        targetMainBehaviour.addBehavior(targetMoveBehavior);
         target.setMainBehaviour(targetMainBehaviour);
  
         aiAppState.start();

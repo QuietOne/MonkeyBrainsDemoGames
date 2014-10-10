@@ -2,11 +2,11 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.PursuitBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.SeekBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.SeparationBehaviour;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.CompoundSteeringBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.PursuitBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.SeekBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.SeparationBehavior;
 import com.jme3.ai.agents.util.GameEntity;
 
 import com.jme3.font.BitmapText;
@@ -30,7 +30,7 @@ public class PriorityDemo extends BasicDemo {
     private BitmapText hudText;
 
     //The purpuse of this class is to save the active layer inside the activeLayer variable
-    private class DebugCompoundSteeringBehaviour extends CompoundSteeringBehaviour {
+    private class DebugCompoundSteeringBehaviour extends CompoundSteeringBehavior {
 
         private DebugCompoundSteeringBehaviour(Agent agent) {
             super(agent);
@@ -43,15 +43,15 @@ public class PriorityDemo extends BasicDemo {
             Vector3f totalForce = new Vector3f();
             float totalBraking = 1;
 
-            this.behaviours.moveAtBeginning();
+            this.behaviors.moveAtBeginning();
 
-            if (!this.behaviours.nullPointer()) {
-                int currentLayer = this.behaviours.getLayer();
+            if (!this.behaviors.nullPointer()) {
+                int currentLayer = this.behaviors.getLayer();
                 int inLayerCounter = 0;
                 int validCounter = 0;
 
-                while (!this.behaviours.nullPointer()) {
-                    if (this.behaviours.getLayer() != currentLayer) //We have finished the last layer, check If it was a valid layer
+                while (!this.behaviors.nullPointer()) {
+                    if (this.behaviors.getLayer() != currentLayer) //We have finished the last layer, check If it was a valid layer
                     {
                         if (inLayerCounter == validCounter) {
                             break; //If we have a valid layer, return the force
@@ -60,22 +60,22 @@ public class PriorityDemo extends BasicDemo {
                             totalBraking = 1;            //and braking
                         }
 
-                        currentLayer = this.behaviours.getLayer();
+                        currentLayer = this.behaviors.getLayer();
                         inLayerCounter = 0;
                         validCounter = 0;
                     }
 
-                    Vector3f force = this.calculatePartialForce(this.behaviours.getBehaviour());
-                    if (force.length() > this.behaviours.getMinLengthToInvalidSteer()) {
+                    Vector3f force = this.calculatePartialForce(this.behaviors.getBehavior());
+                    if (force.length() > this.behaviors.getMinLengthToInvalidSteer()) {
                         validCounter++;
                     }
                     totalForce = totalForce.add(force);
-                    totalBraking *= this.behaviours.getBehaviour().getBrakingFactor();
+                    totalBraking *= this.behaviors.getBehavior().getBrakingFactor();
 
-                    this.activeLayer = this.behaviours.getLayer();
+                    this.activeLayer = this.behaviors.getLayer();
 
                     inLayerCounter++;
-                    this.behaviours.moveNext();
+                    this.behaviors.moveNext();
                 }
             }
 
@@ -85,7 +85,7 @@ public class PriorityDemo extends BasicDemo {
     }
     private Agent target;
     private Agent seeker;
-    private SeekBehaviour targetMove;
+    private SeekBehavior targetMove;
     private DebugCompoundSteeringBehaviour targetSteer;
     Vector3f[] locations = new Vector3f[]{
         new Vector3f(7, 0, 0),
@@ -136,25 +136,25 @@ public class PriorityDemo extends BasicDemo {
                 this.neighboursMass,
                 this.neighboursMaxForce);
 
-        SimpleMainBehaviour seekerMainBehaviour = new SimpleMainBehaviour(seeker);
-        PursuitBehaviour pursuit = new PursuitBehaviour(seeker, target);
+        SimpleMainBehavior seekerMainBehaviour = new SimpleMainBehavior(seeker);
+        PursuitBehavior pursuit = new PursuitBehavior(seeker, target);
         pursuit.setupStrengthControl(5f);
-        seekerMainBehaviour.addBehaviour(pursuit);
+        seekerMainBehaviour.addBehavior(pursuit);
         seeker.setMainBehaviour(seekerMainBehaviour);
 
-        SimpleMainBehaviour targetMainBehaviour = new SimpleMainBehaviour(target);
+        SimpleMainBehavior targetMainBehaviour = new SimpleMainBehavior(target);
 
-        this.targetMove = new SeekBehaviour(target, this.locations[0]);
+        this.targetMove = new SeekBehavior(target, this.locations[0]);
         this.currentFocus = 0;
         ArrayList<GameEntity> separationObstacle = new ArrayList<GameEntity>();
         separationObstacle.add(seeker);
-        SeparationBehaviour separation = new SeparationBehaviour(target, separationObstacle);
+        SeparationBehavior separation = new SeparationBehavior(target, separationObstacle);
 
         targetSteer = new DebugCompoundSteeringBehaviour(target);
-        targetSteer.addSteerBehaviour(targetMove);
+        targetSteer.addSteerBehavior(targetMove);
         targetSteer.addSteerBehaviour(separation, 1, 0.1f);
 
-        targetMainBehaviour.addBehaviour(this.targetSteer);
+        targetMainBehaviour.addBehavior(this.targetSteer);
         target.setMainBehaviour(targetMainBehaviour);
 
         hudText = new BitmapText(guiFont, false);
@@ -183,7 +183,7 @@ public class PriorityDemo extends BasicDemo {
 
         this.hudText.setText(this.HUD_LAYER_TEXT + this.targetSteer.activeLayer);
 
-        if (this.seeker.distanceRelativeToGameObject(this.target) < 0.25f) {
+        if (this.seeker.distanceRelativeToGameEntity(this.target) < 0.25f) {
             this.seeker.setLocalTranslation(
                     (FastMath.nextRandomFloat() - 0.5f) * 10,
                     (FastMath.nextRandomFloat() - 0.5f) * 10,

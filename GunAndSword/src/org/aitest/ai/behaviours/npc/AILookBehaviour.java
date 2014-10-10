@@ -1,9 +1,9 @@
 package org.aitest.ai.behaviours.npc;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.SimpleLookBehaviour;
+import com.jme3.ai.agents.behaviors.npc.SimpleLookBehavior;
 import com.jme3.ai.agents.util.GameEntity;
-import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.PhysicsRayTestResult;
@@ -19,13 +19,13 @@ import java.util.List;
  * @author Tihomir Radosavljevic
  * @version 1.0.1
  */
-public class AILookBehaviour extends SimpleLookBehaviour {
+public class AILookBehaviour extends SimpleLookBehavior {
 
-    AIAppState aiAppState;
+    MonkeyBrainsAppState aiAppState;
 
     public AILookBehaviour(Agent agent) {
         super(agent);
-        aiAppState = AIAppState.getInstance();
+        aiAppState = MonkeyBrainsAppState.getInstance();
     }
 
     @Override

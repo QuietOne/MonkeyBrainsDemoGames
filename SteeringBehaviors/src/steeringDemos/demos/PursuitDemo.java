@@ -5,13 +5,13 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.steering.SeparationBehaviour;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.BalancedCompoundSteeringBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.MoveBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.PursuitBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.WanderBehaviour;
+import com.jme3.ai.agents.behaviors.npc.steering.SeparationBehavior;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.BalancedCompoundSteeringBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.CompoundSteeringBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.MoveBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.PursuitBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.WanderBehavior;
 import com.jme3.ai.agents.util.GameEntity;
 
 import com.jme3.font.BitmapText;
@@ -37,16 +37,16 @@ import java.util.Arrays;
  */
 public class PursuitDemo extends BasicDemo {
 
-    private SeparationBehaviour separation[];
-    private CompoundSteeringBehaviour targetSteer;
+    private SeparationBehavior separation[];
+    private CompoundSteeringBehavior targetSteer;
     Agent target;
     private boolean isStrengthScalar = true;
     private float scalarStrength = 0.1f;
     private BitmapText scalarStrengthHudText;
     private BitmapText scalarInfoHudtext;
     private final String ESCALAR_INFO_HUD_MESSAGE = "Press H to increase the separation escalar strength, L to decrease.";
-    MoveBehaviour targetMoveBehavior;
-    WanderBehaviour targetWanderBehavior;
+    MoveBehavior targetMoveBehavior;
+    WanderBehavior targetWanderBehavior;
     private boolean turnDinamicMode = true;
     private java.awt.event.ActionListener changeDinamicMode = new java.awt.event.ActionListener() {
         public void actionPerformed(ActionEvent event) {
@@ -150,45 +150,45 @@ public class PursuitDemo extends BasicDemo {
         obstacles.addAll(Arrays.asList(neighbours));
 
         //adding behaviours to target
-        SimpleMainBehaviour targetMainBehaviour = new SimpleMainBehaviour(target);
-        targetMoveBehavior = new MoveBehaviour(target);
+        SimpleMainBehavior targetMainBehaviour = new SimpleMainBehavior(target);
+        targetMoveBehavior = new MoveBehavior(target);
         targetMoveBehavior.setupStrengthControl(0.25f);
-        targetWanderBehavior = new WanderBehaviour(target);
+        targetWanderBehavior = new WanderBehavior(target);
         targetMoveBehavior.setMoveDirection(new Vector3f(1, 0, 1)); //moves in x-y direction
 
         this.iterationTimer = new Timer(10000, this.changeDinamicMode); //10000ns = 10s
         this.iterationTimer.start();
 
-        targetSteer = new CompoundSteeringBehaviour(target);
-        targetSteer.addSteerBehaviour(targetMoveBehavior);
-        targetSteer.addSteerBehaviour(targetWanderBehavior);
+        targetSteer = new CompoundSteeringBehavior(target);
+        targetSteer.addSteerBehavior(targetMoveBehavior);
+        targetSteer.addSteerBehavior(targetWanderBehavior);
 
         float randomDistance = ((float) Math.random()) * 1000f;
 
         targetMoveBehavior.setMoveDirection(new Vector3f(randomDistance, randomDistance, randomDistance));
 
-        targetMainBehaviour.addBehaviour(targetSteer);
+        targetMainBehaviour.addBehavior(targetSteer);
         target.setMainBehaviour(targetMainBehaviour);
 
-        SimpleMainBehaviour[] neighboursMainBehaviour = new SimpleMainBehaviour[neighbours.length];
+        SimpleMainBehavior[] neighboursMainBehaviour = new SimpleMainBehavior[neighbours.length];
 
-        separation = new SeparationBehaviour[neighbours.length];
+        separation = new SeparationBehavior[neighbours.length];
 
         //adding pursuit behaviours to agents
         for (int i = 0; i < neighbours.length; i++) {
-            neighboursMainBehaviour[i] = new SimpleMainBehaviour(neighbours[i]);
+            neighboursMainBehaviour[i] = new SimpleMainBehavior(neighbours[i]);
 
-            PursuitBehaviour pursuit = new PursuitBehaviour(
+            PursuitBehavior pursuit = new PursuitBehavior(
                     neighbours[i],
                     target);
 
-            separation[i] = new SeparationBehaviour(neighbours[i], obstacles);
+            separation[i] = new SeparationBehavior(neighbours[i], obstacles);
             separation[i].setupStrengthControl(scalarStrength);
 
-            BalancedCompoundSteeringBehaviour neighSteer = new BalancedCompoundSteeringBehaviour(neighbours[i]);
-            neighSteer.addSteerBehaviour(separation[i]);
-            neighSteer.addSteerBehaviour(pursuit);
-            neighboursMainBehaviour[i].addBehaviour(neighSteer);
+            BalancedCompoundSteeringBehavior neighSteer = new BalancedCompoundSteeringBehavior(neighbours[i]);
+            neighSteer.addSteerBehavior(separation[i]);
+            neighSteer.addSteerBehavior(pursuit);
+            neighboursMainBehaviour[i].addBehavior(neighSteer);
             neighbours[i].setMainBehaviour(neighboursMainBehaviour[i]);
         }
 
@@ -235,7 +235,7 @@ public class PursuitDemo extends BasicDemo {
     private void changeMode() {
 
         if (this.isStrengthScalar) {
-            for (SeparationBehaviour behaviour : this.separation) {
+            for (SeparationBehavior behaviour : this.separation) {
                 behaviour.setupStrengthControl(1, 0, 1);
             }
 
@@ -243,7 +243,7 @@ public class PursuitDemo extends BasicDemo {
 
             this.isStrengthScalar = false;
         } else {
-            for (SeparationBehaviour behaviour : this.separation) {
+            for (SeparationBehavior behaviour : this.separation) {
                 behaviour.setupStrengthControl(scalarStrength);
             }
 
@@ -269,7 +269,7 @@ public class PursuitDemo extends BasicDemo {
         if (this.isStrengthScalar) {
             this.scalarStrength = this.scalarStrength + 0.05f;
 
-            for (SeparationBehaviour behaviour : this.separation) {
+            for (SeparationBehavior behaviour : this.separation) {
                 behaviour.setupStrengthControl(this.scalarStrength);
             }
         }
@@ -285,7 +285,7 @@ public class PursuitDemo extends BasicDemo {
                 this.scalarStrength = 0;
             }
 
-            for (SeparationBehaviour behaviour : this.separation) {
+            for (SeparationBehavior behaviour : this.separation) {
                 behaviour.setupStrengthControl(this.scalarStrength);
             }
         }

@@ -1,7 +1,7 @@
 package org.aitest.ai.behaviours.npc;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.SimpleAttackBehaviour;
+import com.jme3.ai.agents.behaviors.npc.SimpleAttackBehavior;
 import com.jme3.ai.agents.events.GameEntitySeenEvent;
 import java.util.Random;
 import org.aitest.ai.utils.GunAndSwordInventory;
@@ -12,7 +12,7 @@ import org.aitest.ai.utils.GunAndSwordInventory;
  * @author Tihomir Radosavljevic
  * @version 1.0.1
  */
-public class AIAttackBehaviour extends SimpleAttackBehaviour {
+public class AIAttackBehaviour extends SimpleAttackBehavior {
 
     private GunAndSwordInventory weapons;
     /**
@@ -34,25 +34,25 @@ public class AIAttackBehaviour extends SimpleAttackBehaviour {
     @Override
     protected void controlUpdate(float tpf) {
         if (targetPosition != null) {
-            weapons.getGun().attack(targetedObject, tpf);
+            weapons.getGun().attack(targetedEntity, tpf);
             targetPosition = null;
             //is he supossed to miss next time
-            missOrNot((Agent) targetedObject);
+            missOrNot((Agent) targetedEntity);
         } else {
             //if target is seen
-            if (targetedObject != null && targetedObject.isEnabled()) {
+            if (targetedEntity != null && targetedEntity.isEnabled()) {
                 //attack with all weapon at disposal
 
                 //if target is in range of sword strike, strike him
-                if (weapons.getSword().isInRange(targetedObject)) {
-                    weapons.getSword().attack(targetedObject, tpf);
+                if (weapons.getSword().isInRange(targetedEntity)) {
+                    weapons.getSword().attack(targetedEntity, tpf);
                 }
                 //if target is in range of gun, fire him
-                if (weapons.getGun().isInRange(targetedObject)) {
-                    weapons.getGun().attack(targetedObject, tpf);
+                if (weapons.getGun().isInRange(targetedEntity)) {
+                    weapons.getGun().attack(targetedEntity, tpf);
                 }
                 //is he supossed to miss next time
-                missOrNot((Agent) targetedObject);
+                missOrNot((Agent) targetedEntity);
             }
         }
     }
@@ -64,7 +64,7 @@ public class AIAttackBehaviour extends SimpleAttackBehaviour {
             if (agent.isSameTeam(targetAgent)) {
                 return;
             }
-            targetedObject = targetAgent;
+            targetedEntity = targetAgent;
             missOrNot(targetAgent);
             enabled = true;
         }

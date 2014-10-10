@@ -1,8 +1,8 @@
 package org.aitest.ai.model;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.util.control.AIAppState;
-import com.jme3.ai.agents.util.systems.SimpleAgentHPSystem;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
+import com.jme3.ai.agents.util.systems.SimpleAgentHitPoints;
 import com.jme3.animation.AnimControl;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.BetterCharacterControl;
@@ -48,14 +48,14 @@ public class AIModel extends BetterCharacterControl {
         agent.setMoveSpeed(7.0f);
         agent.setRotationSpeed(1.0f);
         agent.setMaxForce(3);
-        agent.setHitPoints(new SimpleAgentHPSystem(agent));
+        agent.setHitPoints(new SimpleAgentHitPoints(agent));
         agent.setInventory(new GunAndSwordInventory(agent));
 
         animationList = new LinkedList<AnimControl>();
         agent.getSpatial().addControl(this); // FORCE TO ADD THE CONTROL TO THE SPATIAL
 
         //add this character under the influence of physics
-        AIAppState.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().add(this);
+        MonkeyBrainsAppState.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().add(this);
 
         
         //same spatial is used in agent.spatial and physics space
@@ -64,7 +64,7 @@ public class AIModel extends BetterCharacterControl {
         // add arrow
         Mesh arrow = new Arrow(Vector3f.UNIT_Z);
         Geometry geoArrow = new Geometry("arrow", arrow);
-        Material matArrow = new Material(AIAppState.getInstance().getApp().getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        Material matArrow = new Material(MonkeyBrainsAppState.getInstance().getApp().getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         matArrow.setColor("Color", ColorRGBA.White);
         geoArrow.setMaterial(matArrow);
         geoArrow.setLocalTranslation(0f, 0.1f, 0f);
@@ -79,7 +79,7 @@ public class AIModel extends BetterCharacterControl {
     @Override
     public void update(float tpf) {
         // Update only for fixed rate
-        if (AIAppState.getInstance().getApp().getStateManager().getState(AIGameUpdateManager.class).IsUpdate()) {
+        if (MonkeyBrainsAppState.getInstance().getApp().getStateManager().getState(AIGameUpdateManager.class).IsUpdate()) {
             //update character
             super.update(tpf);
         }

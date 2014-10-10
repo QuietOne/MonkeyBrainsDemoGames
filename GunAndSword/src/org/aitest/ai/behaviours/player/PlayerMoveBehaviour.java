@@ -1,7 +1,7 @@
 package org.aitest.ai.behaviours.player;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.Behaviour;
+import com.jme3.ai.agents.behaviors.Behavior;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.LoopMode;
 import com.jme3.input.controls.ActionListener;
@@ -19,7 +19,7 @@ import org.aitest.ai.model.AIModel;
  * @author Tihomir Radosavljevic
  * @version 1.0
  */
-public class PlayerMoveBehaviour extends Behaviour implements ActionListener, AnalogListener {
+public class PlayerMoveBehaviour extends Behavior implements ActionListener, AnalogListener {
 
     private AIModel model;
     private List<AnimControl> animationList;

@@ -7,7 +7,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
-import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
 import com.jme3.ai.agents.util.weapons.AbstractBullet;
 import com.jme3.ai.agents.util.weapons.AbstractFirearmWeapon;
 
@@ -37,7 +37,7 @@ public class LaserWeapon extends AbstractFirearmWeapon {
             return null;
         }
         float laserLength = maxAttackRange;
-        AIAppState game = AIAppState.getInstance();
+        MonkeyBrainsAppState game = MonkeyBrainsAppState.getInstance();
         CollisionResults collsions = new CollisionResults();
         Vector3f click3d = new Vector3f(agent.getLocalTranslation());
         Vector3f dir = direction.subtract(click3d).normalizeLocal();
@@ -51,8 +51,8 @@ public class LaserWeapon extends AbstractFirearmWeapon {
                 if (!game.isFriendlyFire() && agent.isSameTeam(target)) {
                     break;
                 }
-                game.agentAttack(agent, target, this);
-                ((Quad) ((Geometry) ((Node) target.getSpatial()).getChild("healthbar")).getMesh()).updateGeometry(target.getHitPoints().getCurrentHP() / 100 * 4, 0.2f);
+                game.decreaseHitPoints(target, this);
+                ((Quad) ((Geometry) ((Node) target.getSpatial()).getChild("healthbar")).getMesh()).updateGeometry(target.getHitPoints().getCurrentHitPoints() / 100 * 4, 0.2f);
                 laserLength = agent.getLocalTranslation().distance(target.getLocalTranslation());
                 break;
             }

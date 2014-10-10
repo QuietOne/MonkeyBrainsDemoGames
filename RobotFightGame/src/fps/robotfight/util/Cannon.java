@@ -3,7 +3,7 @@ package fps.robotfight.util;
 import com.jme3.ai.agents.Agent;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
 import com.jme3.ai.agents.util.weapons.AbstractBullet;
 import com.jme3.ai.agents.util.weapons.AbstractFirearmWeapon;
 
@@ -28,7 +28,7 @@ public class Cannon extends AbstractFirearmWeapon{
     protected AbstractBullet controlAttack(Vector3f direction, float tpf) {
         AbstractBullet cannonBall = new CannonBall(this, RoboFightSpatials.initializeCannonball(), direction);
         bullet = cannonBall;
-        ((Node) AIAppState.getInstance().getRootNode()).attachChild(cannonBall.getSpatial());
+        ((Node) MonkeyBrainsAppState.getInstance().getRootNode()).attachChild(cannonBall.getSpatial());
         return cannonBall;
     }
 

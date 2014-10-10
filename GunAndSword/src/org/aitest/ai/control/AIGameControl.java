@@ -3,9 +3,8 @@ package org.aitest.ai.control;
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.Team;
 import com.jme3.ai.agents.util.GameEntity;
-import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
 import com.jme3.ai.agents.util.control.GameControl;
-import com.jme3.ai.agents.util.systems.SimpleAgentHPSystem;
 import com.jme3.app.Application;
 import com.jme3.asset.DesktopAssetManager;
 import com.jme3.bullet.BulletAppState;
@@ -45,10 +44,10 @@ public class AIGameControl implements GameControl {
     private boolean gameDebug;
 
     public AIGameControl() {
-        inputManager = AIAppState.getInstance().getApp().getInputManager();
-        app = AIAppState.getInstance().getApp();
+        inputManager = MonkeyBrainsAppState.getInstance().getApp().getInputManager();
+        app = MonkeyBrainsAppState.getInstance().getApp();
         dasm = (DesktopAssetManager) app.getAssetManager();
-        rootNode = AIAppState.getInstance().getRootNode();
+        rootNode = MonkeyBrainsAppState.getInstance().getRootNode();
         sceneNode = new Node("Scene");
         gameDebug = false;
         rootNode.attachChild(sceneNode);
@@ -100,10 +99,10 @@ public class AIGameControl implements GameControl {
         rootNode.detachAllChildren();
         // attach it again
         rootNode.attachChild(sceneNode);
-        AIAppState.getInstance().getAgents().clear();
-        AIAppState.getInstance().getGameEntities().clear();
+        MonkeyBrainsAppState.getInstance().getAgents().clear();
+        MonkeyBrainsAppState.getInstance().getGameEntities().clear();
         loadScene();
-        AIAppState.getInstance().start();
+        MonkeyBrainsAppState.getInstance().start();
     }
 
     public void spawn(GameEntity gameObject, Vector3f... area) {
@@ -121,8 +120,8 @@ public class AIGameControl implements GameControl {
         model.setGraphicModel();
         player.setMainBehaviour(new PlayerMainBehaviour(player));
 
-        AIGameSpatials.getInstance().attachCameraTo(player, AIAppState.getInstance().getApp().getCamera());
-        AIAppState.getInstance().addAgent(player);
+        AIGameSpatials.getInstance().attachCameraTo(player, MonkeyBrainsAppState.getInstance().getApp().getCamera());
+        MonkeyBrainsAppState.getInstance().addAgent(player);
         Team team = new Team("Enemy");
         int i = 1;
         for (Spatial sp : sceneBase.getChildren()) {
@@ -138,13 +137,11 @@ public class AIGameControl implements GameControl {
                 model = new AIModel(enemyAgent);
                 model.setViewDirection(enemyNode.getLocalRotation().mult(Vector3f.UNIT_Z).normalizeLocal());
                 enemyAgent.setModel(model);
-                //setting viewing distance of agent
-                enemyAgent.setVisibilityRange(1200f);
                 model.setGraphicModel();
                 enemyAgent.setMainBehaviour(new AIMainBehaviour(enemyAgent));
                 enemyAgent.setTeam(team);
                 //adding it to game
-                AIAppState.getInstance().addAgent(enemyAgent);
+                MonkeyBrainsAppState.getInstance().addAgent(enemyAgent);
 
             } else {
                 //adding static objects

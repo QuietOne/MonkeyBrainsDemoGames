@@ -2,12 +2,12 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.steering.SeparationBehaviour;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.AlignmentBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.CohesionBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.WanderBehaviour;
+import com.jme3.ai.agents.behaviors.npc.steering.SeparationBehavior;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.AlignmentBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.CohesionBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.CompoundSteeringBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.WanderBehavior;
 import com.jme3.ai.agents.util.GameEntity;
 import com.jme3.math.Vector3f;
 import com.jme3.math.FastMath;
@@ -60,20 +60,20 @@ public class CohesionAndAlignmentDemo2D extends BasicDemo {
         List<GameEntity> obstacles = new ArrayList<GameEntity>();
         obstacles.addAll(Arrays.asList(boids));
 
-        SimpleMainBehaviour[] neighboursMainBehaviour = new SimpleMainBehaviour[boids.length];
+        SimpleMainBehavior[] neighboursMainBehaviour = new SimpleMainBehavior[boids.length];
 
-        SeparationBehaviour[] separation = new SeparationBehaviour[boids.length];
-        CohesionBehaviour[] cohesion = new CohesionBehaviour[boids.length];
-        AlignmentBehaviour[] alignment = new AlignmentBehaviour[boids.length];
-        WanderBehaviour[] wander = new WanderBehaviour[boids.length];
+        SeparationBehavior[] separation = new SeparationBehavior[boids.length];
+        CohesionBehavior[] cohesion = new CohesionBehavior[boids.length];
+        AlignmentBehavior[] alignment = new AlignmentBehavior[boids.length];
+        WanderBehavior[] wander = new WanderBehavior[boids.length];
 
         for (int i = 0; i < boids.length; i++) {
-            neighboursMainBehaviour[i] = new SimpleMainBehaviour(boids[i]);
+            neighboursMainBehaviour[i] = new SimpleMainBehavior(boids[i]);
 
-            separation[i] = new SeparationBehaviour(boids[i], obstacles);
-            cohesion[i] = new CohesionBehaviour(boids[i], obstacles, 5f, FastMath.PI / 4);
-            alignment[i] = new AlignmentBehaviour(boids[i], obstacles, 5f, FastMath.PI / 4.2f);
-            wander[i] = new WanderBehaviour(boids[i]);
+            separation[i] = new SeparationBehavior(boids[i], obstacles);
+            cohesion[i] = new CohesionBehavior(boids[i], obstacles, 5f, FastMath.PI / 4);
+            alignment[i] = new AlignmentBehavior(boids[i], obstacles, 5f, FastMath.PI / 4.2f);
+            wander[i] = new WanderBehavior(boids[i]);
             wander[i].setArea(Vector3f.ZERO, new Vector3f(75, 75, 75));
 
             separation[i].setupStrengthControl(0.85f);
@@ -82,14 +82,14 @@ public class CohesionAndAlignmentDemo2D extends BasicDemo {
             wander[i].setupStrengthControl(0.35f);
 
 
-            CompoundSteeringBehaviour steer = new CompoundSteeringBehaviour(boids[i]);
+            CompoundSteeringBehavior steer = new CompoundSteeringBehavior(boids[i]);
 
-            steer.addSteerBehaviour(cohesion[i]);
-            steer.addSteerBehaviour(alignment[i]);
-            steer.addSteerBehaviour(separation[i]);
-            steer.addSteerBehaviour(wander[i]);
+            steer.addSteerBehavior(cohesion[i]);
+            steer.addSteerBehavior(alignment[i]);
+            steer.addSteerBehavior(separation[i]);
+            steer.addSteerBehavior(wander[i]);
             steer.setupStrengthControl(new Plane(new Vector3f(0, 1, 0), 0));
-            neighboursMainBehaviour[i].addBehaviour(steer);
+            neighboursMainBehaviour[i].addBehavior(steer);
 
             boids[i].setMainBehaviour(neighboursMainBehaviour[i]);
         }

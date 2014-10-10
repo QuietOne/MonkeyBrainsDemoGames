@@ -1,7 +1,7 @@
 package org.aitest.ai.utils;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
 import com.jme3.ai.agents.util.weapons.AbstractWeapon;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.LoopMode;
@@ -39,12 +39,12 @@ public class Sword extends AbstractWeapon {
 
             //if somebody is being hit and that one is not me
             if (aiModel != null && !aiModel.equals((AIModel) agent.getModel())) {
-                AIAppState.getInstance().agentAttack(agent, aiModel.getAgent(), this);
+                MonkeyBrainsAppState.getInstance().decreaseHitPoints(aiModel.getAgent(), this);
                 if (!aiModel.getAgent().isEnabled()) {
                     //remove agent from physic space
-                    AIAppState.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().remove(aiModel);
+                    MonkeyBrainsAppState.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace().remove(aiModel);
                     //remove agent's sword from physics space
-                    AIAppState.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace()
+                    MonkeyBrainsAppState.getInstance().getApp().getStateManager().getState(BulletAppState.class).getPhysicsSpace()
                             .remove(((GunAndSwordInventory) aiModel.getAgent().getInventory()).getSword().getSpatial());
                 }
                 break;

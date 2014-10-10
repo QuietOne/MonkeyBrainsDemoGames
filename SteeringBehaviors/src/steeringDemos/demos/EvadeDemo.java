@@ -3,12 +3,12 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.steering.BalancedCompoundSteeringBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.SeekBehaviour;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.EvadeBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.RelativeWanderBehaviour;
+import com.jme3.ai.agents.behaviors.npc.steering.BalancedCompoundSteeringBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.SeekBehavior;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.CompoundSteeringBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.EvadeBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.RelativeWanderBehavior;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
@@ -81,9 +81,9 @@ public class EvadeDemo extends BasicDemo {
 
         for (int i = 0; i < neighbours.length; i++) 
         {
-            SimpleMainBehaviour neighboursMainBehaviour = new SimpleMainBehaviour(neighbours[i]);
-            CompoundSteeringBehaviour compound = new CompoundSteeringBehaviour(neighbours[i]);
-            RelativeWanderBehaviour wander = new RelativeWanderBehaviour
+            SimpleMainBehavior neighboursMainBehaviour = new SimpleMainBehavior(neighbours[i]);
+            CompoundSteeringBehavior compound = new CompoundSteeringBehavior(neighbours[i]);
+            RelativeWanderBehavior wander = new RelativeWanderBehavior
                     (
                         neighbours[i],
                         new Vector3f(-10,-10,-10), 
@@ -91,20 +91,20 @@ public class EvadeDemo extends BasicDemo {
                         0.25f
                     );
             wander.setupStrengthControl(0.37f);
-            compound.addSteerBehaviour(wander);
-            compound.addSteerBehaviour(new SeekBehaviour(neighbours[i], target));
-            neighboursMainBehaviour.addBehaviour(compound);
+            compound.addSteerBehavior(wander);
+            compound.addSteerBehavior(new SeekBehavior(neighbours[i], target));
+            neighboursMainBehaviour.addBehavior(compound);
             neighbours[i].setMainBehaviour(neighboursMainBehaviour);
         }
 
-        SimpleMainBehaviour evaderMainBehaviour = new SimpleMainBehaviour(target);
-        BalancedCompoundSteeringBehaviour balancedCompoundSteeringBehaviour = new BalancedCompoundSteeringBehaviour(target);
+        SimpleMainBehavior evaderMainBehaviour = new SimpleMainBehavior(target);
+        BalancedCompoundSteeringBehavior balancedCompoundSteeringBehaviour = new BalancedCompoundSteeringBehavior(target);
         
         for (int i = 0; i < neighbours.length; i++) {
-            EvadeBehaviour evadeBehavior = new EvadeBehaviour(target, neighbours[i]);
-            balancedCompoundSteeringBehaviour.addSteerBehaviour(evadeBehavior);
+            EvadeBehavior evadeBehavior = new EvadeBehavior(target, neighbours[i]);
+            balancedCompoundSteeringBehaviour.addSteerBehavior(evadeBehavior);
         }
-        evaderMainBehaviour.addBehaviour(balancedCompoundSteeringBehaviour);
+        evaderMainBehaviour.addBehavior(balancedCompoundSteeringBehaviour);
         target.setMainBehaviour(evaderMainBehaviour);
 
         aiAppState.start();

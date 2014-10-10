@@ -1,14 +1,14 @@
 package behaviours;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.steering.WanderBehaviour;
+import com.jme3.ai.agents.behaviors.npc.steering.WanderBehavior;
 import com.jme3.math.Vector3f;
 
 /**
  *
  * @author Tihomir Radosavljević
  */
-public class WanderInsideTerrain extends WanderBehaviour {
+public class WanderInsideTerrain extends WanderBehavior {
 
     private float terrainSize;
 

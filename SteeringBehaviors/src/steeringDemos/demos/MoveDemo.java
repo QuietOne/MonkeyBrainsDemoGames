@@ -2,8 +2,8 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.MoveBehaviour;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.MoveBehavior;
 import com.jme3.math.FastMath;
 
 import com.jme3.math.Vector3f;
@@ -45,15 +45,15 @@ public class MoveDemo extends BasicDemo {
                 this.targetMass,
                 this.targetMaxForce);
 
-        SimpleMainBehaviour targetMainBehaviour = new SimpleMainBehaviour(target);
+        SimpleMainBehavior targetMainBehaviour = new SimpleMainBehavior(target);
 
-        MoveBehaviour targetMoveBehavior = new MoveBehaviour(target);
+        MoveBehavior targetMoveBehavior = new MoveBehavior(target);
         targetMoveBehavior.setMoveDirection(new Vector3f(
                 FastMath.nextRandomFloat() - 0.5f,
                 FastMath.nextRandomFloat() - 0.5f,
                 FastMath.nextRandomFloat() - 0.5f));
 
-        targetMainBehaviour.addBehaviour(targetMoveBehavior);
+        targetMainBehaviour.addBehavior(targetMoveBehavior);
         target.setMainBehaviour(targetMainBehaviour);
 
         aiAppState.start();

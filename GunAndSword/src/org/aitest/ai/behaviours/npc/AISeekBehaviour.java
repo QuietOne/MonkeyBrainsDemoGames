@@ -1,7 +1,7 @@
 package org.aitest.ai.behaviours.npc;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.steering.SeekBehaviour;
+import com.jme3.ai.agents.behaviors.npc.steering.SeekBehavior;
 import com.jme3.ai.agents.events.GameEntitySeenEvent;
 import com.jme3.ai.agents.events.GameEntitySeenListener;
 import com.jme3.math.Quaternion;
@@ -14,7 +14,7 @@ import org.aitest.ai.model.AIModel;
  * @author Tihomir Radosavljevic
  * @version 1.0.0
  */
-public class AISeekBehaviour extends SeekBehaviour implements GameEntitySeenListener {
+public class AISeekBehaviour extends SeekBehavior implements GameEntitySeenListener {
 
     AIModel model;
     

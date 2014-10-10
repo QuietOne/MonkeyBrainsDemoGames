@@ -1,7 +1,7 @@
 package fps.robotfight.util;
 
 import com.jme3.scene.Spatial;
-import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
 import com.jme3.ai.agents.util.weapons.AbstractBullet;
 import com.jme3.ai.agents.util.weapons.AbstractFirearmWeapon;
 
@@ -29,7 +29,7 @@ public class LaserBullet extends AbstractBullet {
             //more bullets than one at moment, but it should be used to define
             //what kind of bullets are in that kind of weapon
             weapon.setBullet(null);
-            AIAppState.getInstance().removeGameEntity(this);
+            MonkeyBrainsAppState.getInstance().removeGameEntity(this);
         } else {
             lifeTime -= tpf;
         }

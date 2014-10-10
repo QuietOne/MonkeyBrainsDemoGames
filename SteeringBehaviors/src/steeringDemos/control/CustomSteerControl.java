@@ -3,7 +3,7 @@ package steeringDemos.control;
 
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.util.GameEntity;
-import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
 import com.jme3.ai.agents.util.control.GameControl;
 
 import com.jme3.input.FlyByCamera;
@@ -33,11 +33,11 @@ public class CustomSteerControl implements GameControl {
         flyCam.setMoveSpeed(this.cameraMoveSpeed);
     }
     private float aleatoryFactorX, aleatoryFactorY, aleatoryFactorZ;
-    private AIAppState game;
+    private MonkeyBrainsAppState game;
     //private InputManager inputManager;
 
     public CustomSteerControl(float cameraMoveSpeed) {
-        game = AIAppState.getInstance();
+        game = MonkeyBrainsAppState.getInstance();
         this.cameraMoveSpeed = cameraMoveSpeed;
         this.aleatoryFactorX = 10f;
         this.aleatoryFactorY = 10f;
@@ -46,7 +46,7 @@ public class CustomSteerControl implements GameControl {
     }
 
     public CustomSteerControl(float cameraMoveSpeed, float aleatoryFactor) {
-        game = AIAppState.getInstance();
+        game = MonkeyBrainsAppState.getInstance();
         this.cameraMoveSpeed = cameraMoveSpeed;
         this.aleatoryFactorX = aleatoryFactor;
         this.aleatoryFactorY = aleatoryFactor;
@@ -54,7 +54,7 @@ public class CustomSteerControl implements GameControl {
     }
 
     public CustomSteerControl(float cameraMoveSpeed, float aleatoryFactorX, float aleatoryFactorY, float aleatoryFactorZ) {
-        game = AIAppState.getInstance();
+        game = MonkeyBrainsAppState.getInstance();
         this.cameraMoveSpeed = cameraMoveSpeed;
         this.aleatoryFactorX = aleatoryFactorX;
         this.aleatoryFactorY = aleatoryFactorY;

@@ -1,8 +1,7 @@
 package org.aitest.ai.behaviours.npc;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.Behaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.RelativeWanderBehaviour;
+import com.jme3.ai.agents.behaviors.Behavior;
 import com.jme3.math.Vector3f;
 
 /**
@@ -10,7 +9,7 @@ import com.jme3.math.Vector3f;
  * @author Tihomir Radosavljević
  * @version 1.0.4
  */
-public class AIMainBehaviour extends Behaviour {
+public class AIMainBehaviour extends Behavior {
 
     private AILookBehaviour lookBehaviour;
     private AIAttackBehaviour attackBehaviour;
@@ -25,6 +24,8 @@ public class AIMainBehaviour extends Behaviour {
         lookBehaviour = new AILookBehaviour(agent);
         lookBehaviour.addListener(attackBehaviour);
         lookBehaviour.addListener(seekBehaviour);
+        //setting viewing distance of agent
+        lookBehaviour.setVisibilityRange(1200f);
         wanderBehaviour = new AIWanderBehaviour(agent);
         wanderBehaviour.setArea(agent.getLocalTranslation().subtract(area), agent.getLocalTranslation().add(area));
 

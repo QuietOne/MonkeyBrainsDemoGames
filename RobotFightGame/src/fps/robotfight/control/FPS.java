@@ -2,10 +2,10 @@ package fps.robotfight.control;
 
 import behaviours.SwitchWeaponsBehaviour;
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.Behaviour;
-import com.jme3.ai.agents.behaviours.npc.SimpleAttackBehaviour;
+import com.jme3.ai.agents.behaviors.Behavior;
+import com.jme3.ai.agents.behaviors.npc.SimpleAttackBehavior;
 import com.jme3.ai.agents.util.GameEntity;
-import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
 import com.jme3.ai.agents.util.control.GameControl;
 import com.jme3.input.FlyByCamera;
 import com.jme3.input.InputManager;
@@ -28,11 +28,11 @@ import java.util.Random;
  */
 public class FPS implements GameControl {
 
-    AIAppState aiAppState;
+    MonkeyBrainsAppState aiAppState;
     InputManager inputManager;
 
     public FPS() {
-        aiAppState = AIAppState.getInstance();
+        aiAppState = MonkeyBrainsAppState.getInstance();
         inputManager = aiAppState.getApp().getInputManager();
     }
 
@@ -57,9 +57,9 @@ public class FPS implements GameControl {
         inputManager.addListener(behaviour, "Switch");
     }
 
-    public HashMap<String, Behaviour> getPlayerMoveSupportedOperations(Agent agent) {
-        HashMap<String, Behaviour> supportedOperations = new HashMap<String, Behaviour>();
-        supportedOperations.put("moveForward", new Behaviour(agent) {
+    public HashMap<String, Behavior> getPlayerMoveSupportedOperations(Agent agent) {
+        HashMap<String, Behavior> supportedOperations = new HashMap<String, Behavior>();
+        supportedOperations.put("moveForward", new Behavior(agent) {
             @Override
             protected void controlUpdate(float tpf) {
                 Vector3f oldPos = agent.getLocalTranslation().clone();
@@ -71,7 +71,7 @@ public class FPS implements GameControl {
                 enabled = false;
             }
         });
-        supportedOperations.put("moveBackward", new Behaviour(agent) {
+        supportedOperations.put("moveBackward", new Behavior(agent) {
             @Override
             protected void controlUpdate(float tpf) {
                 Vector3f oldPos = agent.getLocalTranslation().clone();
@@ -83,14 +83,14 @@ public class FPS implements GameControl {
                 enabled = false;
             }
         });
-        supportedOperations.put("moveRight", new Behaviour(agent) {
+        supportedOperations.put("moveRight", new Behavior(agent) {
             @Override
             protected void controlUpdate(float tpf) {
                 agent.getSpatial().rotate(0, -(FastMath.DEG_TO_RAD * tpf) * agent.getRotationSpeed(), 0);
                 enabled = false;
             }
         });
-        supportedOperations.put("moveLeft", new Behaviour(agent) {
+        supportedOperations.put("moveLeft", new Behavior(agent) {
             @Override
             protected void controlUpdate(float tpf) {
                 agent.getSpatial().rotate(0, (FastMath.DEG_TO_RAD * tpf) * agent.getRotationSpeed(), 0);
@@ -100,9 +100,9 @@ public class FPS implements GameControl {
         return supportedOperations;
     }
 
-    public HashMap<String, Behaviour> getPlayerAttackSupportedOperations(Agent agent) {
-        HashMap<String, Behaviour> supportedOperations = new HashMap<String, Behaviour>();
-        supportedOperations.put("Shoot", new SimpleAttackBehaviour(agent));
+    public HashMap<String, Behavior> getPlayerAttackSupportedOperations(Agent agent) {
+        HashMap<String, Behavior> supportedOperations = new HashMap<String, Behavior>();
+        supportedOperations.put("Shoot", new SimpleAttackBehavior(agent));
         return supportedOperations;
     }
 

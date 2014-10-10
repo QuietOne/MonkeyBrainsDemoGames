@@ -1,7 +1,7 @@
 package behaviours;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.steering.FleeBehaviour;
+import com.jme3.ai.agents.behaviors.npc.steering.FleeBehavior;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 
@@ -9,7 +9,7 @@ import com.jme3.scene.Spatial;
  *
  * @author Tihomir Radosavljević
  */
-public class FleeInsideTerrain extends FleeBehaviour{
+public class FleeInsideTerrain extends FleeBehavior{
 
     private float terrainSize;
 

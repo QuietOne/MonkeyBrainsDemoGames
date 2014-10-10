@@ -6,7 +6,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
-import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
 import com.jme3.ai.agents.util.weapons.AbstractBullet;
 import com.jme3.ai.agents.util.weapons.AbstractFirearmWeapon;
 
@@ -30,7 +30,7 @@ public class CannonBall extends AbstractBullet {
 
     @Override
     public void controlUpdate(float tpf) {
-        AIAppState game = AIAppState.getInstance();
+        MonkeyBrainsAppState game = MonkeyBrainsAppState.getInstance();
         if (weapon.getAgent().getLocalTranslation().distance(spatial.getLocalTranslation())
                 > weapon.getMaxAttackRange()) {
             weapon.setBullet(null);
@@ -43,8 +43,8 @@ public class CannonBall extends AbstractBullet {
         //this the part where it hurts
         for (Agent target : game.getAgents()) {
             if (hurts(target) && !weapon.getAgent().equals(target)) {
-                game.agentAttack(weapon.getAgent(), target, weapon);
-                ((Quad) ((Geometry) ((Node) target.getSpatial()).getChild("healthbar")).getMesh()).updateGeometry(target.getHitPoints().getCurrentHP() / 100 * 4, 0.2f);
+                game.decreaseHitPoints(target, weapon);
+                ((Quad) ((Geometry) ((Node) target.getSpatial()).getChild("healthbar")).getMesh()).updateGeometry(target.getHitPoints().getCurrentHitPoints() / 100 * 4, 0.2f);
                 weapon.setBullet(null);
                 game.removeGameEntity(this);
             }
@@ -52,7 +52,7 @@ public class CannonBall extends AbstractBullet {
     }
 
     private boolean hurts(Agent agent) {
-        if (!AIAppState.getInstance().isFriendlyFire() && weapon.getAgent().isSameTeam(agent)) {
+        if (!MonkeyBrainsAppState.getInstance().isFriendlyFire() && weapon.getAgent().isSameTeam(agent)) {
             return false;
         }
         if (spatial.getLocalTranslation().distance(agent.getLocalTranslation()) < 5 && agent.isEnabled()) {

@@ -2,11 +2,11 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.MoveBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.SeekBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.UnalignedCollisionAvoidanceBehaviour;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.CompoundSteeringBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.MoveBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.SeekBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.UnalignedCollisionAvoidanceBehavior;
 import com.jme3.ai.agents.util.GameEntity;
 
 import com.jme3.math.ColorRGBA;
@@ -35,12 +35,12 @@ public class UnalignedAvoidanceDemo extends BasicDemo {
     private Agent focus;
     private boolean positiveXSide = true;
     //ObstaclesMove
-    MoveBehaviour obstsaclesMoves[] = new MoveBehaviour[150];
+    MoveBehavior obstsaclesMoves[] = new MoveBehavior[150];
     //Negate Direction Timer
     private Timer iterationTimer;
     private java.awt.event.ActionListener negateMoveDir = new java.awt.event.ActionListener() {
         public void actionPerformed(ActionEvent event) {
-            for (MoveBehaviour move : obstsaclesMoves) {
+            for (MoveBehavior move : obstsaclesMoves) {
                 move.setMoveDirection(move.getMoveDirection().negate());
             }
         }
@@ -88,12 +88,12 @@ public class UnalignedAvoidanceDemo extends BasicDemo {
                     this.neighboursMaxForce);
             aiAppState.getGameControl().spawn(neighbours[i], spawnArea);
 
-            SimpleMainBehaviour mainB = new SimpleMainBehaviour(neighbours[i]);
+            SimpleMainBehavior mainB = new SimpleMainBehavior(neighbours[i]);
 
-            obstsaclesMoves[i] = new MoveBehaviour(neighbours[i]);
+            obstsaclesMoves[i] = new MoveBehavior(neighbours[i]);
             obstsaclesMoves[i].setMoveDirection(new Vector3f(rand.nextFloat() - 1, rand.nextFloat() - 1, rand.nextFloat() - 1));
 
-            mainB.addBehaviour(obstsaclesMoves[i]);
+            mainB.addBehavior(obstsaclesMoves[i]);
             neighbours[i].setMainBehaviour(mainB);
         }
 
@@ -112,7 +112,7 @@ public class UnalignedAvoidanceDemo extends BasicDemo {
                 this.neighboursMaxForce);
         aiAppState.getGameControl().spawn(focus, this.generateRandomPosition());
 
-        SimpleMainBehaviour mainB = new SimpleMainBehaviour(focus);
+        SimpleMainBehavior mainB = new SimpleMainBehavior(focus);
         focus.setMainBehaviour(mainB);
 
 
@@ -121,17 +121,17 @@ public class UnalignedAvoidanceDemo extends BasicDemo {
 
         //ADD OBSTACLE AVOIDANCE TO THE TARGET
 
-        CompoundSteeringBehaviour steer = new CompoundSteeringBehaviour(agent);//new BalancedCompoundSteeringBehaviour(agent);//new CompoundSteeringBehaviour(agent);
-        SimpleMainBehaviour targetMainB = new SimpleMainBehaviour(agent);
+        CompoundSteeringBehavior steer = new CompoundSteeringBehavior(agent);//new BalancedCompoundSteeringBehaviour(agent);//new CompoundSteeringBehavior(agent);
+        SimpleMainBehavior targetMainB = new SimpleMainBehavior(agent);
 
-        SeekBehaviour seekSteer = new SeekBehaviour(agent, focus);
+        SeekBehavior seekSteer = new SeekBehavior(agent, focus);
 
-        UnalignedCollisionAvoidanceBehaviour obstacleAvoidance = new UnalignedCollisionAvoidanceBehaviour(agent, obstacles, 2, 5, 0.75f);
+        UnalignedCollisionAvoidanceBehavior obstacleAvoidance = new UnalignedCollisionAvoidanceBehavior(agent, obstacles, 2, 5, 0.75f);
         obstacleAvoidance.setupStrengthControl(5f);
 
-        steer.addSteerBehaviour(seekSteer);
-        steer.addSteerBehaviour(obstacleAvoidance);
-        targetMainB.addBehaviour(steer);
+        steer.addSteerBehavior(seekSteer);
+        steer.addSteerBehavior(obstacleAvoidance);
+        targetMainB.addBehavior(steer);
         agent.setMainBehaviour(targetMainB);
 
         aiAppState.start();
@@ -141,7 +141,7 @@ public class UnalignedAvoidanceDemo extends BasicDemo {
     public void simpleUpdate(float tpf) {
         aiAppState.update(tpf);
 
-        if (this.agent.distanceRelativeToGameObject(this.focus) < 0.5f) {
+        if (this.agent.distanceRelativeToGameEntity(this.focus) < 0.5f) {
             this.focus.setLocalTranslation(this.generateRandomPosition());
         }
     }

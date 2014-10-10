@@ -7,15 +7,15 @@ import behaviours.WanderInsideTerrain;
 import fps.robotfight.util.RoboFightSpatials;
 import fps.robotfight.util.Cannon;
 import fps.robotfight.util.LaserWeapon;
-import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.Team;
-import com.jme3.ai.agents.behaviours.npc.SimpleAttackBehaviour;
-import com.jme3.ai.agents.behaviours.npc.SimpleLookBehaviour;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.player.SimplePlayerAttackBehaviour;
-import com.jme3.ai.agents.behaviours.player.SimplePlayerMoveBehaviour;
-import com.jme3.ai.agents.util.systems.SimpleAgentHPSystem;
+import com.jme3.ai.agents.behaviors.npc.SimpleAttackBehavior;
+import com.jme3.ai.agents.behaviors.npc.SimpleLookBehavior;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.player.SimplePlayerAttackBehavior;
+import com.jme3.ai.agents.behaviors.player.SimplePlayerMoveBehavior;
+import com.jme3.ai.agents.util.systems.SimpleAgentHitPoints;
 import com.jme3.app.SimpleApplication;
 import com.jme3.font.BitmapText;
 import com.jme3.material.Material;
@@ -30,7 +30,7 @@ import fps.robotfight.util.Knife;
  * Testing demo game for MonkeyBrains framework. Some introduction to game: -
  * this game is based on Robotfight game made by Ryu Battosai Kajiya in
  * jMonkeyEngine - this is the game where one robot fights with other robots -
- * there are three kinds of robots: - blue: have instant kill, no attack range
+ * there are three kinds of robots: - blue: have instant kill, no decreaseHitPoints range
  * and always chasing player - red: moves random and have laser - green: runs
  * away from player, have cannon and always shooting at player - all three
  * robots are in the same team - if tree robot are to easy for you you can add
@@ -46,7 +46,7 @@ public class RobotFightGame extends SimpleApplication {
     private Agent player;
     private Agent[] enemies = new Agent[6];
     //Defining game
-    private AIAppState aiAppState = AIAppState.getInstance();
+    private MonkeyBrainsAppState aiAppState = MonkeyBrainsAppState.getInstance();
     private float gameFinishCountDown = 5f;
     //game stats
     private final float terrainSize = 40f;
@@ -107,11 +107,11 @@ public class RobotFightGame extends SimpleApplication {
             enemies[i].setMaxForce(3);
         }
 
-        //setting SimpleAgentHPSystem and RobotFightInventory to agents
-        player.setHitPoints(new SimpleAgentHPSystem(player));
+        //setting SimpleAgentHitPoints and RobotFightInventory to agents
+        player.setHitPoints(new SimpleAgentHitPoints(player));
         player.setInventory(new RobotFightInventory());
         for (Agent enemy : enemies) {
-            enemy.setHitPoints(new SimpleAgentHPSystem(enemy));
+            enemy.setHitPoints(new SimpleAgentHitPoints(enemy));
             enemy.setInventory(new RobotFightInventory());
         }
 
@@ -140,29 +140,16 @@ public class RobotFightGame extends SimpleApplication {
             enemies[i].setTeam(botTeam);
         }
 
-        //set visibility range
-        for (int i = 0; i < enemies.length; i++) {
-            if (i % 3 == 0) {
-                enemies[i].setVisibilityRange(150f);
-            } else {
-                if (i % 3 == 1) {
-                    enemies[i].setVisibilityRange(400f);
-                } else {
-                    enemies[i].setVisibilityRange(500f);
-                }
-            }
-        }
-
         //attaching camera to player
         RoboFightSpatials.attachCameraTo(player, cam);
 
         //making move behaviour for player
-        SimplePlayerMoveBehaviour playerMove = new SimplePlayerMoveBehaviour(player, null);
+        SimplePlayerMoveBehavior playerMove = new SimplePlayerMoveBehavior(player, null);
         ((FPS) aiAppState.getGameControl()).addMoveListener(player, playerMove);
         playerMove.addSupportedOperations(((FPS) aiAppState.getGameControl()).getPlayerMoveSupportedOperations(player));
 
-        //making attack behaviour for player
-        SimplePlayerAttackBehaviour playerAttack = new SimplePlayerAttackBehaviour(player, null);
+        //making decreaseHitPoints behaviour for player
+        SimplePlayerAttackBehavior playerAttack = new SimplePlayerAttackBehavior(player, null);
         ((FPS) aiAppState.getGameControl()).addAttackListener(player, playerAttack);
         playerAttack.addSupportedOperations(((FPS) aiAppState.getGameControl()).getPlayerAttackSupportedOperations(player));
 
@@ -171,32 +158,34 @@ public class RobotFightGame extends SimpleApplication {
         ((FPS) aiAppState.getGameControl()).addSwitchListener(player, playerSwitch);
 
         //making main behaviour for player and adding behaviours to it
-        SimpleMainBehaviour playerMain = new SimpleMainBehaviour(player);
-        playerMain.addBehaviour(playerMove);
-        playerMain.addBehaviour(playerAttack);
-        playerMain.addBehaviour(playerSwitch);
+        SimpleMainBehavior playerMain = new SimpleMainBehavior(player);
+        playerMain.addBehavior(playerMove);
+        playerMain.addBehavior(playerAttack);
+        playerMain.addBehavior(playerSwitch);
         player.setMainBehaviour(playerMain);
 
         //setting main behaviour to bots
         for (int i = 0; i < enemies.length; i++) {
-            SimpleMainBehaviour enemyMain = new SimpleMainBehaviour(enemies[i]);
-            SimpleAttackBehaviour attack = new SimpleAttackBehaviour(enemies[i]);
+            SimpleMainBehavior enemyMain = new SimpleMainBehavior(enemies[i]);
+            SimpleAttackBehavior attack = new SimpleAttackBehavior(enemies[i]);
             if (i % 3 == 0) {
-                SimpleLookBehaviour look = new SimpleLookBehaviour(enemies[i]);
-                look.setTypeOfWatching(SimpleLookBehaviour.TypeOfWatching.AGENT_WATCHING);
+                SimpleLookBehavior look = new SimpleLookBehavior(enemies[i]);
+                look.setTypeOfWatching(SimpleLookBehavior.TypeOfWatching.AGENT_WATCHING);
                 look.addListener(attack);
-                enemyMain.addBehaviour(look);
-                enemyMain.addBehaviour(new WanderInsideTerrain(enemies[i], terrainSize));
+                //setting visibility range for behavior
+                look.setVisibilityRange(150f);
+                enemyMain.addBehavior(look);
+                enemyMain.addBehavior(new WanderInsideTerrain(enemies[i], terrainSize));
             } else {
                 if (i % 3 == 1) {
                     attack.setTarget(player);
-                    enemyMain.addBehaviour(new FleeInsideTerrain(terrainSize, enemies[i], player));
+                    enemyMain.addBehavior(new FleeInsideTerrain(terrainSize, enemies[i], player));
                 } else {
                     attack.setTarget(player);
-                    enemyMain.addBehaviour(new SeekInsideTerrain(terrainSize, enemies[i], player));
+                    enemyMain.addBehavior(new SeekInsideTerrain(terrainSize, enemies[i], player));
                 }
             }
-            enemyMain.addBehaviour(attack);
+            enemyMain.addBehavior(attack);
             enemies[i].setMainBehaviour(enemyMain);
         }
 

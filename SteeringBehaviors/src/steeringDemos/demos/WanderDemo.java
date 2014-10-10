@@ -3,8 +3,8 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.WanderBehaviour;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.WanderBehavior;
 
 import com.jme3.math.Vector3f;
 
@@ -48,9 +48,9 @@ public class WanderDemo extends BasicDemo {
                     this.targetMaxForce
                 );
                 
-        SimpleMainBehaviour targetMainBehaviour =  new SimpleMainBehaviour(target);
-        WanderBehaviour targetMoveBehavior = new WanderBehaviour(target);
-        targetMainBehaviour.addBehaviour(targetMoveBehavior);
+        SimpleMainBehavior targetMainBehaviour =  new SimpleMainBehavior(target);
+        WanderBehavior targetMoveBehavior = new WanderBehavior(target);
+        targetMainBehaviour.addBehavior(targetMoveBehavior);
         target.setMainBehaviour(targetMainBehaviour);
  
         aiAppState.start();

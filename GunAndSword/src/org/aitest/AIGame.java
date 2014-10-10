@@ -1,7 +1,7 @@
 package org.aitest;
 
 import org.aitest.ai.control.AIGameUpdateManager;
-import com.jme3.ai.agents.util.control.AIAppState;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.math.ColorRGBA;
@@ -20,7 +20,7 @@ import org.aitest.ai.utils.AIGameSpatials;
 public class AIGame extends SimpleApplication {
 
     //Defining game
-    private AIAppState aiAppState = AIAppState.getInstance();
+    private MonkeyBrainsAppState aiAppState = MonkeyBrainsAppState.getInstance();
 
     public static void main(String[] args) {
         AIGame app = new AIGame();
@@ -54,7 +54,7 @@ public class AIGame extends SimpleApplication {
         AIGameSpatials.getInstance().setGameLighting();
 
         //approves updates for controls
-        ////////this maybe add to AIAppState update
+        ////////this maybe add to MonkeyBrainsAppState update
         AIGameUpdateManager updateManager = new AIGameUpdateManager();
         stateManager.attach(updateManager);
 

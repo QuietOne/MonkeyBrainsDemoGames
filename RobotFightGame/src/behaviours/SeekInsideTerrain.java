@@ -1,7 +1,7 @@
 package behaviours;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.steering.SeekBehaviour;
+import com.jme3.ai.agents.behaviors.npc.steering.SeekBehavior;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 
@@ -9,7 +9,7 @@ import com.jme3.scene.Spatial;
  *
  * @author Tihomir Radosavljević
  */
-public class SeekInsideTerrain extends SeekBehaviour{
+public class SeekInsideTerrain extends SeekBehavior{
     
     private float terrainSize;
 

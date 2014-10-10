@@ -2,12 +2,12 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.steering.SeparationBehaviour;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.CompoundSteeringBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.ObstacleAvoidanceBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.QueuingBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.SeekBehaviour;
+import com.jme3.ai.agents.behaviors.npc.steering.SeparationBehavior;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.CompoundSteeringBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.ObstacleAvoidanceBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.QueuingBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.SeekBehavior;
 import com.jme3.ai.agents.util.GameEntity;
 
 import com.jme3.math.ColorRGBA;
@@ -35,7 +35,7 @@ import java.util.ArrayList;
  */
 public class QueuingDemo extends BasicDemo {
 
-    SeekBehaviour[] neighSeek;
+    SeekBehavior[] neighSeek;
     Agent[] neighbours;
 
     public static void main(String[] args) {
@@ -67,7 +67,7 @@ public class QueuingDemo extends BasicDemo {
                 this.targetMass,
                 this.targetMaxForce);
         aiAppState.getGameControl().spawn(target, new Vector3f(0, 0, 15));
-        SimpleMainBehaviour targetMainB = new SimpleMainBehaviour(target);
+        SimpleMainBehavior targetMainB = new SimpleMainBehavior(target);
         target.setMainBehaviour(targetMainB);
 
         this.neighbours = new Agent[this.numberNeighbours];
@@ -120,36 +120,36 @@ public class QueuingDemo extends BasicDemo {
                     this.neighboursMaxForce);
             aiAppState.getGameControl().spawn(wallObstacle.get(i), spheresSpawnPositions[i]);
 
-            SimpleMainBehaviour mainB = new SimpleMainBehaviour((Agent) wallObstacle.get(i));
+            SimpleMainBehavior mainB = new SimpleMainBehavior((Agent) wallObstacle.get(i));
             ((Agent) wallObstacle.get(i)).setMainBehaviour(mainB);
         }
 
 
-        SimpleMainBehaviour[] neighboursMainBehaviour = new SimpleMainBehaviour[this.neighbours.length];
-        neighSeek = new SeekBehaviour[this.neighbours.length];
+        SimpleMainBehavior[] neighboursMainBehaviour = new SimpleMainBehavior[this.neighbours.length];
+        neighSeek = new SeekBehavior[this.neighbours.length];
 
         for (int i = 0; i < this.neighbours.length; i++) {
-            neighboursMainBehaviour[i] = new SimpleMainBehaviour(this.neighbours[i]);
+            neighboursMainBehaviour[i] = new SimpleMainBehavior(this.neighbours[i]);
 
-            SeekBehaviour extraSeek = new SeekBehaviour(this.neighbours[i], new Vector3f(0, 0, 14.9f));
+            SeekBehavior extraSeek = new SeekBehavior(this.neighbours[i], new Vector3f(0, 0, 14.9f));
             extraSeek.setupStrengthControl(0.35f);
-            this.neighSeek[i] = new SeekBehaviour(this.neighbours[i], new Vector3f(0, 0, 15.17f));
-            SeparationBehaviour separation = new SeparationBehaviour(this.neighbours[i], obstacles, 0.13f);
+            this.neighSeek[i] = new SeekBehavior(this.neighbours[i], new Vector3f(0, 0, 15.17f));
+            SeparationBehavior separation = new SeparationBehavior(this.neighbours[i], obstacles, 0.13f);
             separation.setupStrengthControl(0.25f);
 
-            ObstacleAvoidanceBehaviour obstacleAvoid = new ObstacleAvoidanceBehaviour(this.neighbours[i], wallObstacle, 1, 5);
+            ObstacleAvoidanceBehavior obstacleAvoid = new ObstacleAvoidanceBehavior(this.neighbours[i], wallObstacle, 1, 5);
 
             // BalancedCompoundSteeringBehaviour steer = new BalancedCompoundSteeringBehaviour(this.neighbours[i]);
-            CompoundSteeringBehaviour steer = new CompoundSteeringBehaviour(this.neighbours[i]);
-            QueuingBehaviour queue = new QueuingBehaviour(this.neighbours[i], convertToAgents(obstacles), 1.5f);
-            SeparationBehaviour queueSeparation = new SeparationBehaviour(this.neighbours[i], obstacles, 0.25f);
+            CompoundSteeringBehavior steer = new CompoundSteeringBehavior(this.neighbours[i]);
+            QueuingBehavior queue = new QueuingBehavior(this.neighbours[i], convertToAgents(obstacles), 1.5f);
+            SeparationBehavior queueSeparation = new SeparationBehavior(this.neighbours[i], obstacles, 0.25f);
             queueSeparation.setupStrengthControl(0.01f); //1%
 
-            steer.addSteerBehaviour(this.neighSeek[i]);
-            steer.addSteerBehaviour(extraSeek);
-            steer.addSteerBehaviour(obstacleAvoid);
-            steer.addSteerBehaviour(queue);
-            steer.addSteerBehaviour(queueSeparation);
+            steer.addSteerBehavior(this.neighSeek[i]);
+            steer.addSteerBehavior(extraSeek);
+            steer.addSteerBehavior(obstacleAvoid);
+            steer.addSteerBehavior(queue);
+            steer.addSteerBehavior(queueSeparation);
             steer.addSteerBehaviour(separation, 1, 0.01f); //Highest layer => Highest priority
 
             //Remove behaviour for testing purposes
@@ -161,14 +161,14 @@ public class QueuingDemo extends BasicDemo {
             steer.removeSteerBehaviour(queueSeparation);
 
             //Add then again
-            steer.addSteerBehaviour(this.neighSeek[i]);
-            steer.addSteerBehaviour(extraSeek);
-            steer.addSteerBehaviour(obstacleAvoid);
-            steer.addSteerBehaviour(queue);
-            steer.addSteerBehaviour(queueSeparation);
+            steer.addSteerBehavior(this.neighSeek[i]);
+            steer.addSteerBehavior(extraSeek);
+            steer.addSteerBehavior(obstacleAvoid);
+            steer.addSteerBehavior(queue);
+            steer.addSteerBehavior(queueSeparation);
             steer.addSteerBehaviour(separation, 1, 0.01f); //Highest layer => Highest priority
 
-            neighboursMainBehaviour[i].addBehaviour(steer);
+            neighboursMainBehaviour[i].addBehavior(steer);
 
             this.neighbours[i].setMainBehaviour(neighboursMainBehaviour[i]);
         }

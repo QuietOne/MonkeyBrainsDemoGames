@@ -4,8 +4,8 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviours.npc.SimpleMainBehaviour;
-import com.jme3.ai.agents.behaviours.npc.steering.BoxExploreBehaviour;
+import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.BoxExploreBehavior;
 
 import com.jme3.math.Vector3f;
 
@@ -46,9 +46,9 @@ public class BoxExploreDemo extends BasicDemo {
                 
         this.addBoxHelper(Vector3f.ZERO, 2.5f, 2, 1.5f);
         
-        SimpleMainBehaviour targetMainBehaviour =  new SimpleMainBehaviour(target);
-        BoxExploreBehaviour boxExplore = new BoxExploreBehaviour(target, Vector3f.ZERO, 5, 3, 4, 0.75f);
-        targetMainBehaviour.addBehaviour(boxExplore);
+        SimpleMainBehavior targetMainBehaviour =  new SimpleMainBehavior(target);
+        BoxExploreBehavior boxExplore = new BoxExploreBehavior(target, Vector3f.ZERO, 5, 3, 4, 0.75f);
+        targetMainBehaviour.addBehavior(boxExplore);
         target.setMainBehaviour(targetMainBehaviour);
          
         aiAppState.start();
