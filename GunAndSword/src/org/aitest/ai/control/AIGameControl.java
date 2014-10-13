@@ -147,7 +147,7 @@ public class AIGameControl implements GameControl {
         AIModel model = new AIModel(player);
         player.setModel(model);
         model.setGraphicModel();
-        player.setMainBehaviour(new PlayerMainBehavior(player));
+        player.setMainBehavior(new PlayerMainBehavior(player));
 
         AIGameSpatials.getInstance().attachCameraTo(player, MonkeyBrainsAppState.getInstance().getApp().getCamera());
         MonkeyBrainsAppState.getInstance().addAgent(player);
@@ -167,7 +167,7 @@ public class AIGameControl implements GameControl {
                 model.setViewDirection(enemyNode.getLocalRotation().mult(Vector3f.UNIT_Z).normalizeLocal());
                 enemyAgent.setModel(model);
                 model.setGraphicModel();
-                enemyAgent.setMainBehaviour(new AIMainBehavior(enemyAgent));
+                enemyAgent.setMainBehavior(new AIMainBehavior(enemyAgent));
                 enemyAgent.setTeam(team);
                 //adding it to game
                 MonkeyBrainsAppState.getInstance().addAgent(enemyAgent);
