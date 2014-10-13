@@ -1,4 +1,32 @@
-//Copyright (c) 2014, Jesús Martín Berlanga. All rights reserved. Distributed under the BSD licence. Read "com/jme3/ai/license.txt".
+/**
+ * Copyright (c) 2014, jMonkeyEngine All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of 'jMonkeyEngine' nor the names of its contributors may be
+ * used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
@@ -8,18 +36,15 @@ import com.jme3.ai.agents.behaviors.npc.steering.MoveBehavior;
 import com.jme3.ai.agents.behaviors.npc.steering.SeekBehavior;
 import com.jme3.ai.agents.behaviors.npc.steering.UnalignedCollisionAvoidanceBehavior;
 import com.jme3.ai.agents.util.GameEntity;
-
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.math.FastMath;
-
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import javax.swing.Timer;
-
 import steeringDemos.BasicDemo;
 import steeringDemos.control.CustomSteerControl;
 
@@ -27,7 +52,7 @@ import steeringDemos.control.CustomSteerControl;
  * Unaligned avoidance demo
  *
  * @author Jesús Martín Berlanga
- * @version 2.0
+ * @version 2.0.0
  */
 public class UnalignedAvoidanceDemo extends BasicDemo {
 
@@ -35,12 +60,12 @@ public class UnalignedAvoidanceDemo extends BasicDemo {
     private Agent focus;
     private boolean positiveXSide = true;
     //ObstaclesMove
-    MoveBehavior obstsaclesMoves[] = new MoveBehavior[150];
+    private MoveBehavior obstaclesMoves[] = new MoveBehavior[150];
     //Negate Direction Timer
     private Timer iterationTimer;
     private java.awt.event.ActionListener negateMoveDir = new java.awt.event.ActionListener() {
         public void actionPerformed(ActionEvent event) {
-            for (MoveBehavior move : obstsaclesMoves) {
+            for (MoveBehavior move : obstaclesMoves) {
                 move.setMoveDirection(move.getMoveDirection().negate());
             }
         }
@@ -57,63 +82,63 @@ public class UnalignedAvoidanceDemo extends BasicDemo {
         this.steerControl.setCameraSettings(getCamera());
         this.steerControl.setFlyCameraSettings(getFlyByCamera());
 
-        //defining rootNode for aiAppState processing
-        aiAppState.setApp(this);
-        aiAppState.setGameControl(this.steerControl);
+        //defining rootNode for brainsAppState processing
+        brainsAppState.setApp(this);
+        brainsAppState.setGameControl(this.steerControl);
 
         Vector3f[] spawnArea = null;
         this.numberNeighbours = 150;
 
         agent = this.createBoid("Target", ColorRGBA.Blue, 0.31f);
 
-        aiAppState.addAgent(agent); //Add the target to the aiAppState
+        brainsAppState.addAgent(agent); //Add the target to the brainsAppState
         this.setStats(
                 agent,
                 this.targetMoveSpeed,
                 this.targetRotationSpeed,
                 this.targetMass,
                 this.targetMaxForce);
-        aiAppState.getGameControl().spawn(agent, new Vector3f());
+        brainsAppState.getGameControl().spawn(agent, new Vector3f());
 
         Agent[] neighbours = new Agent[this.numberNeighbours];
         Random rand = FastMath.rand;
         for (int i = 0; i < this.numberNeighbours; i++) {
             neighbours[i] = this.createSphere("neighbour_" + i, ColorRGBA.Orange, 0.25f);
-            aiAppState.addAgent(neighbours[i]); //Add the neighbours to the aiAppState
+            brainsAppState.addAgent(neighbours[i]); //Add the neighbours to the brainsAppState
             this.setStats(
                     neighbours[i],
                     this.neighboursMoveSpeed,
                     this.neighboursRotationSpeed,
                     this.neighboursMass,
                     this.neighboursMaxForce);
-            aiAppState.getGameControl().spawn(neighbours[i], spawnArea);
+            brainsAppState.getGameControl().spawn(neighbours[i], spawnArea);
 
             SimpleMainBehavior mainB = new SimpleMainBehavior(neighbours[i]);
 
-            obstsaclesMoves[i] = new MoveBehavior(neighbours[i]);
-            obstsaclesMoves[i].setMoveDirection(new Vector3f(rand.nextFloat() - 1, rand.nextFloat() - 1, rand.nextFloat() - 1));
+            obstaclesMoves[i] = new MoveBehavior(neighbours[i]);
+            obstaclesMoves[i].setMoveDirection(new Vector3f(rand.nextFloat() - 1, rand.nextFloat() - 1, rand.nextFloat() - 1));
 
-            mainB.addBehavior(obstsaclesMoves[i]);
-            neighbours[i].setMainBehaviour(mainB);
+            mainB.addBehavior(obstaclesMoves[i]);
+            neighbours[i].setMainBehavior(mainB);
         }
 
         this.iterationTimer = new Timer(4000, this.negateMoveDir); //4k ns = 4s
         this.iterationTimer.start();
 
         focus = this.createSphere("focus", ColorRGBA.Green, 0.35f);
-        aiAppState.addAgent(focus);
+        brainsAppState.addAgent(focus);
 
-        aiAppState.addAgent(focus); //Add the neighbours to the aiAppState
+        brainsAppState.addAgent(focus); //Add the neighbours to the brainsAppState
         this.setStats(
                 focus,
                 this.neighboursMoveSpeed,
                 this.neighboursRotationSpeed,
                 this.neighboursMass,
                 this.neighboursMaxForce);
-        aiAppState.getGameControl().spawn(focus, this.generateRandomPosition());
+        brainsAppState.getGameControl().spawn(focus, this.generateRandomPosition());
 
         SimpleMainBehavior mainB = new SimpleMainBehavior(focus);
-        focus.setMainBehaviour(mainB);
+        focus.setMainBehavior(mainB);
 
 
         List<GameEntity> obstacles = new ArrayList<GameEntity>();
@@ -132,14 +157,14 @@ public class UnalignedAvoidanceDemo extends BasicDemo {
         steer.addSteerBehavior(seekSteer);
         steer.addSteerBehavior(obstacleAvoidance);
         targetMainB.addBehavior(steer);
-        agent.setMainBehaviour(targetMainB);
+        agent.setMainBehavior(targetMainB);
 
-        aiAppState.start();
+        brainsAppState.start();
     }
 
     @Override
     public void simpleUpdate(float tpf) {
-        aiAppState.update(tpf);
+        brainsAppState.update(tpf);
 
         if (this.agent.distanceRelativeToGameEntity(this.focus) < 0.5f) {
             this.focus.setLocalTranslation(this.generateRandomPosition());
