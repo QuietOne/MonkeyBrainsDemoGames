@@ -27,15 +27,42 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.aitest.physics;
+package org.aitest.ai.behaviors.npc;
+
+import com.jme3.ai.agents.Agent;
+import com.jme3.ai.agents.behaviors.npc.steering.WanderBehavior;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
+import org.aitest.ai.model.AIModel;
 
 /**
  *
- * @author mifthbeat
- * @version 1.0.0
+ * @author Tihomir Radosavljević
+ * @version 1.0.2
  */
-public enum AIStaticObjectType {
+public class AIWanderBehavior extends WanderBehavior{
 
-    Floor,
-    Obstacle
+    private AIModel model;
+    
+    public AIWanderBehavior(Agent agent) {
+        super(agent);
+        model = (AIModel) agent.getModel();
+        timeInterval = 1f;
+    }
+
+    @Override
+    protected void controlUpdate(float tpf) {
+        changeTargetPosition(tpf);
+        Vector3f vel = calculateNewVelocity();
+        model.setWalkDirection(vel);
+        rotateAgent(tpf);
+    }
+
+    @Override
+    protected void rotateAgent(float tpf) {
+        Quaternion q = new Quaternion();
+        q.lookAt(velocity, new Vector3f(0, 1, 0));
+        agent.getLocalRotation().slerp(q, agent.getRotationSpeed());
+        model.setViewDirection(agent.getLocalRotation().mult(Vector3f.UNIT_Z).normalize());
+    }    
 }

@@ -27,15 +27,54 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.aitest.physics;
+package org.aitest.ai.behaviors.npc;
+
+import com.jme3.ai.agents.Agent;
+import com.jme3.ai.agents.behaviors.npc.steering.SeekBehavior;
+import com.jme3.ai.agents.events.GameEntitySeenEvent;
+import com.jme3.ai.agents.events.GameEntitySeenListener;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
+import org.aitest.ai.model.AIModel;
 
 /**
+ * Behavior for coming closer to enemy.
  *
- * @author mifthbeat
+ * @author Tihomir Radosavljević
  * @version 1.0.0
  */
-public enum AIStaticObjectType {
+public class AISeekBehavior extends SeekBehavior implements GameEntitySeenListener {
 
-    Floor,
-    Obstacle
+    private AIModel model;
+    
+    public AISeekBehavior(Agent agent) {
+        super(agent);
+        model = (AIModel) agent.getModel();
+    }
+
+    public void handleGameEntitySeenEvent(GameEntitySeenEvent event) {
+        if (event.getGameEntitySeen() instanceof Agent) {
+            Agent targetAgent = (Agent) event.getGameEntitySeen();
+            if (agent.isSameTeam(targetAgent)) {
+                return;
+            }
+            setTarget(targetAgent);
+            enabled = true;
+        }
+    }
+
+    @Override
+    protected void controlUpdate(float tpf) {
+        Vector3f vel = calculateNewVelocity();
+        model.setWalkDirection(vel);
+        rotateAgent(tpf);
+    }
+
+    @Override
+    protected void rotateAgent(float tpf) {
+        Quaternion q = new Quaternion();
+        q.lookAt(velocity, new Vector3f(0, 1, 0));
+        agent.getLocalRotation().slerp(q, agent.getRotationSpeed());
+        model.setViewDirection(agent.getLocalRotation().mult(Vector3f.UNIT_Z).normalize());
+    }
 }

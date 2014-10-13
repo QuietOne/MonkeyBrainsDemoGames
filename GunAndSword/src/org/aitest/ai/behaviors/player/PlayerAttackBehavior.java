@@ -27,15 +27,38 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.aitest.physics;
+package org.aitest.ai.behaviors.player;
+
+import com.jme3.ai.agents.Agent;
+import com.jme3.ai.agents.behaviors.Behavior;
+import com.jme3.input.controls.AnalogListener;
+import com.jme3.math.Vector3f;
+import org.aitest.ai.utils.GunAndSwordInventory;
 
 /**
  *
- * @author mifthbeat
- * @version 1.0.0
+ * @author Tihomir Radosavljević
+ * @version 1.1.0
  */
-public enum AIStaticObjectType {
+public class PlayerAttackBehavior extends Behavior implements AnalogListener {
 
-    Floor,
-    Obstacle
+    private GunAndSwordInventory inventory;
+
+    public PlayerAttackBehavior(Agent agent) {
+        super(agent);
+        inventory = (GunAndSwordInventory) agent.getInventory();
+    }
+
+    @Override
+    protected void controlUpdate(float tpf) {
+    }
+
+    public void onAnalog(String name, float value, float tpf) {
+        if (name.equals("gunFired")) {
+            inventory.getGun().attack(Vector3f.ZERO, tpf);
+        }
+        if (name.equals("swordStrike")) {
+            inventory.getSword().attack(Vector3f.ZERO, tpf);
+        }
+    }
 }

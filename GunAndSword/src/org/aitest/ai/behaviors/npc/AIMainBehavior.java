@@ -27,15 +27,48 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.aitest.physics;
+package org.aitest.ai.behaviors.npc;
+
+import com.jme3.ai.agents.Agent;
+import com.jme3.ai.agents.behaviors.Behavior;
+import com.jme3.math.Vector3f;
 
 /**
  *
- * @author mifthbeat
- * @version 1.0.0
+ * @author Tihomir Radosavljević
+ * @version 1.0.4
  */
-public enum AIStaticObjectType {
+public class AIMainBehavior extends Behavior {
 
-    Floor,
-    Obstacle
+    private AILookBehavior lookBehavior;
+    private AIAttackBehavior attackBehavior;
+    private AIWanderBehavior wanderBehavior;
+    private AISeekBehavior seekBehavior;
+    private final Vector3f area = new Vector3f(2, 0, 2);
+
+    public AIMainBehavior(Agent agent) {
+        super(agent);
+        attackBehavior = new AIAttackBehavior(agent);
+        seekBehavior = new AISeekBehavior(agent);
+        lookBehavior = new AILookBehavior(agent);
+        lookBehavior.addListener(attackBehavior);
+        lookBehavior.addListener(seekBehavior);
+        //setting viewing distance of agent
+        lookBehavior.setVisibilityRange(300f);
+        wanderBehavior = new AIWanderBehavior(agent);
+        wanderBehavior.setArea(agent.getLocalTranslation().subtract(area), agent.getLocalTranslation().add(area));
+
+    }
+
+    @Override
+    protected void controlUpdate(float tpf) {
+        lookBehavior.update(tpf);
+        attackBehavior.update(tpf);
+        if (seekBehavior.getTarget() != null && seekBehavior.getTarget().isEnabled()) {
+            seekBehavior.update(tpf);
+        } else {
+            wanderBehavior.update(tpf);
+            //FIXME: need to include obstacles avoidance
+        }
+    }
 }

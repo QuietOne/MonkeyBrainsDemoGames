@@ -27,15 +27,34 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.aitest.physics;
+package org.aitest.ai.behaviors.player;
+
+import com.jme3.ai.agents.Agent;
+import com.jme3.ai.agents.behaviors.Behavior;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
+import org.aitest.ai.control.AIGameControl;
 
 /**
  *
- * @author mifthbeat
- * @version 1.0.0
+ * @author Tihomir Radosavljević
+ * @version 1.0.1
  */
-public enum AIStaticObjectType {
+public class PlayerMainBehavior extends Behavior {
 
-    Floor,
-    Obstacle
+    private PlayerAttackBehavior attackBehavior;
+    private PlayerMoveBehavior moveBehavior;
+
+    public PlayerMainBehavior(Agent agent) {
+        super(agent);
+        attackBehavior = new PlayerAttackBehavior(agent);
+        moveBehavior = new PlayerMoveBehavior(agent);
+        //adding listeners to appropriate behaviours
+        ((AIGameControl) MonkeyBrainsAppState.getInstance().getGameControl()).addGunAttackListener(attackBehavior);
+        ((AIGameControl) MonkeyBrainsAppState.getInstance().getGameControl()).addSwordAttackListener(attackBehavior);
+        ((AIGameControl) MonkeyBrainsAppState.getInstance().getGameControl()).addMoveListener(moveBehavior);
+    }
+
+    @Override
+    protected void controlUpdate(float tpf) {
+    }
 }

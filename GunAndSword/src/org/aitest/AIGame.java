@@ -1,3 +1,32 @@
+/**
+ * Copyright (c) 2014, jMonkeyEngine All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of 'jMonkeyEngine' nor the names of its contributors may be
+ * used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
 package org.aitest;
 
 import org.aitest.ai.control.AIGameUpdateManager;
@@ -20,7 +49,7 @@ import org.aitest.ai.utils.AIGameSpatials;
 public class AIGame extends SimpleApplication {
 
     //Defining game
-    private MonkeyBrainsAppState aiAppState = MonkeyBrainsAppState.getInstance();
+    private MonkeyBrainsAppState brainsAppState = MonkeyBrainsAppState.getInstance();
 
     public static void main(String[] args) {
         AIGame app = new AIGame();
@@ -30,22 +59,22 @@ public class AIGame extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         //defining app
-        aiAppState.setApp(this);
+        brainsAppState.setApp(this);
         
         //setting hp control
-        aiAppState.setHitPointsControl(new HPControl());
+        brainsAppState.setHitPointsControl(new HPControl());
 
         //setting game control
-        aiAppState.setGameControl(new AIGameControl());
+        brainsAppState.setGameControl(new AIGameControl());
 
         //registering input
-        aiAppState.getGameControl().setInputManagerMapping();
+        brainsAppState.getGameControl().setInputManagerMapping();
 
         //setting camera
-        aiAppState.getGameControl().setCameraSettings(cam);
+        brainsAppState.getGameControl().setCameraSettings(cam);
 
         //setting flying camera
-        aiAppState.getGameControl().setFlyCameraSettings(flyCam);
+        brainsAppState.getGameControl().setFlyCameraSettings(flyCam);
 
         //setting background game color
         viewPort.setBackgroundColor(ColorRGBA.DarkGray);
@@ -65,19 +94,19 @@ public class AIGame extends SimpleApplication {
 
         //loading scene used in game
         //It loads all needed graphics and it creates agents for game
-        ((AIGameControl) aiAppState.getGameControl()).loadScene();
+        ((AIGameControl) brainsAppState.getGameControl()).loadScene();
 
         //initializing GUI
         AIGuiManager guiManager = new AIGuiManager(this);
         stateManager.attach(guiManager);
 
         //setting game options
-        aiAppState.setFriendlyFire(false);
+        brainsAppState.setFriendlyFire(true);
 
         //starting game (enabling the agents)
         //without this agents wouldn't do anything
-        aiAppState.start();
+        brainsAppState.start();
 
-        stateManager.attach(aiAppState);
+        stateManager.attach(brainsAppState);
     }
 }
