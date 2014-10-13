@@ -178,7 +178,7 @@ public class PriorityDemo extends BasicDemo {
 
         targetSteer = new DebugCompoundSteeringBehavior(target);
         targetSteer.addSteerBehavior(targetMove);
-        targetSteer.addSteerBehaviour(separation, 1, 0.1f);
+        targetSteer.addSteerBehavior(separation, 1, 0.1f);
 
         targetMainBehavior.addBehavior(this.targetSteer);
         target.setMainBehavior(targetMainBehavior);
