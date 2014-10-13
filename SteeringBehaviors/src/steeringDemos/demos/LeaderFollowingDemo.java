@@ -1,9 +1,36 @@
-//Copyright (c) 2014, Jesús Martín Berlanga. All rights reserved. Distributed under the BSD licence. Read "com/jme3/ai/license.txt".
+/**
+ * Copyright (c) 2014, jMonkeyEngine All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of 'jMonkeyEngine' nor the names of its contributors may be
+ * used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
 package steeringDemos.demos;
 
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.behaviors.npc.steering.SeparationBehavior;
 import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
@@ -13,17 +40,14 @@ import com.jme3.ai.agents.behaviors.npc.steering.LeaderFollowingBehavior;
 import com.jme3.ai.agents.behaviors.npc.steering.MoveBehavior;
 import com.jme3.ai.agents.behaviors.npc.steering.WanderBehavior;
 import com.jme3.ai.agents.util.GameEntity;
-
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.FastMath;
-
 import steeringDemos.BasicDemo;
 import steeringDemos.control.CustomSteerControl;
-
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.Timer;
@@ -34,21 +58,21 @@ import java.util.Arrays;
  * Leader follow demo
  *
  * @author Jesús Martín Berlanga
- * @version 2.0
+ * @version 2.0.0
  */
 public class LeaderFollowingDemo extends BasicDemo {
 
     private SeparationBehavior separation[];
     private CompoundSteeringBehavior targetSteer;
     private boolean isStrengthScalar = true;
-    private float escalarStrength = 0.1f;
+    private float scalarStrength = 0.1f;
     private BitmapText scalarStrengthHudText;
     private BitmapText scalarInfoHudtext;
-    private final String SCALAR_INFO_HUD_MESSAGE = "Press H to increase the separation escalar strength, L to decrease.";
-    MoveBehavior targetMoveBehavior;
-    WanderBehavior targetWanderBehavior;
+    private final String SCALAR_INFO_HUD_MESSAGE = "Press H to increase the separation scalar strength, L to decrease.";
+    private MoveBehavior targetMoveBehavior;
+    private WanderBehavior targetWanderBehavior;
     private boolean turnDinamicMode = true;
-    
+    private Timer iterationTimer;
     private java.awt.event.ActionListener changeDinamicMode = new java.awt.event.ActionListener() {
         public void actionPerformed(ActionEvent event) {
             if (turnDinamicMode) {
@@ -62,7 +86,6 @@ public class LeaderFollowingDemo extends BasicDemo {
             }
         }
     };
-    private Timer iterationTimer;
 
     public static void main(String[] args) {
         LeaderFollowingDemo app = new LeaderFollowingDemo();
@@ -79,14 +102,14 @@ public class LeaderFollowingDemo extends BasicDemo {
         BitmapText hudText = new BitmapText(guiFont, false);
         hudText.setSize(guiFont.getCharSet().getRenderedSize() * 0.65f);      // font size
         hudText.setColor(ColorRGBA.Red);                             // font color
-        hudText.setText("Press N to switch betwen escalar 'separation strength' and 'plane strength'.");             // the text
+        hudText.setText("Press N to switch betwen scalar 'separation strength' and 'plane strength'.");             // the text
         hudText.setLocalTranslation(0, 475, 0); // position
         guiNode.attachChild(hudText);
 
         this.scalarStrengthHudText = new BitmapText(guiFont, false);
         this.scalarStrengthHudText.setSize(guiFont.getCharSet().getRenderedSize() * 0.65f);      // font size
         this.scalarStrengthHudText.setColor(ColorRGBA.Orange);                             // font color
-        this.scalarStrengthHudText.setText(String.valueOf(this.escalarStrength));             // the text
+        this.scalarStrengthHudText.setText(String.valueOf(this.scalarStrength));             // the text
         this.scalarStrengthHudText.setLocalTranslation(0, 430, 0); // position
         guiNode.attachChild(scalarStrengthHudText);
 
@@ -101,41 +124,41 @@ public class LeaderFollowingDemo extends BasicDemo {
         this.steerControl.setCameraSettings(getCamera());
         this.steerControl.setFlyCameraSettings(getFlyByCamera());
 
-        //defining rootNode for aiAppState processing
-        aiAppState.setApp(this);
-        aiAppState.setGameControl(this.steerControl);
+        //defining rootNode for brainsAppState processing
+        brainsAppState.setApp(this);
+        brainsAppState.setGameControl(this.steerControl);
 
         Vector3f[] spawnArea = null;
         this.numberNeighbours = 15;
 
         Agent target = this.createBoid("Target", this.targetColor, 0.11f);
-        aiAppState.addAgent(target); //Add the target to the aiAppState
+        brainsAppState.addAgent(target); //Add the target to the brainsAppState
         this.setStats(
                 target,
                 this.targetMoveSpeed,
                 this.targetRotationSpeed,
                 this.targetMass,
                 this.targetMaxForce);
-        aiAppState.getGameControl().spawn(target, new Vector3f());
+        brainsAppState.getGameControl().spawn(target, new Vector3f());
 
         Agent[] neighbours = new Agent[this.numberNeighbours];
 
         for (int i = 0; i < this.numberNeighbours; i++) {
             neighbours[i] = this.createBoid("Neighbour " + i, this.neighboursColor, 0.11f);
-            aiAppState.addAgent(neighbours[i]); //Add the neighbours to the aiAppState
+            brainsAppState.addAgent(neighbours[i]); //Add the neighbours to the brainsAppState
             this.setStats(
                     neighbours[i],
                     this.neighboursMoveSpeed,
                     this.neighboursRotationSpeed,
                     this.neighboursMass,
                     this.neighboursMaxForce);
-            aiAppState.getGameControl().spawn(neighbours[i], spawnArea);
+            brainsAppState.getGameControl().spawn(neighbours[i], spawnArea);
         }
 
         List<GameEntity> obstacles = new ArrayList<GameEntity>();
         obstacles.addAll(Arrays.asList(neighbours));
 
-        SimpleMainBehavior targetMainBehaviour = new SimpleMainBehavior(target);
+        SimpleMainBehavior targetMainBehavior = new SimpleMainBehavior(target);
         targetMoveBehavior = new MoveBehavior(target);
         targetMoveBehavior.setupStrengthControl(0.25f);
         targetWanderBehavior = new WanderBehavior(target);
@@ -152,15 +175,15 @@ public class LeaderFollowingDemo extends BasicDemo {
 
         targetMoveBehavior.setMoveDirection(new Vector3f(randomDistance, randomDistance, randomDistance));
 
-        targetMainBehaviour.addBehavior(targetSteer);
-        target.setMainBehaviour(targetMainBehaviour);
+        targetMainBehavior.addBehavior(targetSteer);
+        target.setMainBehavior(targetMainBehavior);
 
-        SimpleMainBehavior[] neighboursMainBehaviour = new SimpleMainBehavior[neighbours.length];
+        SimpleMainBehavior[] neighboursMainBehavior = new SimpleMainBehavior[neighbours.length];
 
         separation = new SeparationBehavior[neighbours.length];
 
         for (int i = 0; i < neighbours.length; i++) {
-            neighboursMainBehaviour[i] = new SimpleMainBehavior(neighbours[i]);
+            neighboursMainBehavior[i] = new SimpleMainBehavior(neighbours[i]);
 
             LeaderFollowingBehavior follow = new LeaderFollowingBehavior(
                     neighbours[i],
@@ -170,24 +193,24 @@ public class LeaderFollowingDemo extends BasicDemo {
                     FastMath.PI / 2.35f);
 
             separation[i] = new SeparationBehavior(neighbours[i], obstacles);
-            separation[i].setupStrengthControl(escalarStrength);
+            separation[i].setupStrengthControl(scalarStrength);
 
             BalancedCompoundSteeringBehavior neighSteer = new BalancedCompoundSteeringBehavior(neighbours[i]);
             neighSteer.addSteerBehavior(separation[i]);
             neighSteer.addSteerBehavior(follow);
-            neighboursMainBehaviour[i].addBehavior(neighSteer);
-            neighbours[i].setMainBehaviour(neighboursMainBehaviour[i]);
+            neighboursMainBehavior[i].addBehavior(neighSteer);
+            neighbours[i].setMainBehavior(neighboursMainBehavior[i]);
         }
 
-        aiAppState.start();
+        brainsAppState.start();
     }
 
     @Override
     public void simpleUpdate(float tpf) {
-        aiAppState.update(tpf);
+        brainsAppState.update(tpf);
 
         if (this.isStrengthScalar) {
-            scalarStrengthHudText.setText(String.valueOf(escalarStrength));
+            scalarStrengthHudText.setText(String.valueOf(scalarStrength));
             this.scalarInfoHudtext.setText(this.SCALAR_INFO_HUD_MESSAGE);
         } else {
             scalarStrengthHudText.setText("");
@@ -220,63 +243,49 @@ public class LeaderFollowingDemo extends BasicDemo {
     };
 
     private void changeMode() {
-
         if (this.isStrengthScalar) {
-            for (SeparationBehavior behaviour : this.separation) {
-                behaviour.setupStrengthControl(1, 0, 1);
+            for (SeparationBehavior behavior : this.separation) {
+                behavior.setupStrengthControl(1, 0, 1);
             }
-
             targetSteer.setupStrengthControl(1, 0, 1);
 
             this.isStrengthScalar = false;
         } else {
-            for (SeparationBehavior behaviour : this.separation) {
-                behaviour.setupStrengthControl(escalarStrength);
+            for (SeparationBehavior behavior : this.separation) {
+                behavior.setupStrengthControl(scalarStrength);
             }
-
             targetSteer.turnOffStrengthControl();
-
             this.isStrengthScalar = true;
         }
     }
-    
     private AnalogListener analogListener = new AnalogListener() {
         public void onAnalog(String name, float value, float tpf) {
-
             if (name.equals("Increase separation")) {
                 increaseSeparation();
             } else if (name.equals("Decrease separation")) {
                 decreaseSeparation();
             }
-
         }
     };
 
     private void increaseSeparation() {
-
         if (this.isStrengthScalar) {
-            this.escalarStrength = this.escalarStrength + 0.05f;
-
-            for (SeparationBehavior behaviour : this.separation) {
-                behaviour.setupStrengthControl(this.escalarStrength);
+            this.scalarStrength = this.scalarStrength + 0.05f;
+            for (SeparationBehavior behavior : this.separation) {
+                behavior.setupStrengthControl(this.scalarStrength);
             }
         }
-
     }
 
     private void decreaseSeparation() {
-
         if (this.isStrengthScalar) {
-            this.escalarStrength = this.escalarStrength - 0.075f;
-
-            if (this.escalarStrength < 0) {
-                this.escalarStrength = 0;
+            this.scalarStrength = this.scalarStrength - 0.075f;
+            if (this.scalarStrength < 0) {
+                this.scalarStrength = 0;
             }
-
-            for (SeparationBehavior behaviour : this.separation) {
-                behaviour.setupStrengthControl(this.escalarStrength);
+            for (SeparationBehavior behavior : this.separation) {
+                behavior.setupStrengthControl(this.scalarStrength);
             }
         }
-
     }
 }
