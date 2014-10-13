@@ -1,4 +1,32 @@
-//Copyright (c) 2014, Jesús Martín Berlanga. All rights reserved. Distributed under the BSD licence. Read "com/jme3/ai/license.txt".
+/**
+ * Copyright (c) 2014, jMonkeyEngine All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of 'jMonkeyEngine' nor the names of its contributors may be
+ * used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
@@ -9,7 +37,6 @@ import com.jme3.ai.agents.behaviors.npc.steering.ObstacleAvoidanceBehavior;
 import com.jme3.ai.agents.behaviors.npc.steering.QueuingBehavior;
 import com.jme3.ai.agents.behaviors.npc.steering.SeekBehavior;
 import com.jme3.ai.agents.util.GameEntity;
-
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.material.Material;
@@ -19,10 +46,8 @@ import com.jme3.math.FastMath;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Cylinder;
-
 import steeringDemos.BasicDemo;
 import steeringDemos.control.CustomSteerControl;
-
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -31,12 +56,12 @@ import java.util.ArrayList;
  * Queuing demo
  *
  * @author Jesús Martín Berlanga
- * @version 2.0
+ * @version 2.0.0
  */
 public class QueuingDemo extends BasicDemo {
 
-    SeekBehavior[] neighSeek;
-    Agent[] neighbours;
+    private SeekBehavior[] neighSeek;
+    private Agent[] neighbours;
 
     public static void main(String[] args) {
         QueuingDemo app = new QueuingDemo();
@@ -49,9 +74,9 @@ public class QueuingDemo extends BasicDemo {
         this.steerControl.setCameraSettings(getCamera());
         this.steerControl.setFlyCameraSettings(getFlyByCamera());
 
-        //defining rootNode for aiAppState processing
-        aiAppState.setApp(this);
-        aiAppState.setGameControl(this.steerControl);
+        //defining rootNode for brainsAppState processing
+        brainsAppState.setApp(this);
+        brainsAppState.setGameControl(this.steerControl);
 
         this.numberNeighbours = 50;
         Vector3f[] spawnArea = null;
@@ -59,23 +84,23 @@ public class QueuingDemo extends BasicDemo {
         ColorRGBA targetNewColor = new ColorRGBA(ColorRGBA.Cyan.r, ColorRGBA.Cyan.g, ColorRGBA.Cyan.b, 0.25f);
 
         Agent target = this.createDoor("Door", targetNewColor, 0.28f);
-        aiAppState.addAgent(target); //Add the target to the aiAppState
+        brainsAppState.addAgent(target); //Add the target to the brainsAppState
         this.setStats(
                 target,
                 this.targetMoveSpeed,
                 this.targetRotationSpeed,
                 this.targetMass,
                 this.targetMaxForce);
-        aiAppState.getGameControl().spawn(target, new Vector3f(0, 0, 15));
+        brainsAppState.getGameControl().spawn(target, new Vector3f(0, 0, 15));
         SimpleMainBehavior targetMainB = new SimpleMainBehavior(target);
-        target.setMainBehaviour(targetMainB);
+        target.setMainBehavior(targetMainB);
 
         this.neighbours = new Agent[this.numberNeighbours];
         this.neighboursMoveSpeed *= 1.5f;
 
         for (int i = 0; i < this.numberNeighbours; i++) {
             this.neighbours[i] = this.createBoid("Neighbour " + i, this.neighboursColor, 0.11f);
-            aiAppState.addAgent(this.neighbours[i]); //Add the neighbours to the aiAppState
+            brainsAppState.addAgent(this.neighbours[i]); //Add the neighbours to the brainsAppState
 
             this.setStats(
                     neighbours[i],
@@ -83,7 +108,7 @@ public class QueuingDemo extends BasicDemo {
                     this.neighboursRotationSpeed,
                     this.neighboursMass,
                     this.neighboursMaxForce);
-            aiAppState.getGameControl().spawn(this.neighbours[i], spawnArea);
+            brainsAppState.getGameControl().spawn(this.neighbours[i], spawnArea);
         }
 
         List<GameEntity> obstacles = new ArrayList<GameEntity>();
@@ -118,18 +143,18 @@ public class QueuingDemo extends BasicDemo {
                     this.neighboursRotationSpeed,
                     this.neighboursMass,
                     this.neighboursMaxForce);
-            aiAppState.getGameControl().spawn(wallObstacle.get(i), spheresSpawnPositions[i]);
+            brainsAppState.getGameControl().spawn(wallObstacle.get(i), spheresSpawnPositions[i]);
 
             SimpleMainBehavior mainB = new SimpleMainBehavior((Agent) wallObstacle.get(i));
-            ((Agent) wallObstacle.get(i)).setMainBehaviour(mainB);
+            ((Agent) wallObstacle.get(i)).setMainBehavior(mainB);
         }
 
 
-        SimpleMainBehavior[] neighboursMainBehaviour = new SimpleMainBehavior[this.neighbours.length];
+        SimpleMainBehavior[] neighboursMainBehavior = new SimpleMainBehavior[this.neighbours.length];
         neighSeek = new SeekBehavior[this.neighbours.length];
 
         for (int i = 0; i < this.neighbours.length; i++) {
-            neighboursMainBehaviour[i] = new SimpleMainBehavior(this.neighbours[i]);
+            neighboursMainBehavior[i] = new SimpleMainBehavior(this.neighbours[i]);
 
             SeekBehavior extraSeek = new SeekBehavior(this.neighbours[i], new Vector3f(0, 0, 14.9f));
             extraSeek.setupStrengthControl(0.35f);
@@ -150,15 +175,15 @@ public class QueuingDemo extends BasicDemo {
             steer.addSteerBehavior(obstacleAvoid);
             steer.addSteerBehavior(queue);
             steer.addSteerBehavior(queueSeparation);
-            steer.addSteerBehaviour(separation, 1, 0.01f); //Highest layer => Highest priority
+            steer.addSteerBehavior(separation, 1, 0.01f); //Highest layer => Highest priority
 
             //Remove behaviour for testing purposes
-            steer.removeSteerBehaviour(separation);
-            steer.removeSteerBehaviour(this.neighSeek[i]);
-            steer.removeSteerBehaviour(obstacleAvoid);
-            steer.removeSteerBehaviour(extraSeek);
-            steer.removeSteerBehaviour(queue);
-            steer.removeSteerBehaviour(queueSeparation);
+            steer.removeSteerBehavior(separation);
+            steer.removeSteerBehavior(this.neighSeek[i]);
+            steer.removeSteerBehavior(obstacleAvoid);
+            steer.removeSteerBehavior(extraSeek);
+            steer.removeSteerBehavior(queue);
+            steer.removeSteerBehavior(queueSeparation);
 
             //Add then again
             steer.addSteerBehavior(this.neighSeek[i]);
@@ -166,14 +191,14 @@ public class QueuingDemo extends BasicDemo {
             steer.addSteerBehavior(obstacleAvoid);
             steer.addSteerBehavior(queue);
             steer.addSteerBehavior(queueSeparation);
-            steer.addSteerBehaviour(separation, 1, 0.01f); //Highest layer => Highest priority
+            steer.addSteerBehavior(separation, 1, 0.01f); //Highest layer => Highest priority
 
-            neighboursMainBehaviour[i].addBehavior(steer);
+            neighboursMainBehavior[i].addBehavior(steer);
 
-            this.neighbours[i].setMainBehaviour(neighboursMainBehaviour[i]);
+            this.neighbours[i].setMainBehavior(neighboursMainBehavior[i]);
         }
 
-        aiAppState.start();
+        brainsAppState.start();
     }
 
     private Agent createDoor(String name, ColorRGBA color, float radius) {
@@ -194,7 +219,7 @@ public class QueuingDemo extends BasicDemo {
 
     @Override
     public void simpleUpdate(float tpf) {
-        aiAppState.update(tpf);
+        brainsAppState.update(tpf);
 
         for (int i = 0; i < this.neighbours.length; i++) {
             if (new Vector3f(0, 0, 15.17f).subtract(this.neighbours[i].getLocalTranslation()).length() < 0.15f) {
