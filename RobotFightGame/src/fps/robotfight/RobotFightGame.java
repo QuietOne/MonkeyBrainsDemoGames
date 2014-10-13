@@ -191,7 +191,7 @@ public class RobotFightGame extends SimpleApplication {
         playerMain.addBehavior(playerMove);
         playerMain.addBehavior(playerAttack);
         playerMain.addBehavior(playerSwitch);
-        player.setMainBehaviour(playerMain);
+        player.setMainBehavior(playerMain);
 
         //setting main behaviour to bots
         for (int i = 0; i < enemies.length; i++) {
@@ -215,7 +215,7 @@ public class RobotFightGame extends SimpleApplication {
                 }
             }
             enemyMain.addBehavior(attack);
-            enemies[i].setMainBehaviour(enemyMain);
+            enemies[i].setMainBehavior(enemyMain);
         }
 
         //starting agents
