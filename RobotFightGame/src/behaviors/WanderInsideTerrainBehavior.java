@@ -27,60 +27,35 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package fps.robotfight.util;
+package behaviors;
 
-import com.jme3.ai.agents.util.systems.Inventory;
-import com.jme3.ai.agents.util.weapons.AbstractWeapon;
+import com.jme3.ai.agents.Agent;
+import com.jme3.ai.agents.behaviors.npc.steering.WanderBehavior;
+import com.jme3.math.Vector3f;
 
 /**
  *
  * @author Tihomir Radosavljević
  * @version 1.0.0
  */
-public class RobotFightInventory implements Inventory{
+public class WanderInsideTerrainBehavior extends WanderBehavior {
 
-    private AbstractWeapon activeWeapon;
-    private AbstractWeapon secondaryWeapon;
+    private float terrainSize;
 
-    public void update(float tpf) {
-        if (activeWeapon != null) {
-            activeWeapon.update(tpf);
+    public WanderInsideTerrainBehavior(Agent agent, float terrainSize) {
+        super(agent);
+        setArea(new Vector3f(terrainSize * 2 - 5, 0, terrainSize * 2 - 5),
+                new Vector3f(-terrainSize * 2 + 5, 0, -terrainSize * 2 + 5));
+        this.terrainSize = terrainSize;
+    }
+
+    @Override
+    protected void controlUpdate(float tpf) {
+        Vector3f oldPos = agent.getLocalTranslation().clone();
+        super.controlUpdate(tpf);
+        if (agent.getLocalTranslation().x > terrainSize * 2 || agent.getLocalTranslation().z > terrainSize * 2
+                || agent.getLocalTranslation().x < -terrainSize * 2 || agent.getLocalTranslation().z < -terrainSize * 2) {
+            agent.setLocalTranslation(oldPos);
         }
-        if (secondaryWeapon != null) {
-            secondaryWeapon.update(tpf);
-        }
-    }
-
-    public float getInventoryMass() {
-        float mass = 0;
-        if (activeWeapon != null) {
-            mass += activeWeapon.getMass();
-        }
-        if (secondaryWeapon != null) {
-            mass += secondaryWeapon.getMass();
-        }
-        return mass;
-    }
-
-    public AbstractWeapon getActiveWeapon() {
-        return activeWeapon;
-    }
-
-    public void setActiveWeapon(AbstractWeapon activeWeapon) {
-        this.activeWeapon = activeWeapon;
-    }
-
-    public AbstractWeapon getSecondaryWeapon() {
-        return secondaryWeapon;
-    }
-
-    public void setSecondaryWeapon(AbstractWeapon secondaryWeapon) {
-        this.secondaryWeapon = secondaryWeapon;
-    }
-
-    public void switchWeapons() {
-        AbstractWeapon tempWeapon = activeWeapon;
-        activeWeapon = secondaryWeapon;
-        secondaryWeapon = tempWeapon;
     }
 }

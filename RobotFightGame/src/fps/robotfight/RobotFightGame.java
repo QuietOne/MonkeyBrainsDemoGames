@@ -1,9 +1,38 @@
+/**
+ * Copyright (c) 2014, jMonkeyEngine All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of 'jMonkeyEngine' nor the names of its contributors may be
+ * used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
 package fps.robotfight;
 
-import behaviours.FleeInsideTerrain;
-import behaviours.SeekInsideTerrain;
-import behaviours.SwitchWeaponsBehaviour;
-import behaviours.WanderInsideTerrain;
+import behaviors.FleeInsideTerrainBehavior;
+import behaviors.SeekInsideTerrainBehavior;
+import behaviors.SwitchWeaponsBehavior;
+import behaviors.WanderInsideTerrainBehavior;
 import fps.robotfight.util.RoboFightSpatials;
 import fps.robotfight.util.Cannon;
 import fps.robotfight.util.LaserWeapon;
@@ -21,8 +50,8 @@ import com.jme3.font.BitmapText;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import fps.robotfight.control.FPS;
-import fps.robotfight.control.HPControl;
+import fps.robotfight.control.RobotFightControl;
+import fps.robotfight.control.RobotFightHitPointsControl;
 import fps.robotfight.util.RobotFightInventory;
 import fps.robotfight.util.Knife;
 
@@ -30,23 +59,23 @@ import fps.robotfight.util.Knife;
  * Testing demo game for MonkeyBrains framework. Some introduction to game: -
  * this game is based on Robotfight game made by Ryu Battosai Kajiya in
  * jMonkeyEngine - this is the game where one robot fights with other robots -
- * there are three kinds of robots: - blue: have instant kill, no decreaseHitPoints range
- * and always chasing player - red: moves random and have laser - green: runs
- * away from player, have cannon and always shooting at player - all three
- * robots are in the same team - if tree robot are to easy for you you can add
- * more with just increasing initial enemies array size. The game will do the
- * rest.
+ * there are three kinds of robots: - blue: have instant kill, no
+ * decreaseHitPoints range and always chasing player - red: moves random and
+ * have laser - green: runs away from player, have cannon and always shooting at
+ * player - all three robots are in the same team - if tree robot are to easy
+ * for you you can add more with just increasing initial enemies array size. The
+ * game will do the rest.
  *
  * @author Tihomir Radosavljević
- * @version 1.0
+ * @version 1.0.1
  */
 public class RobotFightGame extends SimpleApplication {
 
     //defining players
     private Agent player;
-    private Agent[] enemies = new Agent[6];
+    private Agent[] enemies = new Agent[3];
     //Defining game
-    private MonkeyBrainsAppState aiAppState = MonkeyBrainsAppState.getInstance();
+    private MonkeyBrainsAppState brainsAppState = MonkeyBrainsAppState.getInstance();
     private float gameFinishCountDown = 5f;
     //game stats
     private final float terrainSize = 40f;
@@ -59,21 +88,21 @@ public class RobotFightGame extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         //defining app for game processing
-        aiAppState.setApp(this);
+        brainsAppState.setApp(this);
         //setting game control
-        aiAppState.setGameControl(new FPS());
+        brainsAppState.setGameControl(new RobotFightControl());
         //setting hp controls for game
-        aiAppState.setHitPointsControl(new HPControl());
+        brainsAppState.setHitPointsControl(new RobotFightHitPointsControl());
         //registering input
-        aiAppState.getGameControl().setInputManagerMapping();
-        aiAppState.setFriendlyFire(false);
+        brainsAppState.getGameControl().setInputManagerMapping();
+        brainsAppState.setFriendlyFire(false);
 
         //DefinedSpatials for graphics for this game
         RoboFightSpatials.material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         RoboFightSpatials.initializeFloor(terrainSize);
         viewPort.addProcessor(RoboFightSpatials.initializeBloom(assetManager));
 
-        aiAppState.getGameControl().setFlyCameraSettings(flyCam);
+        brainsAppState.getGameControl().setFlyCameraSettings(flyCam);
 
         //initialization of Agents with their names and spatials
         player = new Agent("Player", RoboFightSpatials.initializeAgent("Player", ColorRGBA.Gray));
@@ -91,9 +120,9 @@ public class RobotFightGame extends SimpleApplication {
         }
 
         //adding them to game
-        aiAppState.addAgent(player);
+        brainsAppState.addAgent(player);
         for (int i = 0; i < enemies.length; i++) {
-            aiAppState.getGameControl().spawn(enemies[i], new Vector3f(terrainSize * 2 - 5, 0, terrainSize * 2 - 5),
+            brainsAppState.getGameControl().spawn(enemies[i], new Vector3f(terrainSize * 2 - 5, 0, terrainSize * 2 - 5),
                     new Vector3f(-terrainSize * 2 + 5, 0, -terrainSize * 2 + 5));
         }
 
@@ -145,17 +174,17 @@ public class RobotFightGame extends SimpleApplication {
 
         //making move behaviour for player
         SimplePlayerMoveBehavior playerMove = new SimplePlayerMoveBehavior(player, null);
-        ((FPS) aiAppState.getGameControl()).addMoveListener(player, playerMove);
-        playerMove.addSupportedOperations(((FPS) aiAppState.getGameControl()).getPlayerMoveSupportedOperations(player));
+        ((RobotFightControl) brainsAppState.getGameControl()).addMoveListener(player, playerMove);
+        playerMove.addSupportedOperations(((RobotFightControl) brainsAppState.getGameControl()).getPlayerMoveSupportedOperations(player));
 
         //making decreaseHitPoints behaviour for player
         SimplePlayerAttackBehavior playerAttack = new SimplePlayerAttackBehavior(player, null);
-        ((FPS) aiAppState.getGameControl()).addAttackListener(player, playerAttack);
-        playerAttack.addSupportedOperations(((FPS) aiAppState.getGameControl()).getPlayerAttackSupportedOperations(player));
+        ((RobotFightControl) brainsAppState.getGameControl()).addAttackListener(player, playerAttack);
+        playerAttack.addSupportedOperations(((RobotFightControl) brainsAppState.getGameControl()).getPlayerAttackSupportedOperations(player));
 
         //making switch weapon behaviour for player
-        SwitchWeaponsBehaviour playerSwitch = new SwitchWeaponsBehaviour(player);
-        ((FPS) aiAppState.getGameControl()).addSwitchListener(player, playerSwitch);
+        SwitchWeaponsBehavior playerSwitch = new SwitchWeaponsBehavior(player);
+        ((RobotFightControl) brainsAppState.getGameControl()).addSwitchListener(player, playerSwitch);
 
         //making main behaviour for player and adding behaviours to it
         SimpleMainBehavior playerMain = new SimpleMainBehavior(player);
@@ -175,14 +204,14 @@ public class RobotFightGame extends SimpleApplication {
                 //setting visibility range for behavior
                 look.setVisibilityRange(150f);
                 enemyMain.addBehavior(look);
-                enemyMain.addBehavior(new WanderInsideTerrain(enemies[i], terrainSize));
+                enemyMain.addBehavior(new WanderInsideTerrainBehavior(enemies[i], terrainSize));
             } else {
                 if (i % 3 == 1) {
                     attack.setTarget(player);
-                    enemyMain.addBehavior(new FleeInsideTerrain(terrainSize, enemies[i], player));
+                    enemyMain.addBehavior(new FleeInsideTerrainBehavior(terrainSize, enemies[i], player));
                 } else {
                     attack.setTarget(player);
-                    enemyMain.addBehavior(new SeekInsideTerrain(terrainSize, enemies[i], player));
+                    enemyMain.addBehavior(new SeekInsideTerrainBehavior(terrainSize, enemies[i], player));
                 }
             }
             enemyMain.addBehavior(attack);
@@ -190,28 +219,32 @@ public class RobotFightGame extends SimpleApplication {
         }
 
         //starting agents
-        aiAppState.start();
+        brainsAppState.start();
     }
 
     @Override
     public void simpleUpdate(float tpf) {
-        if (aiAppState.getGameControl().finish()) {
+        if (brainsAppState.getGameControl().finish()) {
             if (gameFinishCountDown <= 0) {
                 this.stop();
             } else {
                 gameFinishCountDown -= tpf;
                 BitmapText hudText = new BitmapText(guiFont, false);
-                hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
+                // font size
+                hudText.setSize(guiFont.getCharSet().getRenderedSize());
                 hudText.setColor(ColorRGBA.Red); // font color
-                if (aiAppState.getGameControl().win(player)) {
-                    hudText.setText(player.getTeam().getName() + " wins."); // the text
+                if (brainsAppState.getGameControl().win(player)) {
+                    // the text
+                    hudText.setText(player.getTeam().getName() + " wins.");
                 } else {
-                    hudText.setText(enemies[0].getTeam().getName() + " wins."); // the text
+                    // the text
+                    hudText.setText(enemies[0].getTeam().getName() + " wins.");
                 }
-                hudText.setLocalTranslation(settings.getWidth() / 2 - hudText.getLineWidth() / 2, settings.getHeight() / 2 - hudText.getLineHeight() / 2, 0); // position
+                // position
+                hudText.setLocalTranslation(settings.getWidth() / 2 - hudText.getLineWidth() / 2, settings.getHeight() / 2 - hudText.getLineHeight() / 2, 0);
                 guiNode.attachChild(hudText);
             }
         }
-        aiAppState.update(tpf);
+        brainsAppState.update(tpf);
     }
 }

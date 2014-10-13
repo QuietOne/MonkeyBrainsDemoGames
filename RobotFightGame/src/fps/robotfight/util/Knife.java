@@ -9,10 +9,11 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
 
 /**
- * Weapon for killing instantly agents that is near by. Made for testing
- * steering behaviours.
+ * Weapon for slowly killing agents that are near by. Made for testing steering
+ * behaviors.
  *
  * @author Tihomir Radosavljević
+ * @version 1.0.0
  */
 public class Knife extends AbstractWeapon {
 
@@ -27,12 +28,13 @@ public class Knife extends AbstractWeapon {
 
     @Override
     public void attack(Vector3f targetPosition, float tpf) {
-        MonkeyBrainsAppState game = MonkeyBrainsAppState.getInstance();
+        MonkeyBrainsAppState brainsAppState = MonkeyBrainsAppState.getInstance();
         //this the part where it hurts
-        for (Agent target : game.getAgents()) {
+        for (Agent target : brainsAppState.getAgents()) {
             if (hurts(target) && !agent.equals(target)) {
-                game.decreaseHitPoints(target, this);
-                ((Quad) ((Geometry) ((Node) target.getSpatial()).getChild("healthbar")).getMesh()).updateGeometry(target.getHitPoints().getCurrentHitPoints() / 100 * 4, 0.2f);
+                brainsAppState.decreaseHitPoints(target, this);
+                ((Quad) ((Geometry) ((Node) target.getSpatial()).getChild("healthbar"))
+                        .getMesh()).updateGeometry(target.getHitPoints().getCurrentHitPoints() / 100 * 4, 0.2f);
             }
         }
     }

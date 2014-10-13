@@ -27,60 +27,34 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package fps.robotfight.util;
+package fps.robotfight.control;
 
-import com.jme3.ai.agents.util.systems.Inventory;
-import com.jme3.ai.agents.util.weapons.AbstractWeapon;
+import com.jme3.ai.agents.Agent;
+import com.jme3.ai.agents.util.GameEntity;
+import com.jme3.ai.agents.util.control.MonkeyBrainsAppState;
+import com.jme3.ai.agents.util.control.HitPointsControl;
+import java.util.List;
 
 /**
  *
  * @author Tihomir Radosavljević
  * @version 1.0.0
  */
-public class RobotFightInventory implements Inventory{
+public class RobotFightHitPointsControl implements HitPointsControl {
 
-    private AbstractWeapon activeWeapon;
-    private AbstractWeapon secondaryWeapon;
-
-    public void update(float tpf) {
-        if (activeWeapon != null) {
-            activeWeapon.update(tpf);
+    public void decreaseHitPoints(GameEntity targetedEntity, float damage) {
+        //finding agent and decreasing his healthbar
+        List<Agent> agents = MonkeyBrainsAppState.getInstance().getAgents();
+        Agent agent = (Agent) targetedEntity;
+        for (int i = 0; i < agents.size(); i++) {
+            if (agents.get(i).equals(agent)) {
+                agents.get(i).getHitPoints().decreaseHitPoints(damage);
+                if (!agents.get(i).isEnabled()) {
+                    agents.get(i).stop();
+                    agents.get(i).getSpatial().removeFromParent();
+                }
+                break;
+            }
         }
-        if (secondaryWeapon != null) {
-            secondaryWeapon.update(tpf);
-        }
-    }
-
-    public float getInventoryMass() {
-        float mass = 0;
-        if (activeWeapon != null) {
-            mass += activeWeapon.getMass();
-        }
-        if (secondaryWeapon != null) {
-            mass += secondaryWeapon.getMass();
-        }
-        return mass;
-    }
-
-    public AbstractWeapon getActiveWeapon() {
-        return activeWeapon;
-    }
-
-    public void setActiveWeapon(AbstractWeapon activeWeapon) {
-        this.activeWeapon = activeWeapon;
-    }
-
-    public AbstractWeapon getSecondaryWeapon() {
-        return secondaryWeapon;
-    }
-
-    public void setSecondaryWeapon(AbstractWeapon secondaryWeapon) {
-        this.secondaryWeapon = secondaryWeapon;
-    }
-
-    public void switchWeapons() {
-        AbstractWeapon tempWeapon = activeWeapon;
-        activeWeapon = secondaryWeapon;
-        secondaryWeapon = tempWeapon;
     }
 }
