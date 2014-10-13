@@ -1,4 +1,32 @@
-//Copyright (c) 2014, Jesús Martín Berlanga. All rights reserved. Distributed under the BSD licence. Read "com/jme3/ai/license.txt".
+/**
+ * Copyright (c) 2014, jMonkeyEngine All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of 'jMonkeyEngine' nor the names of its contributors may be
+ * used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
@@ -19,10 +47,10 @@ import java.util.Arrays;
 import java.util.ArrayList;
 
 /**
- * Cohesion and alignment behaviour demo - 2D Version
+ * Cohesion and alignment behavior demo - 2D Version
  *
  * @author Jesús Martín Berlanga
- * @version 2.0
+ * @version 2.0.0
  */
 public class CohesionAndAlignmentDemo2D extends BasicDemo {
 
@@ -38,29 +66,28 @@ public class CohesionAndAlignmentDemo2D extends BasicDemo {
         this.steerControl.setCameraSettings(getCamera());
         this.steerControl.setFlyCameraSettings(getFlyByCamera());
 
-        //defining rootNode for aiAppState processing
-        aiAppState.setApp(this);
-        aiAppState.setGameControl(this.steerControl);
+        //defining rootNode for brainsAppState processing
+        brainsAppState.setApp(this);
+        brainsAppState.setGameControl(this.steerControl);
 
         this.numberNeighbours = 150;
 
         Vector3f[] spawnArea = null;
         Agent[] boids = new Agent[this.numberNeighbours];
 
-
         for (int i = 0; i < this.numberNeighbours; i++) {
             boids[i] = this.createBoid("boid " + i, this.neighboursColor, 0.1f);
-            aiAppState.addAgent(boids[i]); //Add the neighbours to the aiAppState
+            brainsAppState.addAgent(boids[i]); //Add the neighbours to the brainsAppState
             this.setStats(boids[i], this.neighboursMoveSpeed,
                     this.neighboursRotationSpeed, this.neighboursMass,
                     this.neighboursMaxForce);
-            aiAppState.getGameControl().spawn(boids[i], spawnArea);
+            brainsAppState.getGameControl().spawn(boids[i], spawnArea);
         }
 
         List<GameEntity> obstacles = new ArrayList<GameEntity>();
         obstacles.addAll(Arrays.asList(boids));
 
-        SimpleMainBehavior[] neighboursMainBehaviour = new SimpleMainBehavior[boids.length];
+        SimpleMainBehavior[] neighboursMainBehavior = new SimpleMainBehavior[boids.length];
 
         SeparationBehavior[] separation = new SeparationBehavior[boids.length];
         CohesionBehavior[] cohesion = new CohesionBehavior[boids.length];
@@ -68,7 +95,7 @@ public class CohesionAndAlignmentDemo2D extends BasicDemo {
         WanderBehavior[] wander = new WanderBehavior[boids.length];
 
         for (int i = 0; i < boids.length; i++) {
-            neighboursMainBehaviour[i] = new SimpleMainBehavior(boids[i]);
+            neighboursMainBehavior[i] = new SimpleMainBehavior(boids[i]);
 
             separation[i] = new SeparationBehavior(boids[i], obstacles);
             cohesion[i] = new CohesionBehavior(boids[i], obstacles, 5f, FastMath.PI / 4);
@@ -81,7 +108,6 @@ public class CohesionAndAlignmentDemo2D extends BasicDemo {
             alignment[i].setupStrengthControl(0.25f);
             wander[i].setupStrengthControl(0.35f);
 
-
             CompoundSteeringBehavior steer = new CompoundSteeringBehavior(boids[i]);
 
             steer.addSteerBehavior(cohesion[i]);
@@ -89,16 +115,15 @@ public class CohesionAndAlignmentDemo2D extends BasicDemo {
             steer.addSteerBehavior(separation[i]);
             steer.addSteerBehavior(wander[i]);
             steer.setupStrengthControl(new Plane(new Vector3f(0, 1, 0), 0));
-            neighboursMainBehaviour[i].addBehavior(steer);
+            neighboursMainBehavior[i].addBehavior(steer);
 
-            boids[i].setMainBehaviour(neighboursMainBehaviour[i]);
+            boids[i].setMainBehavior(neighboursMainBehavior[i]);
         }
-
-        aiAppState.start();
+        brainsAppState.start();
     }
 
     @Override
     public void simpleUpdate(float tpf) {
-        aiAppState.update(tpf);
+        brainsAppState.update(tpf);
     }
 }
