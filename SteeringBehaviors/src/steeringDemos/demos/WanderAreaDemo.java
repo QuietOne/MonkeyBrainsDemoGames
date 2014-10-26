@@ -30,22 +30,30 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
-import com.jme3.ai.agents.behaviors.npc.steering.RelativeWanderBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.WanderAreaBehavior;
+import com.jme3.material.Material;
+import com.jme3.material.RenderState;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
+import com.jme3.scene.shape.StripBox;
 import steeringDemos.BasicDemo;
 import steeringDemos.control.CustomSteerControl;
 
 /**
- * Relative Wander Demo
+ * Wander Area Demo
  *
  * @author Jesús Martín Berlanga
- * @version 1.0.1
+ * @version 2.0
  */
-public class RelativeWanderDemo extends BasicDemo {
+public class WanderAreaDemo extends BasicDemo {
 
+    public static final Vector3f WANDER_AREA = new Vector3f(2.5f, 2.5f, 2.5f);
+    
     public static void main(String[] args) {
-        RelativeWanderDemo app = new RelativeWanderDemo();
+        WanderAreaDemo app = new WanderAreaDemo();
         app.start();
     }
 
@@ -69,13 +77,37 @@ public class RelativeWanderDemo extends BasicDemo {
                 this.targetRotationSpeed,
                 this.targetMass,
                 this.targetMaxForce);
+        
+        ////////////////////////////////////////////////////////////////////////////
+        /////////////// Wander Area ////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+        Node wanderArea = new Node();
 
-        SimpleMainBehavior targetMainBehavior = new SimpleMainBehavior(target);
-        RelativeWanderBehavior targetMoveBehavior = new RelativeWanderBehavior(target, 10, 10, 10, 0.1f);
-        targetMoveBehavior.setTimeInterval(0.47f);
-        targetMainBehavior.addBehavior(targetMoveBehavior);
-        target.setMainBehavior(targetMainBehavior);
+        StripBox mesh = new StripBox(Vector3f.ZERO, WANDER_AREA.x, WANDER_AREA.y, WANDER_AREA.z);
+        Geometry geom = new Geometry("A shape", mesh); // wrap shape into geometry
+        Geometry geomWire = new Geometry("A shape", mesh);
 
+        Material matTranslucid = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        matTranslucid.setColor("Color", new ColorRGBA(0, 1, 0, 0.17f));
+        matTranslucid.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        geom.setQueueBucket(RenderQueue.Bucket.Translucent);
+        geom.setMaterial(matTranslucid);
+
+        Material wireMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        wireMat.setColor("Color", new ColorRGBA(0, 1, 0, 0.25f));
+        geomWire.setMaterial(wireMat);
+        wireMat.getAdditionalRenderState().setWireframe(true);
+
+        wanderArea.attachChild(geom);
+        rootNode.attachChild(wanderArea);
+        rootNode.attachChild(geomWire);
+        ////////////////////////////////////////////////////////////////////////////
+
+        WanderAreaBehavior targetMoveBehavior = new WanderAreaBehavior(target);
+        targetMoveBehavior.setArea(Vector3f.ZERO, WANDER_AREA.x, WANDER_AREA.y, WANDER_AREA.z);
+        targetMoveBehavior.setTimeInterval(4);
+        target.setMainBehavior(targetMoveBehavior);
+        
         brainsAppState.start();
     }
 

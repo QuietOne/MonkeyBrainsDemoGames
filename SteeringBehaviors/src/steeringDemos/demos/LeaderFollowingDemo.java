@@ -38,7 +38,7 @@ import com.jme3.ai.agents.behaviors.npc.steering.BalancedCompoundSteeringBehavio
 import com.jme3.ai.agents.behaviors.npc.steering.CompoundSteeringBehavior;
 import com.jme3.ai.agents.behaviors.npc.steering.LeaderFollowingBehavior;
 import com.jme3.ai.agents.behaviors.npc.steering.MoveBehavior;
-import com.jme3.ai.agents.behaviors.npc.steering.WanderBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.WanderAreaBehavior;
 import com.jme3.ai.agents.util.GameEntity;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
@@ -58,7 +58,7 @@ import java.util.Arrays;
  * Leader follow demo
  *
  * @author Jesús Martín Berlanga
- * @version 2.0.0
+ * @version 2.0.1
  */
 public class LeaderFollowingDemo extends BasicDemo {
 
@@ -70,7 +70,7 @@ public class LeaderFollowingDemo extends BasicDemo {
     private BitmapText scalarInfoHudtext;
     private final String SCALAR_INFO_HUD_MESSAGE = "Press H to increase the separation scalar strength, L to decrease.";
     private MoveBehavior targetMoveBehavior;
-    private WanderBehavior targetWanderBehavior;
+    private WanderAreaBehavior targetWanderBehavior;
     private boolean turnDinamicMode = true;
     private Timer iterationTimer;
     private java.awt.event.ActionListener changeDinamicMode = new java.awt.event.ActionListener() {
@@ -161,7 +161,7 @@ public class LeaderFollowingDemo extends BasicDemo {
         SimpleMainBehavior targetMainBehavior = new SimpleMainBehavior(target);
         targetMoveBehavior = new MoveBehavior(target);
         targetMoveBehavior.setupStrengthControl(0.25f);
-        targetWanderBehavior = new WanderBehavior(target);
+        targetWanderBehavior = new WanderAreaBehavior(target);
         targetMoveBehavior.setMoveDirection(new Vector3f(1, 0, 1)); //moves in x-y direction
 
         this.iterationTimer = new Timer(10000, this.changeDinamicMode); //10000ns = 10s

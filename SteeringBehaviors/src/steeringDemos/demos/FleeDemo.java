@@ -45,7 +45,7 @@ import steeringDemos.control.CustomSteerControl;
  * Flee demo
  *
  * @author Jesús Martín Berlanga
- * @version 2.0.0
+ * @version 2.0.1
  */
 public class FleeDemo extends BasicDemo {
 
@@ -101,8 +101,9 @@ public class FleeDemo extends BasicDemo {
             CompoundSteeringBehavior compound = new CompoundSteeringBehavior(neighbours[i]);
             RelativeWanderBehavior wander = new RelativeWanderBehavior(
                     neighbours[i],
-                    new Vector3f(-10, -10, -10),
-                    new Vector3f(10, 10, 10),
+                    10,
+                    10,
+                    10,
                     0.25f);
             wander.setupStrengthControl(0.37f);
             compound.addSteerBehavior(wander);

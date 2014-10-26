@@ -30,21 +30,21 @@
 package steeringDemos.demos;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviors.npc.steering.WanderBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.SimpleWanderBehavior;
 import com.jme3.math.Vector3f;
 import steeringDemos.BasicDemo;
 import steeringDemos.control.CustomSteerControl;
 
 /**
- * Wander Demo
+ * Simple Wander Demo
  *
  * @author Jesús Martín Berlanga
  * @version 1.0.0
  */
-public class WanderDemo extends BasicDemo {
+public class SimpleWanderDemo extends BasicDemo {
 
     public static void main(String[] args) {
-        WanderDemo app = new WanderDemo();
+        SimpleWanderDemo app = new SimpleWanderDemo();
         app.start();
     }
 
@@ -69,9 +69,10 @@ public class WanderDemo extends BasicDemo {
                 this.targetMass,
                 this.targetMaxForce);
 
-        WanderBehavior targetMoveBehavior = new WanderBehavior(target);
+        SimpleWanderBehavior targetMoveBehavior = new SimpleWanderBehavior(target, 1, 1, 1);
+        targetMoveBehavior.setConstantMod(2f);
         target.setMainBehavior(targetMoveBehavior);
-
+        
         brainsAppState.start();
     }
 

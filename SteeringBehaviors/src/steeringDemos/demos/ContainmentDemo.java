@@ -33,7 +33,7 @@ import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
 import com.jme3.ai.agents.behaviors.npc.steering.CompoundSteeringBehavior;
 import com.jme3.ai.agents.behaviors.npc.steering.ContainmentBehavior;
-import com.jme3.ai.agents.behaviors.npc.steering.WanderBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.SimpleWanderBehavior;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.material.Material;
@@ -49,7 +49,7 @@ import steeringDemos.control.CustomSteerControl;
  * Containment demo
  *
  * @author Jesús Martín Berlanga
- * @version 2.0.0
+ * @version 2.0.1
  */
 public class ContainmentDemo extends BasicDemo {
 
@@ -107,7 +107,7 @@ public class ContainmentDemo extends BasicDemo {
         SimpleMainBehavior targetMainBehavior = new SimpleMainBehavior(target);
         CompoundSteeringBehavior steering = new CompoundSteeringBehavior(target);
 
-        WanderBehavior targetMoveBehavior = new WanderBehavior(target);
+        SimpleWanderBehavior targetMoveBehavior = new SimpleWanderBehavior(target, 5, 5, 5);
         ContainmentBehavior contain = new ContainmentBehavior(target, containmentArea);
         contain.setupStrengthControl(75);
 

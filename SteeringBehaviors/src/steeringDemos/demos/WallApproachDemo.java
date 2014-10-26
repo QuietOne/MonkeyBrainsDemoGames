@@ -32,8 +32,8 @@ package steeringDemos.demos;
 import com.jme3.ai.agents.Agent;
 import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
 import com.jme3.ai.agents.behaviors.npc.steering.CompoundSteeringBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.SimpleWanderBehavior;
 import com.jme3.ai.agents.behaviors.npc.steering.WallApproachBehavior;
-import com.jme3.ai.agents.behaviors.npc.steering.WanderBehavior;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.material.Material;
@@ -49,7 +49,7 @@ import steeringDemos.control.CustomSteerControl;
  * Wall approach demo
  *
  * @author Jesús Martín Berlanga
- * @version 2.0.0
+ * @version 2.0.1
  */
 public class WallApproachDemo extends BasicDemo {
 
@@ -72,7 +72,7 @@ public class WallApproachDemo extends BasicDemo {
         target = this.createBoid("Target", this.targetColor, 0.11f);
         
         brainsAppState.addAgent(target); //Add the target to the brainsAppState
-        brainsAppState.getGameControl().spawn(target, new Vector3f(4f, 0, 0));
+        brainsAppState.getGameControl().spawn(target, new Vector3f(3.35f, 0, 0));
         this.setStats(
                 target,
                 this.targetMoveSpeed,
@@ -93,7 +93,8 @@ public class WallApproachDemo extends BasicDemo {
         SimpleMainBehavior targetMainBehavior = new SimpleMainBehavior(target);
         CompoundSteeringBehavior wallSteer = new CompoundSteeringBehavior(target);
 
-        WanderBehavior targetMoveBehavior = new WanderBehavior(target);
+        SimpleWanderBehavior targetMoveBehavior = new SimpleWanderBehavior(target,10,10,10);
+        targetMoveBehavior.setConstantMod(1f);
         WallApproachBehavior wallApproach = new WallApproachBehavior(target, wall, 0.25f);
 
         wallSteer.addSteerBehavior(targetMoveBehavior);

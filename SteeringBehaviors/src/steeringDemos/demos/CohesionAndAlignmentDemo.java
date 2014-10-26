@@ -35,7 +35,7 @@ import com.jme3.ai.agents.behaviors.npc.SimpleMainBehavior;
 import com.jme3.ai.agents.behaviors.npc.steering.AlignmentBehavior;
 import com.jme3.ai.agents.behaviors.npc.steering.CohesionBehavior;
 import com.jme3.ai.agents.behaviors.npc.steering.CompoundSteeringBehavior;
-import com.jme3.ai.agents.behaviors.npc.steering.WanderBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.WanderAreaBehavior;
 import com.jme3.ai.agents.util.GameEntity;
 import com.jme3.math.Vector3f;
 import com.jme3.math.FastMath;
@@ -49,7 +49,7 @@ import java.util.ArrayList;
  * Cohesion and alignment behavior demo
  *
  * @author Jesús Martín Berlanga
- * @version 2.0.0
+ * @version 2.0.1
  */
 public class CohesionAndAlignmentDemo extends BasicDemo {
 
@@ -91,15 +91,15 @@ public class CohesionAndAlignmentDemo extends BasicDemo {
         SeparationBehavior[] separation = new SeparationBehavior[boids.length];
         CohesionBehavior[] cohesion = new CohesionBehavior[boids.length];
         AlignmentBehavior[] alignment = new AlignmentBehavior[boids.length];
-        WanderBehavior[] wander = new WanderBehavior[boids.length];
+        WanderAreaBehavior[] wander = new WanderAreaBehavior[boids.length];
 
         for (int i = 0; i < boids.length; i++) {
             neighboursMainBehavior[i] = new SimpleMainBehavior(boids[i]);
             separation[i] = new SeparationBehavior(boids[i], obstacles);
             cohesion[i] = new CohesionBehavior(boids[i], obstacles, 5f, FastMath.PI / 4);
             alignment[i] = new AlignmentBehavior(boids[i], obstacles, 5f, FastMath.PI / 4.2f);
-            wander[i] = new WanderBehavior(boids[i]);
-            wander[i].setArea(Vector3f.ZERO, new Vector3f(75, 75, 75));
+            wander[i] = new WanderAreaBehavior(boids[i]);
+            wander[i].setArea(Vector3f.ZERO, 37.5f, 37.5f, 37.5f);
 
             separation[i].setupStrengthControl(0.85f);
             cohesion[i].setupStrengthControl(2.15f);
