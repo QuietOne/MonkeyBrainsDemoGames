@@ -30,7 +30,7 @@
 package behaviors;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviors.npc.steering.WanderBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.WanderAreaBehavior;
 import com.jme3.math.Vector3f;
 
 /**
@@ -38,13 +38,13 @@ import com.jme3.math.Vector3f;
  * @author Tihomir Radosavljević
  * @version 1.0.0
  */
-public class WanderInsideTerrainBehavior extends WanderBehavior {
+public class WanderInsideTerrainBehavior extends WanderAreaBehavior {
 
     private float terrainSize;
 
     public WanderInsideTerrainBehavior(Agent agent, float terrainSize) {
         super(agent);
-        setArea(new Vector3f(terrainSize * 2 - 5, 0, terrainSize * 2 - 5),
+        setArea(Vector3f.ZERO.clone(),
                 new Vector3f(-terrainSize * 2 + 5, 0, -terrainSize * 2 + 5));
         this.terrainSize = terrainSize;
     }
