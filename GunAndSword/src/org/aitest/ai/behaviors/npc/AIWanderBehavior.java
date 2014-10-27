@@ -30,7 +30,7 @@
 package org.aitest.ai.behaviors.npc;
 
 import com.jme3.ai.agents.Agent;
-import com.jme3.ai.agents.behaviors.npc.steering.WanderBehavior;
+import com.jme3.ai.agents.behaviors.npc.steering.WanderAreaBehavior;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import org.aitest.ai.model.AIModel;
@@ -40,7 +40,7 @@ import org.aitest.ai.model.AIModel;
  * @author Tihomir Radosavljević
  * @version 1.0.2
  */
-public class AIWanderBehavior extends WanderBehavior{
+public class AIWanderBehavior extends WanderAreaBehavior{
 
     private AIModel model;
     

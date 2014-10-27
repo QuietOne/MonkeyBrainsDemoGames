@@ -56,8 +56,7 @@ public class AIMainBehavior extends Behavior {
         //setting viewing distance of agent
         lookBehavior.setVisibilityRange(300f);
         wanderBehavior = new AIWanderBehavior(agent);
-        wanderBehavior.setArea(agent.getLocalTranslation().subtract(area), agent.getLocalTranslation().add(area));
-
+        wanderBehavior.setArea(agent.getLocalTranslation(), area);
     }
 
     @Override
