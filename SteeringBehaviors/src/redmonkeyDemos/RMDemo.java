@@ -5,9 +5,73 @@
 
 package redmonkeyDemos;
 
+import com.badlogic.gdx.ai.btree.BehaviorTree;
+import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser;
+import com.jme3.animation.AnimChannel;
+import com.jme3.animation.AnimControl;
+import com.jme3.app.SimpleApplication;
+import com.jme3.light.AmbientLight;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.scene.Node;
+import redmonkey.RMOmniSight;
+import redmonkey.RMSpace;
+import redmonkey.elements.RMBanana;
+import redmonkey.elements.monkey.RMMonkey;
+
 /**
  *
  */
-public class RMDemo {
+public class RMDemo extends SimpleApplication{
 
+    private BehaviorTree<RMMonkey> monkeyBehaviorTree;
+    
+    public static void main(String args[]){
+        new RMDemo().start();
+    }
+    
+    @Override
+    public void simpleInitApp() {
+        String rmFile="#\n" +
+"# Monkey tree\n" +
+"#\n" +
+"\n" +
+"# Alias definitions\n" +
+"import sense:\"redmonkey.elements.monkey.SenseTask\"\n" +
+"import goto:\"redmonkey.elements.monkey.GotoTask\"\n" +
+"import sleep:\"redmonkey.elements.monkey.SleepTask\"\n" +
+"\n" +
+"# Tree definition (note that root is optional)\n" +
+"root\n" +
+"  selector\n" +
+"    sequence\n" +
+"      sense tag:\"Banana\" number:3\n" +
+"      goto\n" +
+"    sequence\n" +
+"      sleep times:5\n" +
+"";
+        Node jaime = (Node)assetManager.loadModel("Models/Jaime/Jaime.j3o");
+        jaime.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        rootNode.attachChild(jaime);
+        AnimControl control = jaime.getControl(AnimControl.class);
+        AnimChannel channel = control.createChannel();
+        AmbientLight al = new AmbientLight();
+        al.setColor(new ColorRGBA(10.1f, 1.1f, 1.1f, 1));
+        rootNode.addLight(al);
+        //assetManager.registerLoader(renderer, extensions);
+	//	reader = new FileReader("nonjava/monkey.redmonkey").reader();
+        RMSpace space=new RMSpace();
+        RMMonkey rm=new RMMonkey(Vector3f.ZERO);
+        rm.setChannel(channel);
+        rm.sense = new RMOmniSight();
+        rm.setSpace(space);
+        space.addItems(new RMBanana(new Vector3f(0,0,1)));
+        
+		BehaviorTreeParser<RMMonkey> parser = new BehaviorTreeParser<RMMonkey>(BehaviorTreeParser.DEBUG_NONE);
+		monkeyBehaviorTree = parser.parse(rmFile, rm);
+    }
+public void simpleUpdate(float tpf){
+    monkeyBehaviorTree.step();
+}
 }
