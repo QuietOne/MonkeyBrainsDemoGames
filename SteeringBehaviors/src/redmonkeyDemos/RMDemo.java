@@ -55,6 +55,8 @@ public class RMDemo extends SimpleApplication {
                 + "      sleep times:5\n"
                 + "";
         GuiGlobals.initialize(this);
+        RedMonkeyAppState redMonkeyAppState=new RedMonkeyAppState();
+        stateManager.attach(redMonkeyAppState);
         Node jaime = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
         jaime.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         rootNode.attachChild(jaime);
@@ -65,7 +67,7 @@ public class RMDemo extends SimpleApplication {
         rootNode.addLight(al);
         //assetManager.registerLoader(renderer, extensions);
         //	reader = new FileReader("nonjava/monkey.redmonkey").reader();
-        RMSpace space = new RMSpace();
+        RMSpace space = redMonkeyAppState.space;
         stateManager.attach((AppState)(new RedMonkeyDebugAppState(space,rootNode,guiFont)));
         RMMonkey rm = new RMMonkey(Vector3f.ZERO);
         rm.setChannel(channel);
