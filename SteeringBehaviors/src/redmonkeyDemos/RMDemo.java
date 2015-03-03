@@ -9,14 +9,18 @@ import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.state.AppState;
 import com.jme3.light.AmbientLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
+import com.simsilica.lemur.GuiGlobals;
 import redmonkey.RMItem;
 import redmonkey.RMOmniSight;
 import redmonkey.RMSpace;
+import redmonkey.RedMonkeyAppState;
+import redmonkey.RedMonkeyDebugAppState;
 import redmonkey.elements.monkey.RMMonkey;
 
 /**
@@ -50,6 +54,7 @@ public class RMDemo extends SimpleApplication {
                 + "    sequence\n"
                 + "      sleep times:5\n"
                 + "";
+        GuiGlobals.initialize(this);
         Node jaime = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
         jaime.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         rootNode.attachChild(jaime);
@@ -61,11 +66,12 @@ public class RMDemo extends SimpleApplication {
         //assetManager.registerLoader(renderer, extensions);
         //	reader = new FileReader("nonjava/monkey.redmonkey").reader();
         RMSpace space = new RMSpace();
+        stateManager.attach((AppState)(new RedMonkeyDebugAppState(space,rootNode,guiFont)));
         RMMonkey rm = new RMMonkey(Vector3f.ZERO);
         rm.setChannel(channel);
         rm.sense = new RMOmniSight();
         rm.setSpace(space);
-        space.addItems(new RMItem(new Vector3f(0, 0, 1),"Banana","Tasty"));
+        space.addItems(new RMItem(new Vector3f(-1, 1, -3),"Banana","Tasty"));
 
         BehaviorTreeParser<RMMonkey> parser = new BehaviorTreeParser<RMMonkey>(BehaviorTreeParser.DEBUG_NONE);
         monkeyBehaviorTree = parser.parse(rmFile, rm);
