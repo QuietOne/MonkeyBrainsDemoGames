@@ -169,8 +169,9 @@ public class RMDemo extends SimpleApplication {
         //assetManager.registerLoader(renderer, extensions);
         //	reader = new FileReader("nonjava/monkey.redmonkey").reader();
         stateManager.attach((AppState) (new RedMonkeyDebugAppState(redMonkeyAppState.getSpace(), rootNode, guiFont)));
-        makeMonkey(-134f, -19f, 0f);
-        makeBanana(-130f, -19f, 0f);
+        makeMonkey(-134f, -23f, 0f);
+        makeBanana(-130f, -23f, 0f);
+        makeHome(-150f, -23f, 0f);
 
     }
 
@@ -198,7 +199,7 @@ public class RMDemo extends SimpleApplication {
                 + "    sequence\n"
                 + "      sleep times:5\n"
                 + "";
-        CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 2f, 1);
+        CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(0.5f, 1f, 1);
         player = new CharacterControl(capsuleShape, 0.05f);
         player.setJumpSpeed(20);
         player.setFallSpeed(30);
@@ -214,6 +215,7 @@ public class RMDemo extends SimpleApplication {
         rm.setChannel(channel);
         rm.sense = new RMOmniSight();
         rm.setSpace(redMonkeyAppState.getSpace());
+        rm.setCharacterControl(player);
         BehaviorTreeParser<RMMonkey> parser = new BehaviorTreeParser<RMMonkey>(BehaviorTreeParser.DEBUG_NONE);
         monkeyBehaviorTree = parser.parse(rmFile, rm);
         bulletAppState.getPhysicsSpace().add(player);
@@ -233,4 +235,20 @@ public class RMDemo extends SimpleApplication {
         bulletAppState.getPhysicsSpace().add(rigidBodyControl);
         redMonkeyAppState.getSpace().addItems(new RMItem(cube.getLocalTranslation(), "Banana", "Tasty"));
     }
+
+    private void makeHome(float x, float y, float z) {
+        Box box = new Box(1, 1, 1);
+        Geometry cube = new Geometry("home", box);
+        cube.setLocalTranslation(x, y, z);
+        Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat1.setColor("Color", ColorRGBA.Green);
+        cube.setMaterial(mat1);
+        RigidBodyControl rigidBodyControl = new RigidBodyControl(1f);
+        cube.addControl(rigidBodyControl);
+        rootNode.attachChild(cube);
+        bulletAppState.getPhysicsSpace().add(rigidBodyControl);
+        redMonkeyAppState.getSpace().addItems(new RMItem(cube.getLocalTranslation(), "Home"));
+    }
+
+
 }
