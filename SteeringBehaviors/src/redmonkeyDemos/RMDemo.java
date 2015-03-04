@@ -15,7 +15,6 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.simsilica.lemur.GuiGlobals;
 import redmonkey.RMItem;
 import redmonkey.RMOmniSight;
-import redmonkey.RMSpace;
 import redmonkey.RedMonkeyAppState;
 import redmonkey.RedMonkeyDebugAppState;
 import redmonkey.elements.monkey.RMMonkey;
@@ -28,7 +27,9 @@ import com.jme3.material.Material;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.shape.Box;
 import com.jme3.terrain.geomipmap.TerrainLodControl;
 import com.jme3.terrain.heightmap.AbstractHeightMap;
 import com.jme3.terrain.geomipmap.TerrainQuad;
@@ -43,6 +44,7 @@ import java.util.List;
  */
 public class RMDemo extends SimpleApplication {
 
+    private RedMonkeyAppState redMonkeyAppState;
     private BulletAppState bulletAppState;
     private RigidBodyControl landscape;
     private CharacterControl player;
@@ -56,24 +58,6 @@ public class RMDemo extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        String rmFile = "#\n"
-                + "# Monkey tree\n"
-                + "#\n"
-                + "\n"
-                + "# Alias definitions\n"
-                + "import sense:\"redmonkey.elements.monkey.SenseTask\"\n"
-                + "import goto:\"redmonkey.elements.monkey.GotoTask\"\n"
-                + "import sleep:\"redmonkey.elements.monkey.SleepTask\"\n"
-                + "\n"
-                + "# Tree definition (note that root is optional)\n"
-                + "root\n"
-                + "  selector\n"
-                + "    sequence\n"
-                + "      sense tag:\"Banana,Tasty\" number:3\n"
-                + "      goto\n"
-                + "    sequence\n"
-                + "      sleep times:5\n"
-                + "";
         /**
          * Set up Physics
          */
@@ -167,11 +151,6 @@ public class RMDemo extends SimpleApplication {
         // The CharacterControl offers extra settings for
         // size, stepheight, jumping, falling, and gravity.
         // We also put the player in its starting position.
-        CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 6f, 1);
-        player = new CharacterControl(capsuleShape, 0.05f);
-        player.setJumpSpeed(20);
-        player.setFallSpeed(30);
-        player.setGravity(30);
 
         // We attach the scene and the player to the rootnode and the physics space,
         // to make them appear in the game world.
@@ -180,35 +159,78 @@ public class RMDemo extends SimpleApplication {
         cam.setLocation(new Vector3f(-133.55548f, -20.999119f, 44.5093f));
         cam.setRotation(new Quaternion(-3.7362854E-4f, 0.9974783f, -0.07077533f, -0.0052657295f));
         GuiGlobals.initialize(this);
-        RedMonkeyAppState redMonkeyAppState = new RedMonkeyAppState();
+
+
+        redMonkeyAppState = new RedMonkeyAppState();
         stateManager.attach(redMonkeyAppState);
-        Node jaime = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
-        jaime.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        jaime.setLocalTranslation(-134.12148f, -1.3579952f, -0.8483844f);
-        jaime.addControl(player);
-        rootNode.attachChild(jaime);
-        bulletAppState.getPhysicsSpace().add(player);
-        AnimControl acontrol = jaime.getControl(AnimControl.class);
-        AnimChannel channel = acontrol.createChannel();
         AmbientLight al = new AmbientLight();
         al.setColor(new ColorRGBA(10.1f, 1.1f, 1.1f, 1));
         rootNode.addLight(al);
         //assetManager.registerLoader(renderer, extensions);
         //	reader = new FileReader("nonjava/monkey.redmonkey").reader();
-        RMSpace space = redMonkeyAppState.space;
-        stateManager.attach((AppState) (new RedMonkeyDebugAppState(space, rootNode, guiFont)));
-        RMMonkey rm = new RMMonkey(jaime.getLocalTranslation());
-        rm.setChannel(channel);
-        rm.sense = new RMOmniSight();
-        rm.setSpace(space);
-        space.addItems(new RMItem(new Vector3f(-1, 1, -3), "Banana", "Tasty"));
+        stateManager.attach((AppState) (new RedMonkeyDebugAppState(redMonkeyAppState.getSpace(), rootNode, guiFont)));
+        makeMonkey(-134f, -19f, 0f);
+        makeBanana(-130f, -19f, 0f);
 
-        BehaviorTreeParser<RMMonkey> parser = new BehaviorTreeParser<RMMonkey>(BehaviorTreeParser.DEBUG_NONE);
-        monkeyBehaviorTree = parser.parse(rmFile, rm);
     }
 
     @Override
     public void simpleUpdate(float tpf) {
         monkeyBehaviorTree.step();
+    }
+
+    private void makeMonkey(float x, float y, float z) {
+        String rmFile = "#\n"
+                + "# Monkey tree\n"
+                + "#\n"
+                + "\n"
+                + "# Alias definitions\n"
+                + "import sense:\"redmonkey.elements.monkey.SenseTask\"\n"
+                + "import goto:\"redmonkey.elements.monkey.GotoTask\"\n"
+                + "import sleep:\"redmonkey.elements.monkey.SleepTask\"\n"
+                + "\n"
+                + "# Tree definition (note that root is optional)\n"
+                + "root\n"
+                + "  selector\n"
+                + "    sequence\n"
+                + "      sense tag:\"Banana,Tasty\" number:3\n"
+                + "      goto\n"
+                + "    sequence\n"
+                + "      sleep times:5\n"
+                + "";
+        CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 2f, 1);
+        player = new CharacterControl(capsuleShape, 0.05f);
+        player.setJumpSpeed(20);
+        player.setFallSpeed(30);
+        player.setGravity(30);
+        Node jaime = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
+        jaime.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        jaime.setLocalTranslation(x,y,z);
+        jaime.addControl(player);
+        rootNode.attachChild(jaime);
+        AnimControl acontrol = jaime.getControl(AnimControl.class);
+        AnimChannel channel = acontrol.createChannel();
+        RMMonkey rm = new RMMonkey(jaime.getLocalTranslation());
+        rm.setChannel(channel);
+        rm.sense = new RMOmniSight();
+        rm.setSpace(redMonkeyAppState.getSpace());
+        BehaviorTreeParser<RMMonkey> parser = new BehaviorTreeParser<RMMonkey>(BehaviorTreeParser.DEBUG_NONE);
+        monkeyBehaviorTree = parser.parse(rmFile, rm);
+        bulletAppState.getPhysicsSpace().add(player);
+    
+    }
+    
+    private void makeBanana(float x, float y, float z) {
+        Box box = new Box(1, 1, 1);
+        Geometry cube = new Geometry("banana", box);
+        cube.setLocalTranslation(x, y, z);
+        Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat1.setColor("Color", ColorRGBA.Blue);
+        cube.setMaterial(mat1);
+        RigidBodyControl rigidBodyControl = new RigidBodyControl(1f);
+        cube.addControl(rigidBodyControl);
+        rootNode.attachChild(cube);
+        bulletAppState.getPhysicsSpace().add(rigidBodyControl);
+        redMonkeyAppState.getSpace().addItems(new RMItem(cube.getLocalTranslation(), "Banana", "Tasty"));
     }
 }
