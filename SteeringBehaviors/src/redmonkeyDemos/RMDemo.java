@@ -38,6 +38,7 @@ import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import java.util.ArrayList;
 import java.util.List;
+import redmonkey.RMLoader;
 
 /**
  *
@@ -53,11 +54,15 @@ public class RMDemo extends SimpleApplication {
     private BehaviorTree<RMMonkey> monkeyBehaviorTree;
 
     public static void main(String args[]) {
-        new RMDemo().start();
+        RMDemo app=new RMDemo();
+        app.setShowSettings(false);
+        app.start();
     }
 
     @Override
     public void simpleInitApp() {
+        
+        assetManager.registerLoader(RMLoader.class, "redmonkey");
         /**
          * Set up Physics
          */
@@ -181,24 +186,6 @@ public class RMDemo extends SimpleApplication {
     }
 
     private void makeMonkey(float x, float y, float z) {
-        String rmFile = "#\n"
-                + "# Monkey tree\n"
-                + "#\n"
-                + "\n"
-                + "# Alias definitions\n"
-                + "import sense:\"redmonkey.elements.monkey.SenseTask\"\n"
-                + "import goto:\"redmonkey.elements.monkey.GotoTask\"\n"
-                + "import sleep:\"redmonkey.elements.monkey.SleepTask\"\n"
-                + "\n"
-                + "# Tree definition (note that root is optional)\n"
-                + "root\n"
-                + "  selector\n"
-                + "    sequence\n"
-                + "      sense tag:\"Banana,Tasty\" number:3\n"
-                + "      goto\n"
-                + "    sequence\n"
-                + "      sleep times:5\n"
-                + "";
         CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(0.5f, 1f, 1);
         player = new CharacterControl(capsuleShape, 0.05f);
         player.setJumpSpeed(20);
@@ -217,7 +204,7 @@ public class RMDemo extends SimpleApplication {
         rm.setSpace(redMonkeyAppState.getSpace());
         rm.setCharacterControl(player);
         BehaviorTreeParser<RMMonkey> parser = new BehaviorTreeParser<RMMonkey>(BehaviorTreeParser.DEBUG_NONE);
-        monkeyBehaviorTree = parser.parse(rmFile, rm);
+        monkeyBehaviorTree = parser.parse((String)(assetManager.loadAsset("Scripts/monkey.redmonkey")), rm);
         bulletAppState.getPhysicsSpace().add(player);
     
     }
