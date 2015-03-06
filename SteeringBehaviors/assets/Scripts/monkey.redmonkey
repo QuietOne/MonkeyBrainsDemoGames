@@ -6,12 +6,16 @@
 import sense:"redmonkey.elements.monkey.SenseTask"
 import goto:"redmonkey.elements.monkey.GotoTask"
 import sleep:"redmonkey.elements.monkey.SleepTask"
+import eat:"redmonkey.elements.monkey.EatTask"
 
 # Tree definition (note that root is optional)
 root
   selector
     sequence
       sense tag:"Banana,Tasty"
+      goto
+      eat
+      sense tag:"Home"
       goto
     sequence
       sleep times:5

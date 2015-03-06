@@ -4,8 +4,6 @@
  */
 package redmonkeyDemos;
 
-import com.badlogic.gdx.ai.btree.BehaviorTree;
-import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.app.state.AppState;
@@ -194,10 +192,8 @@ public class RMDemo extends SimpleApplication {
         jaime.setLocalTranslation(x,y,z);
         jaime.addControl(player);
         rootNode.attachChild(jaime);
-        AnimControl acontrol = jaime.getControl(AnimControl.class);
-        AnimChannel channel = acontrol.createChannel();
         RMMonkey rm = new RMMonkey(jaime.getLocalTranslation());
-        rm.setChannel(channel);
+        rm.setChannel(jaime.getControl(AnimControl.class));
         rm.sense = new RMOmniSight();
         rm.setSpace(redMonkeyAppState.getSpace());
         rm.setCharacterControl(player);
