@@ -51,7 +51,6 @@ public class RMDemo extends SimpleApplication {
     private CharacterControl player;
     private TerrainQuad terrain;
     private Material mat_terrain;
-    private BehaviorTree<RMMonkey> monkeyBehaviorTree;
 
     public static void main(String args[]) {
         RMDemo app=new RMDemo();
@@ -182,7 +181,6 @@ public class RMDemo extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
-        monkeyBehaviorTree.step();
     }
 
     private void makeMonkey(float x, float y, float z) {
@@ -203,8 +201,7 @@ public class RMDemo extends SimpleApplication {
         rm.sense = new RMOmniSight();
         rm.setSpace(redMonkeyAppState.getSpace());
         rm.setCharacterControl(player);
-        BehaviorTreeParser<RMMonkey> parser = new BehaviorTreeParser<RMMonkey>(BehaviorTreeParser.DEBUG_NONE);
-        monkeyBehaviorTree = parser.parse((String)(assetManager.loadAsset("Scripts/monkey.redmonkey")), rm);
+        rm.setBehaviorTree(assetManager, "Scripts/monkey.redmonkey");
         bulletAppState.getPhysicsSpace().add(player);
     
     }
