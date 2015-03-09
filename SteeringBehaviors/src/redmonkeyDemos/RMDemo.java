@@ -45,14 +45,13 @@ public class RMDemo extends SimpleApplication {
 
     private RedMonkeyAppState redMonkeyAppState;
     private BulletAppState bulletAppState;
-    private RigidBodyControl landscape;
     private CharacterControl player;
     private TerrainQuad terrain;
     private Material mat_terrain;
 
     public static void main(String args[]) {
         RMDemo app=new RMDemo();
-        app.setShowSettings(false);
+        //app.setShowSettings(false);
         app.start();
     }
 
@@ -158,8 +157,8 @@ public class RMDemo extends SimpleApplication {
         // to make them appear in the game world.
         bulletAppState.getPhysicsSpace().add(terrain);
 
-        cam.setLocation(new Vector3f(-133.55548f, -20.999119f, 44.5093f));
-        cam.setRotation(new Quaternion(-3.7362854E-4f, 0.9974783f, -0.07077533f, -0.0052657295f));
+        cam.setLocation(new Vector3f(-134.8089f, -27.700966f, 14.901398f));
+        cam.setRotation(new Quaternion(0.002319244f, 0.98654234f, -0.16288505f, 0.0140468925f));
         GuiGlobals.initialize(this);
 
 
@@ -173,7 +172,7 @@ public class RMDemo extends SimpleApplication {
         stateManager.attach((AppState) (new RedMonkeyDebugAppState(redMonkeyAppState.getSpace(), rootNode, guiFont)));
         makeMonkey(-134f, -23f, 0f);
         makeBanana(-130f, -23f, 0f);
-        makeHome(-150f, -23f, 0f);
+        makeHome(-140f, -23f, 0f);
 
     }
 
