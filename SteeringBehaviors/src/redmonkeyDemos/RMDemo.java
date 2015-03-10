@@ -162,14 +162,12 @@ public class RMDemo extends SimpleApplication {
         GuiGlobals.initialize(this);
 
 
-        redMonkeyAppState = new RedMonkeyAppState();
+        redMonkeyAppState = new RedMonkeyAppState(rootNode, guiFont);
+        redMonkeyAppState.setDebugEnabled(true);
         stateManager.attach(redMonkeyAppState);
         AmbientLight al = new AmbientLight();
         al.setColor(new ColorRGBA(10.1f, 1.1f, 1.1f, 1));
         rootNode.addLight(al);
-        //assetManager.registerLoader(renderer, extensions);
-        //	reader = new FileReader("nonjava/monkey.redmonkey").reader();
-        stateManager.attach((AppState) (new RedMonkeyDebugAppState(redMonkeyAppState.getSpace(), rootNode, guiFont)));
         makeMonkey(-134f, -23f, 0f);
         makeBanana(-130f, -23f, 0f);
         makeHome(-140f, -23f, 0f);
