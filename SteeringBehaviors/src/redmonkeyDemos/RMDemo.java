@@ -162,7 +162,7 @@ public class RMDemo extends SimpleApplication implements GameLogicHook{
         GuiGlobals.initialize(this);
 
 
-        redMonkeyAppState = new RedMonkeyAppState(rootNode, guiFont);
+        redMonkeyAppState = new RedMonkeyAppState(guiFont);
         redMonkeyAppState.setDebugEnabled(true);
         stateManager.attach(redMonkeyAppState);
         AmbientLight al = new AmbientLight();
@@ -179,8 +179,13 @@ public class RMDemo extends SimpleApplication implements GameLogicHook{
     }
 
     public void endedTask(LeafTask o){
-        if (o instanceof EatTask)
+        if (o instanceof EatTask){
             System.out.println("yum!");
+            //o.object;
+            cube.removeFromParent();
+            bulletAppState.getPhysicsSpace().remove(rigidBodyControl);
+            redMonkeyAppState.getSpace().removeItems(banana);
+        }
         else
             System.out.println("???");
     }
@@ -206,18 +211,22 @@ public class RMDemo extends SimpleApplication implements GameLogicHook{
 
     }
 
+    Geometry cube;
+    RigidBodyControl rigidBodyControl;
+    RMItem banana;
     private void makeBanana(float x, float y, float z) {
         Box box = new Box(1, 1, 1);
-        Geometry cube = new Geometry("banana", box);
+        cube = new Geometry("banana", box);
         cube.setLocalTranslation(x, y, z);
         Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat1.setColor("Color", ColorRGBA.Blue);
         cube.setMaterial(mat1);
-        RigidBodyControl rigidBodyControl = new RigidBodyControl(1f);
+        rigidBodyControl = new RigidBodyControl(1f);
         cube.addControl(rigidBodyControl);
         rootNode.attachChild(cube);
         bulletAppState.getPhysicsSpace().add(rigidBodyControl);
-        redMonkeyAppState.getSpace().addItems(new RMItem(cube.getLocalTranslation(), "Banana", "Tasty"));
+        RMItem banana=new RMItem(cube.getLocalTranslation(), "Banana", "Tasty");
+        redMonkeyAppState.getSpace().addItems(banana);
     }
 
     private void makeHome(float x, float y, float z) {
