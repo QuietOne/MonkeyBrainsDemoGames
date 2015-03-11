@@ -13,7 +13,7 @@ root
   selector
     sequence
       sense tag:"Banana,Tasty"
-      goto anim:"JumpStart" speedFact:0.4
+      goto anim:"JumpStart" speedFact:0.4 reachDist:50
       eat anim:"Punches"
       sense tag:"Home"
       goto anim:"JumpStart" speedFact:0.1
