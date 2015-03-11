@@ -204,7 +204,7 @@ public class RMDemo extends SimpleApplication implements GameLogicHook{
         RedMonkey rm = new RedMonkey(jaime.getLocalTranslation(), terrain, jaime,this);
         rm.setChannel(jaime.getControl(AnimControl.class));
         rm.setSense(new RMOmniSight());
-        rm.setSpace(redMonkeyAppState.getSpace());
+        redMonkeyAppState.getSpace().addItems(rm);
         rm.setCharacterControl(player);
         rm.setBehaviorTree(assetManager, "Scripts/monkey.redmonkey");
         bulletAppState.getPhysicsSpace().add(player);
