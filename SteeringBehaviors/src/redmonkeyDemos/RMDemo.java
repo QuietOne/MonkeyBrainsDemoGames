@@ -4,9 +4,7 @@
  */
 package redmonkeyDemos;
 
-import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
-import com.jme3.app.state.AppState;
 import com.jme3.light.AmbientLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.queue.RenderQueue;
@@ -14,7 +12,6 @@ import com.simsilica.lemur.GuiGlobals;
 import redmonkey.RMItem;
 import redmonkey.RMOmniSight;
 import redmonkey.RedMonkeyAppState;
-import redmonkey.RedMonkeyDebugAppState;
 import redmonkey.elements.monkey.RMMonkey;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
@@ -50,14 +47,14 @@ public class RMDemo extends SimpleApplication {
     private Material mat_terrain;
 
     public static void main(String args[]) {
-        RMDemo app=new RMDemo();
+        RMDemo app = new RMDemo();
         //app.setShowSettings(false);
         app.start();
     }
 
     @Override
     public void simpleInitApp() {
-        
+
         assetManager.registerLoader(RMLoader.class, "redmonkey");
         /**
          * Set up Physics
@@ -157,8 +154,8 @@ public class RMDemo extends SimpleApplication {
         // to make them appear in the game world.
         bulletAppState.getPhysicsSpace().add(terrain);
 
-        cam.setLocation(new Vector3f(-134.8089f, -27.700966f, 14.901398f));
-        cam.setRotation(new Quaternion(0.002319244f, 0.98654234f, -0.16288505f, 0.0140468925f));
+        cam.setLocation(new Vector3f(281.3848f, -50.665142f, -180.4371f));
+        cam.setRotation(new Quaternion(0.12662832f, 0.49964494f, -0.07411138f, 0.85371405f));
         GuiGlobals.initialize(this);
 
 
@@ -168,9 +165,10 @@ public class RMDemo extends SimpleApplication {
         AmbientLight al = new AmbientLight();
         al.setColor(new ColorRGBA(10.1f, 1.1f, 1.1f, 1));
         rootNode.addLight(al);
-        makeMonkey(-134f, -23f, 0f);
-        makeBanana(-130f, -23f, 0f);
-        makeHome(-140f, -23f, 0f);
+        //makeMonkey(-198.75122f, -25.489939f, -15.589758f);
+        makeMonkey(339.57977f, -54.48287f, -172.30641f);
+        makeBanana(342.89056f, -48.94442f, -109.037506f);
+        makeHome(343.57977f, -54.48287f, -172.30641f);
 
     }
 
@@ -186,19 +184,19 @@ public class RMDemo extends SimpleApplication {
         player.setGravity(30);
         Node jaime = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
         jaime.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        jaime.setLocalTranslation(x,y,z);
+        jaime.setLocalTranslation(x, y, z);
         jaime.addControl(player);
         rootNode.attachChild(jaime);
-        RMMonkey rm = new RMMonkey(jaime.getLocalTranslation());
+        RMMonkey rm = new RMMonkey(jaime.getLocalTranslation(), terrain, jaime);
         rm.setChannel(jaime.getControl(AnimControl.class));
         rm.sense = new RMOmniSight();
         rm.setSpace(redMonkeyAppState.getSpace());
         rm.setCharacterControl(player);
         rm.setBehaviorTree(assetManager, "Scripts/monkey.redmonkey");
         bulletAppState.getPhysicsSpace().add(player);
-    
+
     }
-    
+
     private void makeBanana(float x, float y, float z) {
         Box box = new Box(1, 1, 1);
         Geometry cube = new Geometry("banana", box);
@@ -226,6 +224,4 @@ public class RMDemo extends SimpleApplication {
         bulletAppState.getPhysicsSpace().add(rigidBodyControl);
         redMonkeyAppState.getSpace().addItems(new RMItem(cube.getLocalTranslation(), "Home"));
     }
-
-
 }
