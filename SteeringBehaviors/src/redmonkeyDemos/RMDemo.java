@@ -4,6 +4,7 @@
  */
 package redmonkeyDemos;
 
+import com.badlogic.gdx.ai.btree.LeafTask;
 import com.jme3.animation.AnimControl;
 import com.jme3.light.AmbientLight;
 import com.jme3.math.ColorRGBA;
@@ -33,12 +34,14 @@ import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import java.util.ArrayList;
 import java.util.List;
+import redmonkey.GameLogicHook;
 import redmonkey.RMLoader;
+import redmonkey.elements.monkey.EatTask;
 
 /**
  *
  */
-public class RMDemo extends SimpleApplication {
+public class RMDemo extends SimpleApplication implements GameLogicHook{
 
     private RedMonkeyAppState redMonkeyAppState;
     private BulletAppState bulletAppState;
@@ -175,6 +178,13 @@ public class RMDemo extends SimpleApplication {
     public void simpleUpdate(float tpf) {
     }
 
+    public void endedTask(LeafTask o){
+        if (o instanceof EatTask)
+            System.out.println("yum!");
+        else
+            System.out.println("???");
+    }
+    
     private void makeMonkey(float x, float y, float z) {
         CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(0.5f, 1f, 1);
         player = new CharacterControl(capsuleShape, 0.05f);
@@ -186,7 +196,7 @@ public class RMDemo extends SimpleApplication {
         jaime.setLocalTranslation(x, y, z);
         jaime.addControl(player);
         rootNode.attachChild(jaime);
-        RedMonkey rm = new RedMonkey(jaime.getLocalTranslation(), terrain, jaime);
+        RedMonkey rm = new RedMonkey(jaime.getLocalTranslation(), terrain, jaime,this);
         rm.setChannel(jaime.getControl(AnimControl.class));
         rm.setSense(new RMOmniSight());
         rm.setSpace(redMonkeyAppState.getSpace());
