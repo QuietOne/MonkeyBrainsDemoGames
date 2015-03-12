@@ -6,6 +6,7 @@ package redmonkeyDemos;
 
 import com.badlogic.gdx.ai.btree.LeafTask;
 import com.jme3.animation.AnimControl;
+import com.jme3.app.Application;
 import com.jme3.light.AmbientLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.queue.RenderQueue;
@@ -32,16 +33,16 @@ import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
+import com.simsilica.lemur.event.BaseAppState;
 import java.util.ArrayList;
 import java.util.List;
 import redmonkey.GameLogicHook;
-import redmonkey.RMLoader;
 import redmonkey.elements.monkey.EatTask;
 
 /**
  *
  */
-public class RMDemo extends SimpleApplication implements GameLogicHook{
+public class RMDemo extends SimpleApplication {
 
     private RedMonkeyAppState redMonkeyAppState;
     private BulletAppState bulletAppState;
@@ -58,7 +59,6 @@ public class RMDemo extends SimpleApplication implements GameLogicHook{
     @Override
     public void simpleInitApp() {
 
-        assetManager.registerLoader(RMLoader.class, "redmonkey");
         /**
          * Set up Physics
          */
@@ -164,13 +164,7 @@ public class RMDemo extends SimpleApplication implements GameLogicHook{
 
         redMonkeyAppState = new RedMonkeyAppState(guiFont);
         redMonkeyAppState.setDebugEnabled(true);
-        stateManager.attach(redMonkeyAppState);
-        AmbientLight al = new AmbientLight();
-        al.setColor(new ColorRGBA(10.1f, 1.1f, 1.1f, 1));
-        rootNode.addLight(al);
-        makeMonkey(339.57977f, -54.48287f, -172.30641f);
-        makeBanana(342.89056f, -48.94442f, -109.037506f);
-        makeHome(343.57977f, -54.48287f, -172.30641f);
+        stateManager.attachAll(redMonkeyAppState,new BuildDemoAppState());
 
     }
 
@@ -178,67 +172,93 @@ public class RMDemo extends SimpleApplication implements GameLogicHook{
     public void simpleUpdate(float tpf) {
     }
 
-    public void endedTask(LeafTask o){
-        if (o instanceof EatTask){
-            System.out.println("yum!");
-            //o.object;
-            cube.removeFromParent();
-            bulletAppState.getPhysicsSpace().remove(rigidBodyControl);
-            redMonkeyAppState.getSpace().removeItems(banana);
+    class BuildDemoAppState extends BaseAppState implements GameLogicHook {
+
+        Geometry cube;
+        RigidBodyControl rigidBodyControl;
+        RMItem banana;
+
+        public void endedTask(LeafTask o) {
+            if (o instanceof EatTask) {
+                System.out.println("yum!");
+                //o.object;
+                cube.removeFromParent();
+                bulletAppState.getPhysicsSpace().remove(rigidBodyControl);
+                redMonkeyAppState.getSpace().removeItems(banana);
+            } else {
+                System.out.println("???");
+            }
         }
-        else
-            System.out.println("???");
-    }
-    
-    private void makeMonkey(float x, float y, float z) {
-        CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(0.5f, 1f, 1);
-        player = new CharacterControl(capsuleShape, 0.05f);
-        player.setJumpSpeed(20);
-        player.setFallSpeed(30);
-        player.setGravity(30);
-        Node jaime = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
-        jaime.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        RedMonkey rm = new RedMonkey(x,y,z, terrain, jaime,this);
-        rm.spatial.addControl(player);
-        rm.setChannel(jaime.getControl(AnimControl.class));
-        rm.setSense(new RMOmniSight());
-        redMonkeyAppState.getSpace().addItems(rm);
-        rm.setCharacterControl(player);
-        rm.setBehaviorTree(assetManager, "Scripts/monkey.redmonkey");
-        rootNode.attachChild(rm.spatial);
-        bulletAppState.getPhysicsSpace().add(player);
 
-    }
+        private void makeMonkey(float x, float y, float z) {
+            CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(0.5f, 1f, 1);
+            player = new CharacterControl(capsuleShape, 0.05f);
+            player.setJumpSpeed(20);
+            player.setFallSpeed(30);
+            player.setGravity(30);
+            Node jaime = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
+            jaime.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+            RedMonkey rm = new RedMonkey(x, y, z, terrain, jaime, this);
+            rm.spatial.addControl(player);
+            rm.setChannel(jaime.getControl(AnimControl.class));
+            rm.setSense(new RMOmniSight());
+            redMonkeyAppState.getSpace().addItems(rm);
+            rm.setCharacterControl(player);
+            rm.setBehaviorTree(assetManager, "Scripts/monkey.redmonkey");
+            rootNode.attachChild(rm.spatial);
+            bulletAppState.getPhysicsSpace().add(player);
 
-    Geometry cube;
-    RigidBodyControl rigidBodyControl;
-    RMItem banana;
-    private void makeBanana(float x, float y, float z) {
-        Box box = new Box(1, 1, 1);
-        cube = new Geometry("banana", box);
-        cube.setLocalTranslation(x, y, z);
-        Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat1.setColor("Color", ColorRGBA.Blue);
-        cube.setMaterial(mat1);
-        rigidBodyControl = new RigidBodyControl(1f);
-        cube.addControl(rigidBodyControl);
-        rootNode.attachChild(cube);
-        bulletAppState.getPhysicsSpace().add(rigidBodyControl);
-        RMItem banana=new RMItem(cube.getLocalTranslation(), "Banana", "Tasty");
-        redMonkeyAppState.getSpace().addItems(banana);
-    }
+        }
 
-    private void makeHome(float x, float y, float z) {
-        Box box = new Box(1, 1, 1);
-        Geometry cube = new Geometry("home", box);
-        cube.setLocalTranslation(x, y, z);
-        Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat1.setColor("Color", ColorRGBA.Green);
-        cube.setMaterial(mat1);
-        RigidBodyControl rigidBodyControl = new RigidBodyControl(1f);
-        cube.addControl(rigidBodyControl);
-        rootNode.attachChild(cube);
-        bulletAppState.getPhysicsSpace().add(rigidBodyControl);
-        redMonkeyAppState.getSpace().addItems(new RMItem(cube.getLocalTranslation(), "Home"));
+        private void makeBanana(float x, float y, float z) {
+            Box box = new Box(1, 1, 1);
+            cube = new Geometry("banana", box);
+            cube.setLocalTranslation(x, y, z);
+            Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+            mat1.setColor("Color", ColorRGBA.Blue);
+            cube.setMaterial(mat1);
+            rigidBodyControl = new RigidBodyControl(1f);
+            cube.addControl(rigidBodyControl);
+            rootNode.attachChild(cube);
+            bulletAppState.getPhysicsSpace().add(rigidBodyControl);
+            RMItem banana = new RMItem(cube.getLocalTranslation(), "Banana", "Tasty");
+            redMonkeyAppState.getSpace().addItems(banana);
+        }
+
+        private void makeHome(float x, float y, float z) {
+            Box box = new Box(1, 1, 1);
+            Geometry cube = new Geometry("home", box);
+            cube.setLocalTranslation(x, y, z);
+            Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+            mat1.setColor("Color", ColorRGBA.Green);
+            cube.setMaterial(mat1);
+            RigidBodyControl rigidBodyControl = new RigidBodyControl(1f);
+            cube.addControl(rigidBodyControl);
+            rootNode.attachChild(cube);
+            bulletAppState.getPhysicsSpace().add(rigidBodyControl);
+            redMonkeyAppState.getSpace().addItems(new RMItem(cube.getLocalTranslation(), "Home"));
+        }
+
+        @Override
+        protected void initialize(Application aplctn) {
+            AmbientLight al = new AmbientLight();
+            al.setColor(new ColorRGBA(10.1f, 1.1f, 1.1f, 1));
+            rootNode.addLight(al);
+            makeMonkey(339.57977f, -54.48287f, -172.30641f);
+            makeBanana(342.89056f, -48.94442f, -109.037506f);
+            makeHome(343.57977f, -54.48287f, -172.30641f);
+        }
+
+        @Override
+        protected void cleanup(Application aplctn) {
+        }
+
+        @Override
+        protected void enable() {
+        }
+
+        @Override
+        protected void disable() {
+        }
     }
 }
