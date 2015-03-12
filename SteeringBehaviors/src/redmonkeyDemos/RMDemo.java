@@ -198,15 +198,14 @@ public class RMDemo extends SimpleApplication implements GameLogicHook{
         player.setGravity(30);
         Node jaime = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
         jaime.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        jaime.setLocalTranslation(x, y, z);
-        jaime.addControl(player);
-        rootNode.attachChild(jaime);
-        RedMonkey rm = new RedMonkey(jaime.getLocalTranslation(), terrain, jaime,this);
+        RedMonkey rm = new RedMonkey(x,y,z, terrain, jaime,this);
+        rm.spatial.addControl(player);
         rm.setChannel(jaime.getControl(AnimControl.class));
         rm.setSense(new RMOmniSight());
         redMonkeyAppState.getSpace().addItems(rm);
         rm.setCharacterControl(player);
         rm.setBehaviorTree(assetManager, "Scripts/monkey.redmonkey");
+        rootNode.attachChild(rm.spatial);
         bulletAppState.getPhysicsSpace().add(player);
 
     }
