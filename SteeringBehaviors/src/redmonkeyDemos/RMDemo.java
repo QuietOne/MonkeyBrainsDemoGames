@@ -220,7 +220,7 @@ public class RMDemo extends SimpleApplication {
             cube.addControl(rigidBodyControl);
             rootNode.attachChild(cube);
             bulletAppState.getPhysicsSpace().add(rigidBodyControl);
-            RMItem banana = new RMItem(cube.getLocalTranslation(), "Banana", "Tasty");
+            RMItem banana = new RMItem(cube, "Banana", "Tasty");
             redMonkeyAppState.getSpace().addItems(banana);
         }
 
@@ -235,7 +235,7 @@ public class RMDemo extends SimpleApplication {
             cube.addControl(rigidBodyControl);
             rootNode.attachChild(cube);
             bulletAppState.getPhysicsSpace().add(rigidBodyControl);
-            redMonkeyAppState.getSpace().addItems(new RMItem(cube.getLocalTranslation(), "Home"));
+            redMonkeyAppState.getSpace().addItems(new RMItem(cube, "Home"));
         }
 
         @Override
