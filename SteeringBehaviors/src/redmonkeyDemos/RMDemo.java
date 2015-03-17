@@ -26,6 +26,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.terrain.geomipmap.TerrainLodControl;
 import com.jme3.terrain.heightmap.AbstractHeightMap;
@@ -177,14 +178,17 @@ public class RMDemo extends SimpleApplication {
         Geometry cube;
         RigidBodyControl rigidBodyControl;
         RMItem banana;
+        Node jaime;
 
-        public void endedTask(LeafTask o) {
+        public void endedTask(LeafTask o, RMItem... items) {
             if (o instanceof EatTask) {
                 System.out.println("yum!");
-                //o.object;
-                cube.removeFromParent();
+                Spatial banana=(Geometry) items[0].spatial;
+                banana.removeControl(rigidBodyControl);
                 bulletAppState.getPhysicsSpace().remove(rigidBodyControl);
-                redMonkeyAppState.getSpace().removeItems(banana);
+                banana.setLocalTranslation(0, 0, 1.5f);
+                jaime.attachChild(banana);
+                redMonkeyAppState.getSpace().removeItems(this.banana);
             } else {
                 System.out.println("???");
             }
@@ -196,7 +200,7 @@ public class RMDemo extends SimpleApplication {
             player.setJumpSpeed(20);
             player.setFallSpeed(30);
             player.setGravity(30);
-            Node jaime = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
+            jaime = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
             jaime.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
             RedMonkey rm = new RedMonkey(x, y, z, terrain, jaime, this,-0.2f);
             rm.setChannel(jaime.getControl(AnimControl.class));
