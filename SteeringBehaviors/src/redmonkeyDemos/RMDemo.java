@@ -202,7 +202,7 @@ public class RMDemo extends SimpleApplication {
             player.setGravity(30);
             jaime = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
             jaime.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-            RedMonkey rm = new RedMonkey(x, y, z, terrain, jaime, this,-0.2f);
+            RedMonkey rm = new RedMonkey(x, y, z, terrain, jaime, this,-0.2f,"Jaime");
             rm.setChannel(jaime.getControl(AnimControl.class));
             rm.setSense(new RMOmniSight());
             redMonkeyAppState.getSpace().addItems(rm);
