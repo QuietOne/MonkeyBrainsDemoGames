@@ -10,12 +10,12 @@ import com.jme3.app.Application;
 import com.jme3.light.AmbientLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.queue.RenderQueue;
-import com.simsilica.lemur.GuiGlobals;
 import redmonkey.RMItem;
 import redmonkey.senses.RMOmniSight;
 import redmonkey.RedMonkeyAppState;
 import redmonkey.elements.monkey.RedMonkey;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.state.BaseAppState;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
@@ -34,7 +34,6 @@ import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
-import com.simsilica.lemur.event.BaseAppState;
 import java.util.ArrayList;
 import java.util.List;
 import redmonkey.GameLogicHook;
@@ -160,7 +159,6 @@ public class RMDemo extends SimpleApplication {
 
         cam.setLocation(new Vector3f(281.3848f, -50.665142f, -180.4371f));
         cam.setRotation(new Quaternion(0.12662832f, 0.49964494f, -0.07411138f, 0.85371405f));
-        GuiGlobals.initialize(this);
 
 
         redMonkeyAppState = new RedMonkeyAppState(guiFont);
@@ -257,11 +255,11 @@ public class RMDemo extends SimpleApplication {
         }
 
         @Override
-        protected void enable() {
+        protected void onEnable() {
         }
 
         @Override
-        protected void disable() {
+        protected void onDisable() {
         }
     }
 }
